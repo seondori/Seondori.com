@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# [수정] 파일 경로 안전하게 찾기 (실행 위치 에러 방지)
+# [수정] 실행 위치 상관없이 파일 찾기 (Render 배포 시 필수)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 def get_data_file():
     files = glob.glob(os.path.join(BASE_DIR, "ram_*.json"))
@@ -28,13 +28,59 @@ def get_data_file():
 
 DATA_PATH = get_data_file()
 
-# --- 기존 코드 (유지) ---
-TICKERS = {
-    "indices": {"^KS11": "🇰🇷 코스피", "^DJI": "🇺🇸 다우존스", "^GSPC": "🇺🇸 S&P 500", "^IXIC": "🇺🇸 나스닥"},
-    "macro": {"CL=F": "🛢️ WTI 원유", "GC=F": "👑 금", "^VIX": "😱 VIX", "HG=F": "🏭 구리"},
-    "forex": {"KRW=X": "🇰🇷 원/달러", "JPYKRW=X": "🇯🇵 원/엔 (100엔)", "DX-Y.NYB": "🌎 달러 인덱스"},
-    "bonds": {"ZT=F": "🇺🇸 미국 2년", "^TNX": "🇺🇸 미국 10년"} 
-}
+# ========== 여기에 추가! ==========
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "Seondori API Server"}
+# =================================
+
+# [추가] 관리자 데이터 입력용 모델
+class UpdateRequest(BaseModel):et_data_file()
+
+# [추가] 관리자 데이터 입력용 모델
+class UpdateRequest(BaseModel):
+    date: str
+    time: str
+    text: str
+
+# [추가] 텍스트 파싱 로직
+def parse_price_data(price_text):
+    prices = {}
+    current_ram_type = None
+    patterns = {
+        'ddr5': r'삼성\s*D5\s*(\d+G)[^\d]*([\d]+)\s*[\[\(]?[\d,\.]*[\]\)]?\s*-\s*([\d,\.]+)\s*원',
+        'ddr4': r'삼성\s*(\d+G)\s*PC4\s*([\d]+)\s*[\[\(]?[\d,\.]*[Mm]?[Hh]?[Zz]?[\]\)]?\s*-\s*([\d,\.]+)\s*원',
+        'ddr3': r'삼성\s*(\d+G)\s*PC3\s*([\d]+)\s*-\s*([\d,\.]+)\s*원',
+    }
+    for line in price_text.split('\n'):
+        line = line.strip()
+        if not line or line.startswith('*'): continue
+        if '데스크탑' in line: current_ram_type = '데스크탑'; continue
+        if '노트북' in line: current_ram_type = '노트북'; continue
+        parts = line.split(',')
+        for part in parts:
+            try:
+                for p_name, p_regex in patterns.items():
+                    m = re.search(p_regex, part)
+                    if m:
+                        cap, spd, pr = m.groups()
+                        # DDR3 등 MHz 표기 예외 처리
+                        if '5' in p_name: suffix = f" {spd}MHz"
+                        elif '4' in p_name: suffix = f" PC4-{spd}"
+                        else: suffix = f" PC3-{spd}"
+                        dtype = "DDR" + p_name[-1]
+                        cat = f"{dtype.upper()} RAM ({current_ram_type})"
+                        prod = f"삼성 {dtype.upper()} {cap}{suffix}{' (노트북)' if current_ram_type == '노트북' else ''}"
+                        price = int(pr.replace(',', '').replace('.', ''))
+                        if cat not in prices: prices[cat] = []
+                        prices[cat].append({"product": prod, "price": price, "price_formatted": f"{price:,}원"})
+                        break
+            except: continue
+    return prices
+
+def format_chart_data(series):
+    if series is None or series.empty: return []
+    return [{"date": d.strftime("%Y-%m-%d"), "value": float(v)} for d, v in series.items()]
 
 def get_period_str(period_option):
     if period_option == "5일": return "5d", "90m"
@@ -45,10 +91,13 @@ def get_period_str(period_option):
 @app.get("/api/market-data")
 async def get_market_data(period: str = "1개월"):
     p, i = get_period_str(period)
-    all_symbols = []
-    for cat in TICKERS.values():
-        all_symbols.extend(cat.keys())
-    all_symbols.append("CNY=X")
+    TICKERS = {
+        "indices": {"^KS11": "🇰🇷 코스피", "^DJI": "🇺🇸 다우존스", "^GSPC": "🇺🇸 S&P 500", "^IXIC": "🇺🇸 나스닥"},
+        "macro": {"CL=F": "🛢️ WTI 원유", "GC=F": "👑 금", "^VIX": "😱 VIX", "HG=F": "🏭 구리"},
+        "forex": {"KRW=X": "🇰🇷 원/달러", "JPYKRW=X": "🇯🇵 원/엔 (100엔)", "DX-Y.NYB": "🌎 달러 인덱스"},
+        "bonds": {"ZT=F": "🇺🇸 미국 2년", "^TNX": "🇺🇸 미국 10년"} 
+    }
+    all_symbols = [s for cat in TICKERS.values() for s in cat.keys()] + ["CNY=X"]
 
     try:
         data = yf.download(all_symbols, period=p, interval=i, progress=False, group_by='ticker')
@@ -64,8 +113,7 @@ async def get_market_data(period: str = "1개월"):
             if hist.empty: return None
             current = float(hist.iloc[-1])
             prev = float(hist.iloc[-2]) if len(hist) > 1 else current
-            if symbol == "JPYKRW=X": 
-                current *= 100; prev *= 100; hist = hist * 100
+            if symbol == "JPYKRW=X": current *= 100; prev *= 100; hist = hist * 100
             chart_data = [{"time": t.strftime('%Y-%m-%d %H:%M'), "value": float(v)} for t, v in hist.items()]
             return {"name": name, "current": current, "delta": current - prev, "pct": ((current - prev) / prev) * 100 if prev != 0 else 0, "chart": chart_data}
         except: return None
@@ -105,53 +153,14 @@ async def get_ram_data():
                 if p_name not in product_history: product_history[p_name] = []
                 product_history[p_name].append({"date": date, "price": item['price']})
 
-    # [중요] trends 키 사용
     return {
         "current": json_data.get("price_data", {}),
-        "trends": product_history, 
+        "trends": product_history,
         "total_days": len(sorted_dates),
         "date_range": f"{sorted_dates[0]} ~ {sorted_dates[-1]}" if sorted_dates else ""
     }
 
-# --- [추가됨] 관리자 기능 ---
-class UpdateRequest(BaseModel):
-    date: str
-    time: str
-    text: str
-
-def parse_price_data(price_text):
-    prices = {}
-    current_ram_type = None
-    patterns = {
-        'ddr5': r'삼성\s*D5\s*(\d+G)[^\d]*([\d]+)\s*[\[\(]?[\d,\.]*[\]\)]?\s*-\s*([\d,\.]+)\s*원',
-        'ddr4': r'삼성\s*(\d+G)\s*PC4[- ]?([\d]+)\s*[\[\(]?[\d,\.]*[Mm]?[Hh]?[Zz]?[\]\)]?\s*-\s*([\d,\.]+)\s*원',
-        'ddr3': r'삼성\s*(\d+G)\s*PC3[- ]?([\d]+)\s*-\s*([\d,\.]+)\s*원',
-    }
-    for line in price_text.split('\n'):
-        line = line.strip()
-        if not line or line.startswith('*'): continue
-        if '데스크탑' in line: current_ram_type = '데스크탑'; continue
-        if '노트북' in line: current_ram_type = '노트북'; continue
-        parts = line.split(',')
-        for part in parts:
-            try:
-                for p_name, p_regex in patterns.items():
-                    m = re.search(p_regex, part)
-                    if m:
-                        cap, spd, pr = m.groups()
-                        dtype = "DDR" + p_name[-1]
-                        if '5' in p_name: suffix = f" {spd}MHz"
-                        elif '4' in p_name: suffix = f" PC4-{spd}"
-                        else: suffix = f" PC3-{spd}"
-                        cat = f"{dtype.upper()} RAM ({current_ram_type})"
-                        prod = f"삼성 {dtype.upper()} {cap}{suffix}{' (노트북)' if current_ram_type == '노트북' else ''}"
-                        price = int(pr.replace(',', '').replace('.', ''))
-                        if cat not in prices: prices[cat] = []
-                        prices[cat].append({"product": prod, "price": price, "price_formatted": f"{price:,}원"})
-                        break
-            except: continue
-    return prices
-
+# [추가] 관리자 API
 @app.post("/api/admin/update")
 async def update_data(req: UpdateRequest):
     parsed = parse_price_data(req.text)
@@ -163,6 +172,7 @@ async def update_data(req: UpdateRequest):
     
     key = f"{req.date} {req.time}"
     full["price_history"][key] = parsed
+    
     if sorted(full["price_history"].keys())[-1] == key: full["price_data"] = parsed
         
     with open(DATA_PATH, "w", encoding="utf-8") as f:
