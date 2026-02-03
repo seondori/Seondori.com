@@ -5456,6 +5456,76 @@
           "price_formatted": "3,000원"
         }
       ]
+    },
+    "2026-02-03 18:00": {
+      "DDR5 RAM (데스크탑)": [
+        {
+          "product": "삼성 DDR5 32G 5600MHz",
+          "price": 410000,
+          "price_formatted": "410,000원"
+        },
+        {
+          "product": "삼성 DDR5 16G 4800MHz",
+          "price": 185000,
+          "price_formatted": "185,000원"
+        },
+        {
+          "product": "삼성 DDR5 32G 4800MHz",
+          "price": 300000,
+          "price_formatted": "300,000원"
+        }
+      ],
+      "DDR4 RAM (데스크탑)": [
+        {
+          "product": "삼성 DDR4 32G PC4-25600",
+          "price": 230000,
+          "price_formatted": "230,000원"
+        },
+        {
+          "product": "삼성 DDR4 32G PC4-21300",
+          "price": 180000,
+          "price_formatted": "180,000원"
+        },
+        {
+          "product": "삼성 DDR4 16G PC4-25600",
+          "price": 130000,
+          "price_formatted": "130,000원"
+        },
+        {
+          "product": "삼성 DDR4 16G PC4-17000",
+          "price": 100000,
+          "price_formatted": "100,000원"
+        },
+        {
+          "product": "삼성 DDR4 8G PC4-21300",
+          "price": 48000,
+          "price_formatted": "48,000원"
+        },
+        {
+          "product": "삼성 DDR4 8G PC4-19200",
+          "price": 40000,
+          "price_formatted": "40,000원"
+        }
+      ],
+      "DDR4 RAM (노트북)": [
+        {
+          "product": "삼성 DDR4 32G PC4-25600 (노트북)",
+          "price": 190000,
+          "price_formatted": "190,000원"
+        },
+        {
+          "product": "삼성 DDR4 16G PC4-25600 (노트북)",
+          "price": 100000,
+          "price_formatted": "100,000원"
+        }
+      ],
+      "DDR3 RAM (노트북)": [
+        {
+          "product": "삼성 DDR3 8G PC3-10600 (노트북)",
+          "price": 3000,
+          "price_formatted": "3,000원"
+        }
+      ]
     }
   }
 }

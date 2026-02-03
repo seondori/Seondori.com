@@ -6,169 +6,142 @@ import {
 import { Globe, Cpu, TrendingUp, TrendingDown, RefreshCcw, LayoutDashboard, Settings, Search, Save, Download } from 'lucide-react';
 
 const App = () => {
-  const [activeTab, setActiveTab] = useState('indices');
-  const [globalPeriod, setGlobalPeriod] = useState('1개월'); 
-  const [ramPeriod, setRamPeriod] = useState('30'); // 1개월 기본
+  // 환경변수에서 API URL 가져오기 (없으면 localhost 사용)
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   
-  // 초기값 null 유지 (로딩 상태 구분을 위해)
-  const [marketData, setMarketData] = useState(null);
-  const [ramData, setRamData] = useState(null);
-  const [loading, setLoading] = useState(true); // 처음에 로딩 true
+  const [data, setData] = useState({ market: {}, ram: {}, history: {} });
+  const [tab, setTab] = useState('market'); 
+  const [loading, setLoading] = useState(false);
+  
+  // 기간 선택 (기본 1개월)
+  const [globalPeriod, setGlobalPeriod] = useState('1개월');
+  
+  // [요청 반영] RAM 차트 기본 기간: 30일 (1개월)
+  const [ramPeriod, setRamPeriod] = useState('30'); 
 
+  // RAM 페이지 상태
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [ramSearch, setRamSearch] = useState("");
 
+  // 관리자 상태
   const [adminDate, setAdminDate] = useState(new Date().toISOString().slice(0, 10));
   const [adminTime, setAdminTime] = useState("10:00");
   const [adminText, setAdminText] = useState("");
 
-  // 정렬 순서 (이름이 정확하지 않아도 부분 일치로 정렬 시도)
-  const categoryOrder = [
-    "DDR5", "DDR4", "DDR3", "노트북" 
-  ];
-
-  // 1. 시장 데이터 로드
-  useEffect(() => {
-    const fetchMarket = async () => {
-      try {
-        const res = await axios.get(`http://localhost:8000/api/market-data?period=${globalPeriod}`);
-        setMarketData(res.data);
-      } catch (e) { console.error(e); }
-    };
-    fetchMarket();
-  }, [globalPeriod]);
-
-  // 2. RAM 데이터 로드
-  useEffect(() => {
-    const fetchRam = async () => {
-      try {
-        const res = await axios.get('http://localhost:8000/api/ram-data');
-        setRamData(res.data);
-        setLoading(false); // 데이터 로드 완료
-
-        // 초기값 설정
-        if (res.data.current) {
-            // [수정] 탭이 사라지지 않도록 데이터에 있는 모든 키를 가져옴
-            const allCats = Object.keys(res.data.current);
-            // 정렬
-            const sortedCats = sortCategories(allCats);
-            const firstCat = sortedCats[0];
-            
-            if (firstCat) {
-                setSelectedCategory(firstCat);
-                const firstProd = res.data.current[firstCat][0]?.product;
-                if (firstProd) setSelectedProduct(firstProd);
-            }
+  // 데이터 로드
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${API_URL}/api/all-data`);
+      setData(res.data);
+      
+      // [수정] 데이터 로드 후 초기 카테고리 설정 (정렬 순서 반영)
+      if (res.data.ram) {
+        const availableCats = Object.keys(res.data.ram);
+        const sortedCats = sortCategories(availableCats);
+        const firstCat = sortedCats[0];
+        
+        if (firstCat) {
+            setSelectedCategory(firstCat);
+            const firstProd = res.data.ram[firstCat][0]?.product;
+            if (firstProd) setSelectedProduct(firstProd);
         }
-      } catch (e) { 
-          console.error(e); 
-          setLoading(false);
       }
-    };
-    fetchRam();
-  }, []);
+    } catch (err) { console.error(err); }
+    setLoading(false);
+  };
 
-  useEffect(() => {
-    if (ramData && selectedCategory && ramData.current[selectedCategory]) {
-      const items = ramData.current[selectedCategory];
-      if (items && items.length > 0) {
-        setSelectedProduct(items[0].product);
-      }
-    }
-  }, [selectedCategory, ramData]);
+  useEffect(() => { fetchData(); }, []);
 
-  // [수정] 카테고리 정렬 (모든 탭 표시 보장)
+  // [핵심 수정] 카테고리 정렬 함수 (요청하신 순서대로)
   const sortCategories = (categories) => {
+    const order = [
+      "DDR5 RAM (데스크탑)",
+      "DDR4 RAM (데스크탑)",
+      "DDR3 RAM (데스크탑)",
+      "DDR5 RAM (노트북)",
+      "DDR4 RAM (노트북)",
+      "DDR3 RAM (노트북)"
+    ];
+    
     return categories.sort((a, b) => {
-        // 데스크탑 우선, 그 다음 DDR 버전 역순(5->4->3)
-        const scoreA = (a.includes("노트북") ? 0 : 10) + (a.includes("DDR5") ? 3 : (a.includes("DDR4") ? 2 : 1));
-        const scoreB = (b.includes("노트북") ? 0 : 10) + (b.includes("DDR5") ? 3 : (b.includes("DDR4") ? 2 : 1));
-        return scoreB - scoreA;
+      const indexA = order.indexOf(a);
+      const indexB = order.indexOf(b);
+      // 순서 목록에 없으면 맨 뒤로
+      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
     });
   };
 
+  // 관리자 업데이트
   const handleUpdate = async () => {
     if(!adminText) return alert("데이터를 입력해주세요.");
     if(!confirm(`${adminDate} ${adminTime} 기준으로 저장하시겠습니까?`)) return;
     try {
-        const res = await axios.post('http://localhost:8000/api/admin/update', {
-            date: adminDate, time: adminTime, text: adminText
+        const res = await axios.post(`${API_URL}/api/admin/update`, {
+            date: adminDate,
+            time: adminTime,
+            text: adminText
         });
         if (res.data.status === 'success') {
-            alert("저장되었습니다.");
+            alert(`성공! ${res.data.count}개 항목 저장됨.`);
             setAdminText("");
             window.location.reload();
         } else { alert("실패: " + res.data.message); }
     } catch(e) { alert("서버 오류"); }
   };
 
-  const handleDownload = () => window.open('http://localhost:8000/api/admin/download', '_blank');
+  const handleDownload = () => {
+    window.open(`${API_URL}/api/admin/download`, '_blank');
+  };
 
-  const getFilteredRamChart = () => {
-    if (!ramData || !selectedProduct || !ramData.trends || !ramData.trends[selectedProduct]) return [];
-    const fullHistory = ramData.trends[selectedProduct];
-    const days = parseInt(ramPeriod);
-    return fullHistory.slice(-days);
+  const getRamTrend = (category, productName) => {
+    if (!data.history) return [];
+    return Object.entries(data.history)
+      .sort(([a], [b]) => new Date(a) - new Date(b))
+      .map(([datetimeStr, dayData]) => {
+        const item = dayData[category]?.find(p => p.product === productName);
+        return { 
+            name: datetimeStr.length > 10 ? datetimeStr.substring(5, 16) : datetimeStr.substring(5), 
+            price: item ? item.price : null 
+        };
+      })
+      .filter(d => d.price !== null)
+      .slice(-parseInt(ramPeriod));
   };
 
   const getStats = (chartData) => {
     if (!chartData || chartData.length === 0) return { max: 0, min: 0, avg: 0, delta: 0, pct: 0 };
     const prices = chartData.map(d => d.price);
-    const max = Math.max(...prices);
-    const min = Math.min(...prices);
-    const avg = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length);
     const start = prices[0];
     const end = prices[prices.length - 1];
-    const delta = end - start;
-    const pct = (start !== 0) ? ((end - start) / start * 100) : 0;
-    return { max, min, avg, start, end, delta, pct };
-  };
-
-  const renderMarketCard = (item) => {
-    const isUp = item.delta >= 0;
-    const chartData = item.chart || [];
-    return (
-      <div key={item.name} className="bg-[#1e1e1e] border border-[#333] rounded-xl p-4 flex flex-col h-48 shadow-lg">
-        <div className="text-[#aaa] text-xs mb-1">{item.name}</div>
-        <div className="text-2xl font-bold text-white mb-1">
-          {item.current.toLocaleString(undefined, {maximumFractionDigits: 2})}
-        </div>
-        <div className={`text-xs flex items-center mb-4 ${isUp ? 'text-[#ff5252]' : 'text-[#00e676]'}`}>
-          {isUp ? <TrendingUp size={12} className="mr-1"/> : <TrendingDown size={12} className="mr-1"/>}
-          {item.delta > 0 ? '+' : ''}{item.delta.toFixed(2)} ({item.pct.toFixed(2)}%)
-        </div>
-        <div className="flex-1 w-full min-h-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <Area type="monotone" dataKey="value" stroke={isUp ? "#ff5252" : "#00e676"} fill={`url(#grad${item.name})`} strokeWidth={2} isAnimationActive={false} />
-              <defs>
-                <linearGradient id={`grad${item.name}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={isUp ? "#ff5252" : "#00e676"} stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={isUp ? "#ff5252" : "#00e676"} stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    );
-  };
-
-  const getRamStats = (items) => {
-    if (!items || items.length === 0) return { max: 0, min: 0, avg: 0 };
-    const prices = items.map(i => i.price);
     return {
-      max: Math.max(...prices),
-      min: Math.min(...prices),
-      avg: Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
+        max: Math.max(...prices),
+        min: Math.min(...prices),
+        avg: Math.round(prices.reduce((a,b)=>a+b,0)/prices.length),
+        delta: end - start,
+        pct: (start !== 0) ? ((end - start) / start * 100) : 0
     };
   };
 
-  // [까만 화면 해결] 데이터 로딩 중엔 로딩 화면 표시
-  if (loading || !marketData || !ramData) return (
-    <div className="min-h-screen bg-[#0b0e11] text-white flex items-center justify-center font-sans">
-        <div className="text-center animate-pulse"><RefreshCcw className="animate-spin mb-4 mx-auto text-blue-500" size={40}/><p>로딩 중...</p></div>
+  const renderCard = (ticker, info) => (
+    <div key={ticker} className="bg-[#1e1e1e] p-5 rounded-2xl border border-[#333] flex flex-col h-48 hover:border-blue-500/50 transition-all shadow-lg">
+      <div className="text-gray-400 text-xs font-bold mb-1">{ticker}</div>
+      <div className="text-2xl font-bold mb-1">{info.val.toLocaleString(undefined, {maximumFractionDigits:2})}</div>
+      <div className={`text-xs font-bold flex items-center mb-4 ${info.pct >= 0 ? 'text-[#ff5252]' : 'text-[#00e676]'}`}>
+        {info.pct >= 0 ? <TrendingUp size={14} className="mr-1"/> : <TrendingDown size={14} className="mr-1"/>}
+        {Math.abs(info.pct).toFixed(2)}%
+      </div>
+      <div className="mt-auto h-12 w-full opacity-50">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={[{v:10}, {v:15}, {v:8}, {v:12}, {v:18}, {v:14}, {v:20}]}>
+            <Area type="monotone" dataKey="v" stroke={info.pct >= 0 ? "#ff5252" : "#00e676"} fill={info.pct >= 0 ? "rgba(255, 82, 82, 0.1)" : "rgba(0, 230, 118, 0.1)"} strokeWidth={2} isAnimationActive={false} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 
@@ -190,6 +163,7 @@ const App = () => {
 
       <main className="flex-1 p-8 overflow-y-auto">
         <header className="mb-8">
+            {/* [수정] 기간 표시 (1개월) 제거 */}
             <h1 className="text-3xl font-bold mb-2">📊 Seondori.com</h1>
         </header>
 
@@ -201,15 +175,17 @@ const App = () => {
             ))}
         </div>
 
-        {activeTab !== 'ram' && activeTab !== 'admin' && marketData && (
+        {loading && <div className="text-blue-400 mb-4 text-sm animate-pulse">데이터를 불러오는 중...</div>}
+
+        {activeTab !== 'ram' && activeTab !== 'admin' && data.market && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {activeTab === 'indices' && [...(marketData.indices || []), ...(marketData.macro || [])].map(renderMarketCard)}
-                {activeTab === 'forex' && (marketData.forex || []).map(renderMarketCard)}
-                {activeTab === 'bonds' && (marketData.bonds || []).map(renderMarketCard)}
+                {activeTab === 'indices' && [...(data.market.indices || []), ...(data.market.macro || [])].map(renderCard)}
+                {activeTab === 'forex' && (data.market.forex || []).map(renderCard)}
+                {activeTab === 'bonds' && (data.market.bonds || []).map(renderCard)}
             </div>
         )}
 
-        {activeTab === 'ram' && ramData && (
+        {activeTab === 'ram' && data.ram && (
             <div className="space-y-6">
                 <div className="bg-[#1e1e1e] border border-[#333] rounded-lg p-4 mb-4 flex justify-between items-center">
                     <h3 className="font-bold text-lg">시세 히스토리</h3>
@@ -219,8 +195,8 @@ const App = () => {
                 </div>
                 <div className="bg-[#1e1e1e] border border-[#333] rounded-lg p-6">
                     <div className="flex flex-wrap gap-2 mb-6">
-                        {/* [수정] 데이터에 있는 모든 키를 가져와서 정렬하여 표시 (탭 사라짐 방지) */}
-                        {sortCategories(Object.keys(ramData.current)).map(cat => (
+                        {/* [핵심 수정] 데이터에 있는 모든 카테고리를 가져와서, 지정된 순서대로 정렬하여 표시 */}
+                        {sortCategories(Object.keys(data.ram)).map(cat => (
                             <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-3 py-1.5 text-xs rounded border transition ${selectedCategory === cat ? 'bg-purple-600 border-purple-600 text-white' : 'bg-[#262730] border-[#444] text-gray-300 hover:bg-[#333]'}`}>
                                 {cat}
                             </button>
@@ -232,7 +208,7 @@ const App = () => {
                                 <tr><th className="py-2 px-4">제품명</th><th className="py-2 px-4 text-right">가격</th></tr>
                             </thead>
                             <tbody>
-                                {ramData.current[selectedCategory]?.filter(item => item.product.toLowerCase().includes(ramSearch.toLowerCase())).map((item, i) => (
+                                {data.ram[selectedCategory]?.filter(item => item.product.toLowerCase().includes(ramSearch.toLowerCase())).map((item, i) => (
                                     <tr key={i} onClick={() => setSelectedProduct(item.product)} className={`cursor-pointer border-b border-[#333] transition ${selectedProduct === item.product ? 'bg-blue-500/20' : 'hover:bg-[#262730]'}`}>
                                         <td className="py-2 px-4">{item.product}</td>
                                         <td className="py-2 px-4 text-right font-mono text-purple-400 font-bold">{item.price_formatted}</td>
@@ -244,7 +220,7 @@ const App = () => {
                     {selectedProduct && (
                         <div className="bg-[#0e1117] rounded-xl p-6 border border-[#333]">
                             {(() => {
-                                const chartData = getFilteredRamChart();
+                                const chartData = getRamTrend(selectedCategory, selectedProduct);
                                 const stats = getStats(chartData);
                                 return (
                                     <>
@@ -261,7 +237,7 @@ const App = () => {
                                             <ResponsiveContainer>
                                                 <LineChart data={chartData}>
                                                     <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
-                                                    <XAxis dataKey="date" stroke="#666" tick={{fontSize: 11}} />
+                                                    <XAxis dataKey="name" stroke="#666" tick={{fontSize: 11}} />
                                                     <YAxis domain={['auto', 'auto']} stroke="#666" tick={{fontSize: 11}} tickFormatter={(val) => val.toLocaleString()} />
                                                     <Tooltip contentStyle={{backgroundColor: '#1e1e1e', border: '1px solid #444'}} formatter={(val) => [`${val.toLocaleString()}원`, '가격']} />
                                                     <Line type="monotone" dataKey="price" stroke="#3b82f6" strokeWidth={3} dot={{r: 4, fill: '#3b82f6'}} />
@@ -277,7 +253,6 @@ const App = () => {
             </div>
         )}
 
-        {/* [추가] 관리자 탭 */}
         {activeTab === 'admin' && (
             <div className="max-w-2xl mx-auto animate-in fade-in">
                 <div className="flex justify-between items-center mb-6">
