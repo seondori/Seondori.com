@@ -28,14 +28,10 @@ def get_data_file():
 
 DATA_PATH = get_data_file()
 
-# ========== 여기에 추가! ==========
+# [추가] 루트 경로 - 서버 상태 확인용
 @app.get("/")
 async def root():
-    return {"status": "ok", "message": "Seondori API Server"}
-# =================================
-
-# [추가] 관리자 데이터 입력용 모델
-class UpdateRequest(BaseModel):et_data_file()
+    return {"status": "ok", "message": "Seondori API Server", "endpoints": ["/api/market-data", "/api/ram-data"]}
 
 # [추가] 관리자 데이터 입력용 모델
 class UpdateRequest(BaseModel):
