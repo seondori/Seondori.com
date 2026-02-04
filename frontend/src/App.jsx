@@ -6,11 +6,10 @@ import {
 import { Globe, Cpu, TrendingUp, TrendingDown, RefreshCcw, LayoutDashboard, Settings, Search, Save, Download } from 'lucide-react';
 
 const App = () => {
-  // 환경변수에서 API URL 가져오기
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   
   const [data, setData] = useState({ market: {}, ram: {}, history: {} });
-  const [activeTab, setActiveTab] = useState('indices');  // tab -> activeTab로 변경
+  const [activeTab, setActiveTab] = useState('indices'); 
   const [loading, setLoading] = useState(false);
   
   // 기간 선택 (기본 1개월)
@@ -33,7 +32,6 @@ const App = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // 시장 데이터와 RAM 데이터 개별로 로드
       const [marketRes, ramRes] = await Promise.all([
         axios.get(`${API_URL}/api/market-data?period=${globalPeriod}`),
         axios.get(`${API_URL}/api/ram-data`)
@@ -45,7 +43,6 @@ const App = () => {
         history: ramRes.data.trends
       });
       
-      // [수정] 데이터 로드 후 초기 카테고리 설정 (정렬 순서 반영)
       if (ramRes.data.current) {
         const availableCats = Object.keys(ramRes.data.current);
         const sortedCats = sortCategories(availableCats);
@@ -61,7 +58,7 @@ const App = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchData(); }, [globalPeriod]);
+  useEffect(() => { fetchData(); }, []);
 
   // [핵심 수정] 카테고리 정렬 함수 (요청하신 순서대로)
   const sortCategories = (categories) => {
@@ -136,7 +133,11 @@ const App = () => {
     };
   };
 
-  const renderCard = (item) => (
+  const renderCard = (item) => {
+    // 차트 데이터 확인
+    const chartData = item.chart && item.chart.length > 0 ? item.chart : [{value:0}];
+    
+    return (
     <div key={item.name} className="bg-[#1e1e1e] p-5 rounded-2xl border border-[#333] flex flex-col h-48 hover:border-blue-500/50 transition-all shadow-lg">
       <div className="text-gray-400 text-xs font-bold mb-1">{item.name}</div>
       <div className="text-2xl font-bold mb-1">{item.current.toLocaleString(undefined, {maximumFractionDigits:2})}</div>
@@ -146,16 +147,16 @@ const App = () => {
       </div>
       <div className="mt-auto h-12 w-full opacity-50">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={item.chart || []}>
+          <AreaChart data={chartData}>
             <Area type="monotone" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} fill={item.pct >= 0 ? "rgba(255, 82, 82, 0.1)" : "rgba(0, 230, 118, 0.1)"} strokeWidth={2} isAnimationActive={false} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>
-  );
+  )};
 
   return (
-    <div className="flex h-screen bg-[#0e1117] text-white font-sans">
+    <div className="flex min-h-screen bg-[#0e1117] text-white font-sans">
       <aside className="w-64 border-r border-[#333] p-6 hidden md:block bg-[#262730]">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><Settings size={20}/> 설정</h2>
         <button onClick={() => window.location.reload()} className="w-full py-2 bg-[#333] hover:bg-[#444] rounded mb-6 text-sm flex justify-center items-center gap-2 transition">
@@ -172,6 +173,7 @@ const App = () => {
 
       <main className="flex-1 p-8 overflow-y-auto">
         <header className="mb-8">
+            {/* [수정] 기간 표시 (1개월) 제거 */}
             <h1 className="text-3xl font-bold mb-2">📊 Seondori.com</h1>
         </header>
 
