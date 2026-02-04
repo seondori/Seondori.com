@@ -106,17 +106,17 @@ const App = () => {
 
   const getRamTrend = (category, productName) => {
     if (!data.history) return [];
-    return Object.entries(data.history)
-      .sort(([a], [b]) => new Date(a) - new Date(b))
-      .map(([datetimeStr, dayData]) => {
-        const item = dayData[category]?.find(p => p.product === productName);
-        return { 
-            name: datetimeStr.length > 10 ? datetimeStr.substring(5, 16) : datetimeStr.substring(5), 
-            price: item ? item.price : null 
-        };
-      })
-      .filter(d => d.price !== null)
-      .slice(-parseInt(ramPeriod));
+    
+    // 백엔드는 제품명을 키로 하는 구조
+    const productTrend = data.history[productName];
+    if (!productTrend || !Array.isArray(productTrend)) return [];
+    
+    return productTrend
+      .slice(-parseInt(ramPeriod))
+      .map(item => ({
+        name: item.date.length > 10 ? item.date.substring(5, 16) : item.date.substring(5),
+        price: item.price
+      }));
   };
 
   const getStats = (chartData) => {
@@ -137,6 +137,12 @@ const App = () => {
     // 차트 데이터 확인
     const chartData = item.chart && item.chart.length > 0 ? item.chart : [{value:0}];
     
+    // Y축 범위를 등락폭이 잘 보이도록 타이트하게 설정
+    const values = chartData.map(d => d.value);
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const padding = (maxValue - minValue) * 0.05; // 5% 패딩
+    
     return (
     <div key={item.name} className="bg-[#1e1e1e] p-5 rounded-2xl border border-[#333] flex flex-col h-48 hover:border-blue-500/50 transition-all shadow-lg">
       <div className="text-gray-400 text-xs font-bold mb-1">{item.name}</div>
@@ -147,9 +153,10 @@ const App = () => {
       </div>
       <div className="mt-auto h-12 w-full opacity-50">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
-            <Area type="monotone" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} fill={item.pct >= 0 ? "rgba(255, 82, 82, 0.1)" : "rgba(0, 230, 118, 0.1)"} strokeWidth={2} isAnimationActive={false} />
-          </AreaChart>
+          <LineChart data={chartData}>
+            <YAxis domain={[minValue - padding, maxValue + padding]} hide={true} />
+            <Line type="monotone" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} strokeWidth={2} dot={false} isAnimationActive={false} />
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>
