@@ -6,11 +6,11 @@ import {
 import { Globe, Cpu, TrendingUp, TrendingDown, RefreshCcw, LayoutDashboard, Settings, Search, Save, Download } from 'lucide-react';
 
 const App = () => {
-  // 환경변수에서 API URL 가져오기 (없으면 localhost 사용)
+  // 환경변수에서 API URL 가져오기
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   
   const [data, setData] = useState({ market: {}, ram: {}, history: {} });
-  const [tab, setTab] = useState('market'); 
+  const [activeTab, setActiveTab] = useState('market'); 
   const [loading, setLoading] = useState(false);
   
   // 기간 선택 (기본 1개월)
@@ -33,18 +33,27 @@ const App = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_URL}/api/all-data`);
-      setData(res.data);
+      // 시장 데이터와 RAM 데이터 동시 로드
+      const [marketRes, ramRes] = await Promise.all([
+        axios.get(`${API_URL}/api/market-data?period=${globalPeriod}`),
+        axios.get(`${API_URL}/api/ram-data`)
+      ]);
+      
+      setData({
+        market: marketRes.data,
+        ram: ramRes.data.current,
+        history: ramRes.data.trends
+      });
       
       // [수정] 데이터 로드 후 초기 카테고리 설정 (정렬 순서 반영)
-      if (res.data.ram) {
-        const availableCats = Object.keys(res.data.ram);
+      if (ramRes.data.current) {
+        const availableCats = Object.keys(ramRes.data.current);
         const sortedCats = sortCategories(availableCats);
         const firstCat = sortedCats[0];
         
         if (firstCat) {
             setSelectedCategory(firstCat);
-            const firstProd = res.data.ram[firstCat][0]?.product;
+            const firstProd = ramRes.data.current[firstCat][0]?.product;
             if (firstProd) setSelectedProduct(firstProd);
         }
       }
@@ -127,18 +136,18 @@ const App = () => {
     };
   };
 
-  const renderCard = (ticker, info) => (
-    <div key={ticker} className="bg-[#1e1e1e] p-5 rounded-2xl border border-[#333] flex flex-col h-48 hover:border-blue-500/50 transition-all shadow-lg">
-      <div className="text-gray-400 text-xs font-bold mb-1">{ticker}</div>
-      <div className="text-2xl font-bold mb-1">{info.val.toLocaleString(undefined, {maximumFractionDigits:2})}</div>
-      <div className={`text-xs font-bold flex items-center mb-4 ${info.pct >= 0 ? 'text-[#ff5252]' : 'text-[#00e676]'}`}>
-        {info.pct >= 0 ? <TrendingUp size={14} className="mr-1"/> : <TrendingDown size={14} className="mr-1"/>}
-        {Math.abs(info.pct).toFixed(2)}%
+  const renderCard = (item) => (
+    <div key={item.name} className="bg-[#1e1e1e] p-5 rounded-2xl border border-[#333] flex flex-col h-48 hover:border-blue-500/50 transition-all shadow-lg">
+      <div className="text-gray-400 text-xs font-bold mb-1">{item.name}</div>
+      <div className="text-2xl font-bold mb-1">{item.current.toLocaleString(undefined, {maximumFractionDigits:2})}</div>
+      <div className={`text-xs font-bold flex items-center mb-4 ${item.pct >= 0 ? 'text-[#ff5252]' : 'text-[#00e676]'}`}>
+        {item.pct >= 0 ? <TrendingUp size={14} className="mr-1"/> : <TrendingDown size={14} className="mr-1"/>}
+        {Math.abs(item.pct).toFixed(2)}%
       </div>
       <div className="mt-auto h-12 w-full opacity-50">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={[{v:10}, {v:15}, {v:8}, {v:12}, {v:18}, {v:14}, {v:20}]}>
-            <Area type="monotone" dataKey="v" stroke={info.pct >= 0 ? "#ff5252" : "#00e676"} fill={info.pct >= 0 ? "rgba(255, 82, 82, 0.1)" : "rgba(0, 230, 118, 0.1)"} strokeWidth={2} isAnimationActive={false} />
+          <AreaChart data={item.chart || []}>
+            <Area type="monotone" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} fill={item.pct >= 0 ? "rgba(255, 82, 82, 0.1)" : "rgba(0, 230, 118, 0.1)"} strokeWidth={2} isAnimationActive={false} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
