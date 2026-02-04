@@ -9,7 +9,7 @@ const App = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   
   const [data, setData] = useState({ market: {}, ram: {}, history: {} });
-  const [activeTab, setActiveTab] = useState('indices'); 
+  const [activeTab, setActiveTab] = useState('tradingview'); 
   const [loading, setLoading] = useState(false);
   
   // 기간 선택 (기본 1개월)
@@ -155,7 +155,7 @@ const App = () => {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
             <YAxis domain={[minValue - padding, maxValue + padding]} hide={true} />
-            <Line type="monotone" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} strokeWidth={2} dot={false} isAnimationActive={false} />
+            <Line type="linear" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} strokeWidth={1.5} dot={false} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -185,7 +185,14 @@ const App = () => {
         </header>
 
         <div className="flex gap-2 mb-6 border-b border-[#333] pb-1 overflow-x-auto">
-            {[{id: 'indices', label: '📈 주가지수'}, {id: 'forex', label: '💱 환율'}, {id: 'ram', label: '💾 RAM 시세'}, {id: 'bonds', label: '💰 국채 금리'}, {id: 'admin', label: '⚙️ ADMIN'}].map(tab => (
+            {[
+              {id: 'tradingview', label: '🔍 Trading View'}, 
+              {id: 'indices', label: '📈 주가지수'}, 
+              {id: 'forex', label: '💱 환율'}, 
+              {id: 'ram', label: '💾 RAM 시세'}, 
+              {id: 'bonds', label: '💰 국채 금리'}, 
+              {id: 'admin', label: '⚙️ ADMIN'}
+            ].map(tab => (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`px-4 py-2 text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors ${activeTab === tab.id ? 'bg-[#1e1e1e] text-blue-400 border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>
                     {tab.label}
                 </button>
@@ -194,7 +201,36 @@ const App = () => {
 
         {loading && <div className="text-blue-400 mb-4 text-sm animate-pulse">데이터를 불러오는 중...</div>}
 
-        {activeTab !== 'ram' && activeTab !== 'admin' && data.market && (
+        {activeTab === 'tradingview' && (
+            <div>
+                <h3 className="text-xl font-bold mb-4">💡 TradingView 실시간 차트 (RSI 포함)</h3>
+                <div className="mb-4">
+                    <select 
+                        className="bg-[#1e1e1e] border border-[#555] rounded px-4 py-2 text-sm outline-none"
+                        onChange={(e) => {
+                            const iframe = document.getElementById('tradingview-iframe');
+                            if (iframe) {
+                                iframe.src = `https://www.tradingview.com/chart/?symbol=${e.target.value}&theme=dark`;
+                            }
+                        }}
+                    >
+                        <option value="FX_IDC:USDKRW">🇰🇷 원/달러 환율</option>
+                        <option value="KRX:KOSPI">🇰🇷 코스피 지수</option>
+                        <option value="NASDAQ:QQQ">🇺🇸 나스닥 100</option>
+                        <option value="SPY">🇺🇸 S&P 500</option>
+                        <option value="TVC:GOLD">👑 금 선물</option>
+                        <option value="TVC:USOIL">🛢️ WTI 원유</option>
+                    </select>
+                </div>
+                <iframe 
+                    id="tradingview-iframe"
+                    src="https://www.tradingview.com/chart/?symbol=FX_IDC:USDKRW&theme=dark"
+                    style={{width: '100%', height: '600px', border: 'none', borderRadius: '8px'}}
+                ></iframe>
+            </div>
+        )}
+
+        {activeTab !== 'ram' && activeTab !== 'admin' && activeTab !== 'tradingview' && data.market && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {activeTab === 'indices' && [...(data.market.indices || []), ...(data.market.macro || [])].map(renderCard)}
                 {activeTab === 'forex' && (data.market.forex || []).map(renderCard)}
