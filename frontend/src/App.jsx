@@ -60,6 +60,41 @@ const App = () => {
 
   useEffect(() => { fetchData(); }, []);
 
+  // TradingView 위젯 초기화
+  useEffect(() => {
+    if (activeTab === 'tradingview') {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/tv.js';
+      script.async = true;
+      script.onload = () => {
+        if (window.TradingView) {
+          new window.TradingView.widget({
+            autosize: true,
+            symbol: "FX_IDC:USDKRW",
+            interval: "D",
+            timezone: "Asia/Seoul",
+            theme: "dark",
+            style: "1",
+            locale: "kr",
+            toolbar_bg: "#1e1e1e",
+            enable_publishing: false,
+            hide_side_toolbar: false,
+            allow_symbol_change: true,
+            studies: ["RSI@tv-basicstudies"],
+            container_id: "tradingview_chart"
+          });
+        }
+      };
+      document.body.appendChild(script);
+      
+      return () => {
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
+        }
+      };
+    }
+  }, [activeTab]);
+
   // [핵심 수정] 카테고리 정렬 함수 (요청하신 순서대로)
   const sortCategories = (categories) => {
     const order = [
@@ -204,29 +239,7 @@ const App = () => {
         {activeTab === 'tradingview' && (
             <div>
                 <h3 className="text-xl font-bold mb-4">💡 TradingView 실시간 차트 (RSI 포함)</h3>
-                <div className="mb-4">
-                    <select 
-                        className="bg-[#1e1e1e] border border-[#555] rounded px-4 py-2 text-sm outline-none"
-                        onChange={(e) => {
-                            const iframe = document.getElementById('tradingview-iframe');
-                            if (iframe) {
-                                iframe.src = `https://www.tradingview.com/chart/?symbol=${e.target.value}&theme=dark`;
-                            }
-                        }}
-                    >
-                        <option value="FX_IDC:USDKRW">🇰🇷 원/달러 환율</option>
-                        <option value="KRX:KOSPI">🇰🇷 코스피 지수</option>
-                        <option value="NASDAQ:QQQ">🇺🇸 나스닥 100</option>
-                        <option value="SPY">🇺🇸 S&P 500</option>
-                        <option value="TVC:GOLD">👑 금 선물</option>
-                        <option value="TVC:USOIL">🛢️ WTI 원유</option>
-                    </select>
-                </div>
-                <iframe 
-                    id="tradingview-iframe"
-                    src="https://www.tradingview.com/chart/?symbol=FX_IDC:USDKRW&theme=dark"
-                    style={{width: '100%', height: '600px', border: 'none', borderRadius: '8px'}}
-                ></iframe>
+                <div id="tradingview_chart" style={{height: '600px'}}></div>
             </div>
         )}
 
