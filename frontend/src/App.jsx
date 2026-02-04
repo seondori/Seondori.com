@@ -261,10 +261,15 @@ const App = () => {
                 </div>
                 <div className="bg-[#1e1e1e] border border-[#333] rounded-lg p-6">
                     <div className="flex flex-wrap gap-2 mb-6">
-                        {/* [핵심 수정] 데이터에 있는 모든 카테고리를 가져와서, 지정된 순서대로 정렬하여 표시 */}
-                        {sortCategories(Object.keys(data.ram)).map(cat => (
-                            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-3 py-1.5 text-xs rounded border transition ${selectedCategory === cat ? 'bg-purple-600 border-purple-600 text-white' : 'bg-[#262730] border-[#444] text-gray-300 hover:bg-[#333]'}`}>
-                                {cat}
+                        {/* 모든 카테고리 표시 (데이터 유무 관계없이) */}
+                        {["DDR5 RAM (데스크탑)", "DDR4 RAM (데스크탑)", "DDR3 RAM (데스크탑)", "DDR5 RAM (노트북)", "DDR4 RAM (노트북)", "DDR3 RAM (노트북)"].map(cat => (
+                            <button 
+                                key={cat} 
+                                onClick={() => setSelectedCategory(cat)} 
+                                className={`px-3 py-1.5 text-xs rounded border transition ${selectedCategory === cat ? 'bg-purple-600 border-purple-600 text-white' : 'bg-[#262730] border-[#444] text-gray-300 hover:bg-[#333]'} ${!data.ram[cat] ? 'opacity-50' : ''}`}
+                                disabled={!data.ram[cat]}
+                            >
+                                {cat} {!data.ram[cat] && '(데이터 없음)'}
                             </button>
                         ))}
                     </div>
