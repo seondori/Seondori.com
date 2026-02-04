@@ -10,7 +10,7 @@ const App = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   
   const [data, setData] = useState({ market: {}, ram: {}, history: {} });
-  const [activeTab, setActiveTab] = useState('market'); 
+  const [activeTab, setActiveTab] = useState('indices');  // tab -> activeTab로 변경
   const [loading, setLoading] = useState(false);
   
   // 기간 선택 (기본 1개월)
@@ -33,7 +33,7 @@ const App = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // 시장 데이터와 RAM 데이터 동시 로드
+      // 시장 데이터와 RAM 데이터 개별로 로드
       const [marketRes, ramRes] = await Promise.all([
         axios.get(`${API_URL}/api/market-data?period=${globalPeriod}`),
         axios.get(`${API_URL}/api/ram-data`)
@@ -61,7 +61,7 @@ const App = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [globalPeriod]);
 
   // [핵심 수정] 카테고리 정렬 함수 (요청하신 순서대로)
   const sortCategories = (categories) => {
@@ -155,7 +155,7 @@ const App = () => {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#0e1117] text-white font-sans">
+    <div className="flex h-screen bg-[#0e1117] text-white font-sans">
       <aside className="w-64 border-r border-[#333] p-6 hidden md:block bg-[#262730]">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><Settings size={20}/> 설정</h2>
         <button onClick={() => window.location.reload()} className="w-full py-2 bg-[#333] hover:bg-[#444] rounded mb-6 text-sm flex justify-center items-center gap-2 transition">
@@ -172,7 +172,6 @@ const App = () => {
 
       <main className="flex-1 p-8 overflow-y-auto">
         <header className="mb-8">
-            {/* [수정] 기간 표시 (1개월) 제거 */}
             <h1 className="text-3xl font-bold mb-2">📊 Seondori.com</h1>
         </header>
 
