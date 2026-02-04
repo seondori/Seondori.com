@@ -9,7 +9,7 @@ const App = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   
   const [data, setData] = useState({ market: {}, ram: {}, history: {} });
-  const [activeTab, setActiveTab] = useState('indices'); 
+  const [activeTab, setActiveTab] = useState('tradingview'); 
   const [loading, setLoading] = useState(false);
   
   // 기간 선택 (기본 1개월)
@@ -106,17 +106,17 @@ const App = () => {
 
   const getRamTrend = (category, productName) => {
     if (!data.history) return [];
-    return Object.entries(data.history)
-      .sort(([a], [b]) => new Date(a) - new Date(b))
-      .map(([datetimeStr, dayData]) => {
-        const item = dayData[category]?.find(p => p.product === productName);
-        return { 
-            name: datetimeStr.length > 10 ? datetimeStr.substring(5, 16) : datetimeStr.substring(5), 
-            price: item ? item.price : null 
-        };
-      })
-      .filter(d => d.price !== null)
-      .slice(-parseInt(ramPeriod));
+    
+    // 백엔드는 제품명을 키로 하는 구조
+    const productTrend = data.history[productName];
+    if (!productTrend || !Array.isArray(productTrend)) return [];
+    
+    return productTrend
+      .slice(-parseInt(ramPeriod))
+      .map(item => ({
+        name: item.date.length > 10 ? item.date.substring(5, 16) : item.date.substring(5),
+        price: item.price
+      }));
   };
 
   const getStats = (chartData) => {
@@ -137,6 +137,12 @@ const App = () => {
     // 차트 데이터 확인
     const chartData = item.chart && item.chart.length > 0 ? item.chart : [{value:0}];
     
+    // Y축 범위를 등락폭이 잘 보이도록 타이트하게 설정
+    const values = chartData.map(d => d.value);
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const padding = (maxValue - minValue) * 0.05; // 5% 패딩
+    
     return (
     <div key={item.name} className="bg-[#1e1e1e] p-5 rounded-2xl border border-[#333] flex flex-col h-48 hover:border-blue-500/50 transition-all shadow-lg">
       <div className="text-gray-400 text-xs font-bold mb-1">{item.name}</div>
@@ -147,9 +153,10 @@ const App = () => {
       </div>
       <div className="mt-auto h-12 w-full opacity-50">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
-            <Area type="monotone" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} fill={item.pct >= 0 ? "rgba(255, 82, 82, 0.1)" : "rgba(0, 230, 118, 0.1)"} strokeWidth={2} isAnimationActive={false} />
-          </AreaChart>
+          <LineChart data={chartData}>
+            <YAxis domain={[minValue - padding, maxValue + padding]} hide={true} />
+            <Line type="linear" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} strokeWidth={1.5} dot={false} isAnimationActive={false} />
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>
@@ -178,7 +185,14 @@ const App = () => {
         </header>
 
         <div className="flex gap-2 mb-6 border-b border-[#333] pb-1 overflow-x-auto">
-            {[{id: 'indices', label: '📈 주가지수'}, {id: 'forex', label: '💱 환율'}, {id: 'ram', label: '💾 RAM 시세'}, {id: 'bonds', label: '💰 국채 금리'}, {id: 'admin', label: '⚙️ ADMIN'}].map(tab => (
+            {[
+              {id: 'tradingview', label: '🔍 Trading View'}, 
+              {id: 'indices', label: '📈 주가지수'}, 
+              {id: 'forex', label: '💱 환율'}, 
+              {id: 'ram', label: '💾 RAM 시세'}, 
+              {id: 'bonds', label: '💰 국채 금리'}, 
+              {id: 'admin', label: '⚙️ ADMIN'}
+            ].map(tab => (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`px-4 py-2 text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors ${activeTab === tab.id ? 'bg-[#1e1e1e] text-blue-400 border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>
                     {tab.label}
                 </button>
@@ -187,7 +201,36 @@ const App = () => {
 
         {loading && <div className="text-blue-400 mb-4 text-sm animate-pulse">데이터를 불러오는 중...</div>}
 
-        {activeTab !== 'ram' && activeTab !== 'admin' && data.market && (
+        {activeTab === 'tradingview' && (
+            <div>
+                <h3 className="text-xl font-bold mb-4">💡 TradingView 실시간 차트 (RSI 포함)</h3>
+                <div className="mb-4">
+                    <select 
+                        className="bg-[#1e1e1e] border border-[#555] rounded px-4 py-2 text-sm outline-none"
+                        onChange={(e) => {
+                            const iframe = document.getElementById('tradingview-iframe');
+                            if (iframe) {
+                                iframe.src = `https://www.tradingview.com/chart/?symbol=${e.target.value}&theme=dark`;
+                            }
+                        }}
+                    >
+                        <option value="FX_IDC:USDKRW">🇰🇷 원/달러 환율</option>
+                        <option value="KRX:KOSPI">🇰🇷 코스피 지수</option>
+                        <option value="NASDAQ:QQQ">🇺🇸 나스닥 100</option>
+                        <option value="SPY">🇺🇸 S&P 500</option>
+                        <option value="TVC:GOLD">👑 금 선물</option>
+                        <option value="TVC:USOIL">🛢️ WTI 원유</option>
+                    </select>
+                </div>
+                <iframe 
+                    id="tradingview-iframe"
+                    src="https://www.tradingview.com/chart/?symbol=FX_IDC:USDKRW&theme=dark"
+                    style={{width: '100%', height: '600px', border: 'none', borderRadius: '8px'}}
+                ></iframe>
+            </div>
+        )}
+
+        {activeTab !== 'ram' && activeTab !== 'admin' && activeTab !== 'tradingview' && data.market && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {activeTab === 'indices' && [...(data.market.indices || []), ...(data.market.macro || [])].map(renderCard)}
                 {activeTab === 'forex' && (data.market.forex || []).map(renderCard)}
