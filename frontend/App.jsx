@@ -133,7 +133,11 @@ const App = () => {
     };
   };
 
-  const renderCard = (item) => (
+  const renderCard = (item) => {
+    // 차트 데이터 확인
+    const chartData = item.chart && item.chart.length > 0 ? item.chart : [{value:0}];
+    
+    return (
     <div key={item.name} className="bg-[#1e1e1e] p-5 rounded-2xl border border-[#333] flex flex-col h-48 hover:border-blue-500/50 transition-all shadow-lg">
       <div className="text-gray-400 text-xs font-bold mb-1">{item.name}</div>
       <div className="text-2xl font-bold mb-1">{item.current.toLocaleString(undefined, {maximumFractionDigits:2})}</div>
@@ -143,13 +147,13 @@ const App = () => {
       </div>
       <div className="mt-auto h-12 w-full opacity-50">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={item.chart || []}>
+          <AreaChart data={chartData}>
             <Area type="monotone" dataKey="value" stroke={item.pct >= 0 ? "#ff5252" : "#00e676"} fill={item.pct >= 0 ? "rgba(255, 82, 82, 0.1)" : "rgba(0, 230, 118, 0.1)"} strokeWidth={2} isAnimationActive={false} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>
-  );
+  )};
 
   return (
     <div className="flex min-h-screen bg-[#0e1117] text-white font-sans">
