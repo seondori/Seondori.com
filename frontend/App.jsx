@@ -12,23 +12,18 @@ const App = () => {
   const [activeTab, setActiveTab] = useState('tradingview'); 
   const [loading, setLoading] = useState(false);
   
-  // 기간 선택 (기본 1개월)
   const [globalPeriod, setGlobalPeriod] = useState('1개월');
-  
-  // [요청 반영] RAM 차트 기본 기간: 30일 (1개월)
   const [ramPeriod, setRamPeriod] = useState('30'); 
 
-  // RAM 페이지 상태
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [ramSearch, setRamSearch] = useState("");
 
-  // 관리자 상태
   const [adminDate, setAdminDate] = useState(new Date().toISOString().slice(0, 10));
   const [adminTime, setAdminTime] = useState("10:00");
   const [adminText, setAdminText] = useState("");
+  const [parseLog, setParseLog] = useState(""); // 파싱 로그 표시용
 
-  // 데이터 로드
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -37,14 +32,17 @@ const App = () => {
         axios.get(`${API_URL}/api/ram-data`)
       ]);
       
+      console.log("RAM Data Response:", ramRes.data); // 디버깅용
+      
       setData({
         market: marketRes.data,
-        ram: ramRes.data.current,
-        history: ramRes.data.trends
+        ram: ramRes.data.current || {},
+        history: ramRes.data.trends || {}
       });
       
       if (ramRes.data.current) {
         const availableCats = Object.keys(ramRes.data.current);
+        console.log("Available categories:", availableCats); // 디버깅용
         const sortedCats = sortCategories(availableCats);
         const firstCat = sortedCats[0];
         
@@ -54,13 +52,14 @@ const App = () => {
             if (firstProd) setSelectedProduct(firstProd);
         }
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error("Data fetch error:", err); 
+    }
     setLoading(false);
   };
 
   useEffect(() => { fetchData(); }, []);
 
-  // TradingView 위젯 초기화
   useEffect(() => {
     if (activeTab === 'tradingview') {
       const script = document.createElement('script');
@@ -95,7 +94,6 @@ const App = () => {
     }
   }, [activeTab]);
 
-  // [핵심 수정] 카테고리 정렬 함수 (요청하신 순서대로)
   const sortCategories = (categories) => {
     const order = [
       "DDR5 RAM (데스크탑)",
@@ -109,7 +107,6 @@ const App = () => {
     return categories.sort((a, b) => {
       const indexA = order.indexOf(a);
       const indexB = order.indexOf(b);
-      // 순서 목록에 없으면 맨 뒤로
       if (indexA === -1 && indexB === -1) return a.localeCompare(b);
       if (indexA === -1) return 1;
       if (indexB === -1) return -1;
@@ -117,7 +114,9 @@ const App = () => {
     });
   };
 
-  // 관리자 업데이트
+  // ============================================
+  // [개선] 관리자 업데이트 - 피드백 개선
+  // ============================================
   const handleUpdate = async () => {
     if(!adminText) return alert("데이터를 입력해주세요.");
     if(!confirm(`${adminDate} ${adminTime} 기준으로 저장하시겠습니까?`)) return;
@@ -128,21 +127,24 @@ const App = () => {
             text: adminText
         });
         if (res.data.status === 'success') {
-            alert(`성공! ${res.data.count}개 항목 저장됨.`);
+            alert(`✅ 성공!\n- ${res.data.count}개 항목 저장됨\n- 총 ${res.data.total_categories}개 카테고리\n- ${res.data.message}`);
             setAdminText("");
-            window.location.reload();
+            setParseLog(`마지막 업데이트: ${adminDate} ${adminTime} (${res.data.count}개 항목)`);
+            setTimeout(() => fetchData(), 1000); // 1초 후 데이터 새로고침
         } else { alert("실패: " + res.data.message); }
-    } catch(e) { alert("서버 오류"); }
+    } catch(e) { alert("서버 오류: " + e.message); }
   };
 
   const handleDownload = () => {
     window.open(`${API_URL}/api/admin/download`, '_blank');
   };
 
+  // ============================================
+  // [개선] RAM 트렌드 데이터 조회
+  // ============================================
   const getRamTrend = (category, productName) => {
     if (!data.history) return [];
     
-    // 백엔드는 제품명을 키로 하는 구조
     const productTrend = data.history[productName];
     if (!productTrend || !Array.isArray(productTrend)) return [];
     
@@ -154,29 +156,38 @@ const App = () => {
       }));
   };
 
+  // ============================================
+  // [개선] 통계 계산 로직
+  // ============================================
   const getStats = (chartData) => {
-    if (!chartData || chartData.length === 0) return { max: 0, min: 0, avg: 0, delta: 0, pct: 0 };
+    if (!chartData || chartData.length === 0) 
+      return { max: 0, min: 0, avg: 0, delta: 0, pct: 0 };
+    
     const prices = chartData.map(d => d.price);
     const start = prices[0];
     const end = prices[prices.length - 1];
+    const max = Math.max(...prices);
+    const min = Math.min(...prices);
+    const avg = Math.round(prices.reduce((a,b)=>a+b,0)/prices.length);
+    
     return {
-        max: Math.max(...prices),
-        min: Math.min(...prices),
-        avg: Math.round(prices.reduce((a,b)=>a+b,0)/prices.length),
+        max: max,
+        min: min,
+        avg: avg,
         delta: end - start,
-        pct: (start !== 0) ? ((end - start) / start * 100) : 0
+        pct: (start !== 0) ? ((end - start) / start * 100) : 0,
+        // 추가: 가격이 실제로 변동했는지 확인
+        hasData: prices.length > 1 && max > min
     };
   };
 
   const renderCard = (item) => {
-    // 차트 데이터 확인
     const chartData = item.chart && item.chart.length > 0 ? item.chart : [{value:0}];
     
-    // Y축 범위를 등락폭이 잘 보이도록 타이트하게 설정
     const values = chartData.map(d => d.value);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
-    const padding = (maxValue - minValue) * 0.05; // 5% 패딩
+    const padding = (maxValue - minValue) * 0.05;
     
     return (
     <div key={item.name} className="bg-[#1e1e1e] p-5 rounded-2xl border border-[#333] flex flex-col h-48 hover:border-blue-500/50 transition-all shadow-lg">
@@ -209,13 +220,12 @@ const App = () => {
             {['5일', '1개월', '6개월', '1년'].map(p => <option key={p} value={p}>{p}</option>)}
         </select>
         <div className="mt-10 pt-10 border-t border-[#444]">
-            <p className="text-xs text-gray-500">Version 2.1.0 (React)</p>
+            <p className="text-xs text-gray-500">Version 2.2.0 (React)</p>
         </div>
       </aside>
 
       <main className="flex-1 p-8 overflow-y-auto">
         <header className="mb-8">
-            {/* [수정] 기간 표시 (1개월) 제거 */}
             <h1 className="text-3xl font-bold mb-2">📊 Seondori.com</h1>
         </header>
 
@@ -261,14 +271,23 @@ const App = () => {
                 </div>
                 <div className="bg-[#1e1e1e] border border-[#333] rounded-lg p-6">
                     <div className="flex flex-wrap gap-2 mb-6">
-                        {/* [핵심 수정] 데이터에 있는 모든 카테고리를 가져와서, 지정된 순서대로 정렬하여 표시 */}
+                        {/* ✅ 데이터 있는 카테고리만 표시 + 정렬 */}
                         {sortCategories(Object.keys(data.ram)).map(cat => (
-                            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-3 py-1.5 text-xs rounded border transition ${selectedCategory === cat ? 'bg-purple-600 border-purple-600 text-white' : 'bg-[#262730] border-[#444] text-gray-300 hover:bg-[#333]'}`}>
+                            <button key={cat} onClick={() => {
+                              setSelectedCategory(cat);
+                              if (data.ram[cat] && data.ram[cat].length > 0) {
+                                setSelectedProduct(data.ram[cat][0].product);
+                              }
+                            }} className={`px-3 py-1.5 text-xs rounded border transition ${selectedCategory === cat ? 'bg-purple-600 border-purple-600 text-white' : 'bg-[#262730] border-[#444] text-gray-300 hover:bg-[#333]'}`}>
                                 {cat}
+                                <span className="text-xs ml-1 text-gray-400">({data.ram[cat]?.length || 0})</span>
                             </button>
                         ))}
                     </div>
-                    <div className="overflow-x-auto max-h-60 overflow-y-auto mb-8 border border-[#333] rounded-lg">
+
+                    {/* ✅ 선택된 카테고리의 제품 목록 */}
+                    {selectedCategory && data.ram[selectedCategory] ? (
+                      <div className="overflow-x-auto max-h-60 overflow-y-auto mb-8 border border-[#333] rounded-lg">
                         <table className="w-full text-left text-sm">
                             <thead className="bg-[#262730] text-gray-400 sticky top-0">
                                 <tr><th className="py-2 px-4">제품명</th><th className="py-2 px-4 text-right">가격</th></tr>
@@ -282,7 +301,11 @@ const App = () => {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="text-gray-500 text-sm py-4">선택된 카테고리에 데이터가 없습니다.</div>
+                    )}
+
                     {selectedProduct && (
                         <div className="bg-[#0e1117] rounded-xl p-6 border border-[#333]">
                             {(() => {
@@ -292,14 +315,21 @@ const App = () => {
                                     <>
                                         <div className="flex justify-between items-end mb-6">
                                             <div><div className="text-sm text-gray-400 mb-1">제품</div><div className="text-xl font-bold">{selectedProduct}</div></div>
-                                            <div className="text-right"><div className="text-xs text-gray-500 mb-1">변동</div><div className={`text-xl font-bold ${stats.delta >= 0 ? 'text-[#ff5252]' : 'text-[#00e676]'}`}>{stats.delta.toLocaleString()}원 ({stats.pct.toFixed(2)}%)</div></div>
+                                            <div className="text-right">
+                                              <div className="text-xs text-gray-500 mb-1">변동</div>
+                                              <div className={`text-xl font-bold ${stats.delta >= 0 ? 'text-[#ff5252]' : 'text-[#00e676]'}`}>
+                                                {stats.delta !== 0 ? stats.delta.toLocaleString() : '-'}원 ({stats.pct.toFixed(2)}%)
+                                              </div>
+                                              {chartData.length === 0 && <div className="text-xs text-gray-500 mt-1">히스토리 없음</div>}
+                                            </div>
                                         </div>
                                         <div className="grid grid-cols-3 gap-4 mb-8">
-                                            <div className="bg-[#1e1e1e] p-3 rounded border border-[#333] text-center"><div className="text-xs text-gray-500">최고가</div><div className="font-bold text-lg">{stats.max.toLocaleString()}원</div></div>
-                                            <div className="bg-[#1e1e1e] p-3 rounded border border-[#333] text-center"><div className="text-xs text-gray-500">최저가</div><div className="font-bold text-lg">{stats.min.toLocaleString()}원</div></div>
-                                            <div className="bg-[#1e1e1e] p-3 rounded border border-[#333] text-center"><div className="text-xs text-gray-500">평균가</div><div className="font-bold text-lg">{stats.avg.toLocaleString()}원</div></div>
+                                            <div className="bg-[#1e1e1e] p-3 rounded border border-[#333] text-center"><div className="text-xs text-gray-500">최고가</div><div className="font-bold text-lg">{stats.max !== 0 ? stats.max.toLocaleString() : '-'}원</div></div>
+                                            <div className="bg-[#1e1e1e] p-3 rounded border border-[#333] text-center"><div className="text-xs text-gray-500">최저가</div><div className="font-bold text-lg">{stats.min !== 0 ? stats.min.toLocaleString() : '-'}원</div></div>
+                                            <div className="bg-[#1e1e1e] p-3 rounded border border-[#333] text-center"><div className="text-xs text-gray-500">평균가</div><div className="font-bold text-lg">{stats.avg !== 0 ? stats.avg.toLocaleString() : '-'}원</div></div>
                                         </div>
-                                        <div className="h-64 w-full">
+                                        {chartData.length > 0 ? (
+                                          <div className="h-64 w-full">
                                             <ResponsiveContainer>
                                                 <LineChart data={chartData}>
                                                     <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
@@ -309,7 +339,12 @@ const App = () => {
                                                     <Line type="monotone" dataKey="price" stroke="#3b82f6" strokeWidth={3} dot={{r: 4, fill: '#3b82f6'}} />
                                                 </LineChart>
                                             </ResponsiveContainer>
-                                        </div>
+                                          </div>
+                                        ) : (
+                                          <div className="h-64 flex items-center justify-center text-gray-500 border border-[#333] rounded">
+                                            아직 가격 히스토리 데이터가 없습니다.
+                                          </div>
+                                        )}
                                     </>
                                 )
                             })()}
@@ -345,6 +380,13 @@ const App = () => {
                         <textarea value={adminText} onChange={(e)=>setAdminText(e.target.value)} className="w-full h-64 bg-[#0b0e11] border border-[#555] rounded p-3 text-sm resize-none outline-none font-mono" placeholder="여기에 가격 정보를 포함한 전체 텍스트를 붙여넣으세요..."></textarea>
                     </div>
                     <button onClick={handleUpdate} className="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition">저장하기</button>
+                    
+                    {/* ✅ 파싱 로그 표시 */}
+                    {parseLog && (
+                      <div className="mt-4 p-3 bg-[#0b0e11] border border-green-500/30 rounded text-sm text-green-400">
+                        {parseLog}
+                      </div>
+                    )}
                 </div>
             </div>
         )}
