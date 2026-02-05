@@ -19,7 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# [수정] 실행 위치 상관없이 파일 찾기 (Render 배포 시 필수)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 def get_data_file():
     files = glob.glob(os.path.join(BASE_DIR, "ram_*.json"))
@@ -28,50 +27,97 @@ def get_data_file():
 
 DATA_PATH = get_data_file()
 
-# [추가] 루트 경로 - 서버 상태 확인용
 @app.get("/")
 async def root():
     return {"status": "ok", "message": "Seondori API Server", "endpoints": ["/api/market-data", "/api/ram-data"]}
 
-# [추가] 관리자 데이터 입력용 모델
 class UpdateRequest(BaseModel):
     date: str
     time: str
     text: str
 
-# [추가] 텍스트 파싱 로직
+# ============================================
+# [핵심 개선 1] 더 유연한 파싱 로직
+# ============================================
 def parse_price_data(price_text):
+    """
+    더 관대한 정규표현식으로 다양한 입력 형식 지원
+    """
     prices = {}
     current_ram_type = None
+    
+    # 더 유연한 패턴들 (선택사항 많음)
     patterns = {
-        'ddr5': r'삼성\s*D5\s*(\d+G)[^\d]*([\d]+)\s*[\[\(]?[\d,\.]*[\]\)]?\s*-\s*([\d,\.]+)\s*원',
-        'ddr4': r'삼성\s*(\d+G)\s*PC4\s*([\d]+)\s*[\[\(]?[\d,\.]*[Mm]?[Hh]?[Zz]?[\]\)]?\s*-\s*([\d,\.]+)\s*원',
-        'ddr3': r'삼성\s*(\d+G)\s*PC3\s*([\d]+)\s*-\s*([\d,\.]+)\s*원',
+        'ddr5': [
+            r'삼성\s+D5\s+(\d+G)[^\d]*([\d]+)[^\d]*-\s*([\d,\.]+)\s*원',  # 삼성 D5 16G 7200 - 100,000원
+            r'D5\s+(\d+G)[^\d]*([\d]+)[^\d]*-\s*([\d,\.]+)\s*원',        # D5 16G 7200 - 100,000원
+        ],
+        'ddr4': [
+            r'삼성\s+(\d+G)\s+PC4[^\d]*([\d]+)[^\d]*-\s*([\d,\.]+)\s*원', # 삼성 16G PC4-3200 - 80,000원
+            r'(\d+G)\s+PC4[^\d]*([\d]+)[^\d]*-\s*([\d,\.]+)\s*원',       # 16G PC4-3200 - 80,000원
+        ],
+        'ddr3': [
+            r'삼성\s+(\d+G)\s+PC3[^\d]*([\d]+)[^\d]*-\s*([\d,\.]+)\s*원', # 삼성 8G PC3-1600 - 50,000원
+            r'(\d+G)\s+PC3[^\d]*([\d]+)[^\d]*-\s*([\d,\.]+)\s*원',       # 8G PC3-1600 - 50,000원
+        ],
     }
+    
     for line in price_text.split('\n'):
         line = line.strip()
-        if not line or line.startswith('*'): continue
-        if '데스크탑' in line: current_ram_type = '데스크탑'; continue
-        if '노트북' in line: current_ram_type = '노트북'; continue
-        parts = line.split(',')
-        for part in parts:
-            try:
-                for p_name, p_regex in patterns.items():
-                    m = re.search(p_regex, part)
-                    if m:
+        if not line or line.startswith('*'): 
+            continue
+        
+        # 데스크탑/노트북 구분
+        if '데스크탑' in line: 
+            current_ram_type = '데스크탑'
+            continue
+        if '노트북' in line: 
+            current_ram_type = '노트북'
+            continue
+        
+        # 각 패턴 시도
+        for p_name, p_regex_list in patterns.items():
+            for p_regex in p_regex_list:
+                m = re.search(p_regex, line)
+                if m:
+                    try:
                         cap, spd, pr = m.groups()
-                        # DDR3 등 MHz 표기 예외 처리
-                        if '5' in p_name: suffix = f" {spd}MHz"
-                        elif '4' in p_name: suffix = f" PC4-{spd}"
-                        else: suffix = f" PC3-{spd}"
+                        
+                        # 속도 표기법 결정
+                        if '5' in p_name: 
+                            suffix = f" {spd}MHz"
+                        elif '4' in p_name: 
+                            suffix = f" PC4-{spd}"
+                        else: 
+                            suffix = f" PC3-{spd}"
+                        
+                        # DDR 타입과 카테고리 결정
                         dtype = "DDR" + p_name[-1]
+                        
+                        # ✅ DDR 타입과 메모리 타입의 조합
+                        if current_ram_type is None:
+                            current_ram_type = '데스크탑'  # 기본값
+                        
                         cat = f"{dtype.upper()} RAM ({current_ram_type})"
-                        prod = f"삼성 {dtype.upper()} {cap}{suffix}{' (노트북)' if current_ram_type == '노트북' else ''}"
+                        prod = f"삼성 {dtype.upper()} {cap}{suffix}"
+                        
+                        # 가격 정수 변환
                         price = int(pr.replace(',', '').replace('.', ''))
-                        if cat not in prices: prices[cat] = []
-                        prices[cat].append({"product": prod, "price": price, "price_formatted": f"{price:,}원"})
-                        break
-            except: continue
+                        
+                        if cat not in prices: 
+                            prices[cat] = []
+                        
+                        prices[cat].append({
+                            "product": prod, 
+                            "price": price, 
+                            "price_formatted": f"{price:,}원"
+                        })
+                        
+                        break  # 매칭 성공하면 다른 패턴 시도 안 함
+                    except Exception as e:
+                        print(f"파싱 에러: {e}")
+                        continue
+    
     return prices
 
 def format_chart_data(series):
@@ -133,7 +179,9 @@ async def get_market_data(period: str = "1개월"):
 
 @app.get("/api/ram-data")
 async def get_ram_data():
-    if not os.path.exists(DATA_PATH): return {"error": "No data file"}
+    if not os.path.exists(DATA_PATH): 
+        return {"error": "No data file"}
+    
     with open(DATA_PATH, 'r', encoding='utf-8') as f:
         json_data = json.load(f)
     
@@ -146,7 +194,8 @@ async def get_ram_data():
         for cat, items in categories.items():
             for item in items:
                 p_name = item['product']
-                if p_name not in product_history: product_history[p_name] = []
+                if p_name not in product_history: 
+                    product_history[p_name] = []
                 product_history[p_name].append({"date": date, "price": item['price']})
 
     return {
@@ -156,24 +205,54 @@ async def get_ram_data():
         "date_range": f"{sorted_dates[0]} ~ {sorted_dates[-1]}" if sorted_dates else ""
     }
 
-# [추가] 관리자 API
+# ============================================
+# [핵심 개선 2] 데이터 누적 (병합) 로직
+# ============================================
 @app.post("/api/admin/update")
 async def update_data(req: UpdateRequest):
     parsed = parse_price_data(req.text)
-    if not parsed: return {"status": "error", "message": "파싱 실패"}
+    if not parsed: 
+        return {"status": "error", "message": "파싱 실패"}
     
+    # 기존 파일 로드
     full = {"price_data": {}, "price_history": {}}
     if os.path.exists(DATA_PATH):
-        with open(DATA_PATH, "r", encoding="utf-8") as f: full = json.load(f)
+        with open(DATA_PATH, "r", encoding="utf-8") as f: 
+            full = json.load(f)
     
+    # 히스토리에 추가 (새로운 시간점의 데이터)
     key = f"{req.date} {req.time}"
     full["price_history"][key] = parsed
     
-    if sorted(full["price_history"].keys())[-1] == key: full["price_data"] = parsed
+    # ✅ [핵심] price_data 병합 (덮어쓰기 아님)
+    # 기존 데이터에 새 데이터를 병합
+    for category, items in parsed.items():
+        if category not in full["price_data"]:
+            full["price_data"][category] = []
         
+        # 같은 제품명이 있으면 가격 업데이트, 없으면 추가
+        existing_products = {item['product']: idx for idx, item in enumerate(full["price_data"][category])}
+        
+        for new_item in items:
+            prod_name = new_item['product']
+            if prod_name in existing_products:
+                # 기존 제품 업데이트
+                idx = existing_products[prod_name]
+                full["price_data"][category][idx] = new_item
+            else:
+                # 새 제품 추가
+                full["price_data"][category].append(new_item)
+    
+    # 파일 저장
     with open(DATA_PATH, "w", encoding="utf-8") as f:
         json.dump(full, f, ensure_ascii=False, indent=2)
-    return {"status": "success", "count": sum(len(v) for v in parsed.values())}
+    
+    return {
+        "status": "success", 
+        "count": sum(len(v) for v in parsed.values()),
+        "total_categories": len(full["price_data"]),
+        "message": f"✅ {req.date} {req.time} 데이터 저장됨"
+    }
 
 @app.get("/api/admin/download")
 async def download():
