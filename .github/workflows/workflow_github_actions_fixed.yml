@@ -1,0 +1,80 @@
+name: RAM Price Crawler (Cookie-Based)
+
+on:
+  schedule:
+    - cron: '0 1 * * *'   # 한국시간 10:00
+    - cron: '0 4 * * *'   # 한국시간 13:00
+    - cron: '0 9 * * *'   # 한국시간 18:00
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # ⭐ 핵심: 최신 Chrome 설치 (버전 문제 해결)
+      - name: Install latest Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      # ⭐ webdriver-manager만 사용 (manual chromedriver 설정 제거)
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager requests
+
+      # Chrome 버전 확인 (디버깅용)
+      - name: Check Chrome version
+        run: |
+          google-chrome --version
+          which google-chrome
+
+      - name: Run crawler
+        env:
+          NAVER_COOKIES: ${{ secrets.NAVER_COOKIES }}
+          GITHUB_ACTIONS: true
+        run: |
+          cd backend
+          python crawler_cookie_based.py
+
+      - name: Check crawler results
+        if: always()
+        run: |
+          if ls backend/ram_*.json 1> /dev/null 2>&1; then
+            echo "✅ 크롤러 결과 파일 확인됨"
+            ls -lah backend/ram_*.json
+          else
+            echo "⚠️ 결과 파일 없음"
+          fi
+
+      - name: Commit and push changes
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "ℹ️ 변경사항 없음"
+          else
+            git commit -m "🤖 자동 업데이트: RAM 시세 $(date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawler-logs-${{ github.run_id }}
+          path: backend/
+          retention-days: 7
