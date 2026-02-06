@@ -26,9 +26,11 @@ import glob
 # ============================================
 # 설정
 # ============================================
-CAFE_URL = "https://cafe.naver.com/joonggonara"
+# 구버전 카페 URL 사용 (iframe 기반)
+CAFE_URL = "https://cafe.naver.com/ArticleList.nhn?search.clubid=10050146&search.menuid=0&search.boardtype=L"
+CAFE_SEARCH_URL = "https://cafe.naver.com/ArticleSearchList.nhn?search.clubid=10050146&search.searchBy=0&search.query="
 SEARCH_KEYWORD = "베스트코리아컴 BKC"
-TARGET_TITLE_KEYWORD = "[매입]구입]채굴기"
+TARGET_TITLE_KEYWORD = "구입]채굴기"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -277,18 +279,14 @@ def verify_login(driver):
 def search_cafe_post(driver):
     log(f"카페 검색 시작: {SEARCH_KEYWORD}")
     try:
-        driver.get(CAFE_URL)
-        time.sleep(3)
+        # 구버전 검색 URL로 직접 이동
+        import urllib.parse
+        encoded_keyword = urllib.parse.quote(SEARCH_KEYWORD)
+        search_url = f"{CAFE_SEARCH_URL}{encoded_keyword}"
         
-        log("검색창 찾는 중...")
-        search_input = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "#topLayerQueryInput"))
-        )
-        
-        log(f"검색어 입력: {SEARCH_KEYWORD}")
-        search_input.send_keys(SEARCH_KEYWORD)
-        search_input.send_keys(Keys.RETURN)
-        time.sleep(5)  # 검색 결과 로딩 대기 시간 증가
+        log(f"검색 URL로 이동: {search_url}")
+        driver.get(search_url)
+        time.sleep(5)
         
         # 디버깅: 현재 페이지 정보 출력
         log(f"현재 URL: {driver.current_url}")
@@ -321,13 +319,30 @@ def search_cafe_post(driver):
             log("iframe 전환 완료")
         except Exception as e:
             log(f"cafe_main iframe을 찾을 수 없음. 다른 방법 시도 중...", "WARN")
-            # 첫 번째 iframe으로 시도
-            if len(iframes) > 0:
-                log(f"첫 번째 iframe으로 전환 시도: {iframes[0].get_attribute('id') or iframes[0].get_attribute('name')}")
-                driver.switch_to.frame(iframes[0])
-                log("첫 번째 iframe 전환 완료")
+            
+            # id나 name에 'main' 포함된 iframe 찾기
+            main_iframe = None
+            for iframe in iframes:
+                iframe_id = iframe.get_attribute("id") or ""
+                iframe_name = iframe.get_attribute("name") or ""
+                if "main" in iframe_id.lower() or "main" in iframe_name.lower():
+                    main_iframe = iframe
+                    log(f"main 포함 iframe 발견: id='{iframe_id}', name='{iframe_name}'")
+                    break
+            
+            if main_iframe:
+                driver.switch_to.frame(main_iframe)
+                log("main iframe 전환 완료")
+            elif len(iframes) > 0:
+                # 마지막 수단: 가장 큰 iframe 찾기
+                log("가장 큰 iframe 찾는 중...")
+                largest_iframe = max(iframes, key=lambda x: x.size['width'] * x.size['height'])
+                driver.switch_to.frame(largest_iframe)
+                log(f"가장 큰 iframe 전환 완료: {largest_iframe.get_attribute('id') or largest_iframe.get_attribute('name')}")
             else:
-                raise Exception("iframe을 전혀 찾을 수 없습니다")
+                # iframe이 없는 신버전일 수 있음 - 신버전 셀렉터 시도
+                log("iframe 없음 - 신버전 카페로 추정", "WARN")
+                raise Exception("구버전 카페 접근 실패")
         
         log("게시글 목록 찾는 중...")
         articles = WebDriverWait(driver, 10).until(
