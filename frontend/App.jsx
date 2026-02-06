@@ -19,6 +19,12 @@ const App = () => {
   const [selectedProduct, setSelectedProduct] = useState("");
   const [ramSearch, setRamSearch] = useState("");
 
+  // DRAMeXchange states
+  const [dramData, setDramData] = useState({ price_data: {}, price_history: {} });
+  const [selectedDramType, setSelectedDramType] = useState('DDR5');
+  const [selectedDramProduct, setSelectedDramProduct] = useState('');
+  const [dramPeriod, setDramPeriod] = useState('30');
+
   const [adminDate, setAdminDate] = useState(new Date().toISOString().slice(0, 10));
   const [adminTime, setAdminTime] = useState("10:00");
   const [adminText, setAdminText] = useState("");
@@ -27,18 +33,31 @@ const App = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [marketRes, ramRes] = await Promise.all([
+      const [marketRes, ramRes, dramRes] = await Promise.all([
         axios.get(`${API_URL}/api/market-data?period=${globalPeriod}`),
-        axios.get(`${API_URL}/api/ram-data`)
+        axios.get(`${API_URL}/api/ram-data`),
+        axios.get(`${API_URL}/api/dramexchange-data`)
       ]);
       
       console.log("RAM Data Response:", ramRes.data);
+      console.log("DRAM Exchange Data:", dramRes.data);
       
       setData({
         market: marketRes.data,
         ram: ramRes.data.current || {},
         history: ramRes.data.trends || {}
       });
+
+      // Set DRAMeXchange data
+      setDramData(dramRes.data);
+      
+      // Set initial DRAM product selection
+      if (dramRes.data.price_data && Object.keys(dramRes.data.price_data).length > 0) {
+        const firstType = Object.keys(dramRes.data.price_data)[0];
+        setSelectedDramType(firstType);
+        const firstProduct = dramRes.data.price_data[firstType]?.[0]?.product;
+        if (firstProduct) setSelectedDramProduct(firstProduct);
+      }
       
       if (ramRes.data.current) {
         const availableCats = Object.keys(ramRes.data.current);
@@ -239,6 +258,7 @@ const App = () => {
         <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 border-b border-[#333] pb-1 overflow-x-auto scrollbar-hide">
             {[
               {id: 'ram', label: '💾 RAM 시세', shortLabel: '💾 RAM'},
+              {id: 'dramexchange', label: '📊 DRAMeXchange', shortLabel: '📊 DRAM'},
               {id: 'tradingview', label: '🔍 Trading View', shortLabel: '🔍 차트'}, 
               {id: 'indices', label: '📈 주가지수', shortLabel: '📈 지수'}, 
               {id: 'forex', label: '💱 환율', shortLabel: '💱 환율'}, 
@@ -407,6 +427,205 @@ const App = () => {
                         </div>
                     )}
                 </div>
+            </div>
+        )}
+
+        {activeTab === 'dramexchange' && (
+            <div className="max-w-7xl mx-auto animate-in fade-in">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 sm:mb-6 gap-2">
+                    <div>
+                        <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+                            <TrendingUp size={24} className="text-purple-500"/> RAM-DRAMeXchange
+                        </h2>
+                        <p className="text-xs sm:text-sm text-gray-500 mt-1">글로벌 메모리 시세 추적</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <label className="text-xs text-gray-400">기간:</label>
+                        <select value={dramPeriod} onChange={(e) => setDramPeriod(e.target.value)} className="bg-[#262730] border border-[#555] rounded px-2 sm:px-3 py-1 text-xs sm:text-sm outline-none">
+                            <option value="7">7일</option>
+                            <option value="14">14일</option>
+                            <option value="30">30일</option>
+                            <option value="90">90일</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    {/* Type Selection */}
+                    <div className="bg-[#1e1e1e] rounded-xl p-3 sm:p-4 border border-[#333]">
+                        <h3 className="text-sm font-bold mb-3 text-gray-400">메모리 타입</h3>
+                        <div className="flex flex-col gap-2">
+                            {Object.keys(dramData.price_data).map(type => (
+                                <button 
+                                    key={type} 
+                                    onClick={() => {
+                                        setSelectedDramType(type);
+                                        const firstProduct = dramData.price_data[type]?.[0]?.product;
+                                        if (firstProduct) setSelectedDramProduct(firstProduct);
+                                    }}
+                                    className={`text-left px-3 py-2 rounded text-xs sm:text-sm transition ${selectedDramType === type ? 'bg-purple-600 text-white font-bold' : 'bg-[#262730] hover:bg-[#333] text-gray-300'}`}
+                                >
+                                    {type} ({dramData.price_data[type]?.length || 0})
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Product List */}
+                    <div className="bg-[#1e1e1e] rounded-xl p-3 sm:p-4 border border-[#333] lg:col-span-2">
+                        <h3 className="text-sm font-bold mb-3 text-gray-400">제품 목록</h3>
+                        {dramData.price_data[selectedDramType] && dramData.price_data[selectedDramType].length > 0 ? (
+                            <div className="overflow-x-auto max-h-96 overflow-y-auto">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-[#262730] text-gray-400 sticky top-0">
+                                        <tr>
+                                            <th className="py-2 px-2 sm:px-4 text-left">제품명</th>
+                                            <th className="py-2 px-2 sm:px-4 text-right">Daily High</th>
+                                            <th className="py-2 px-2 sm:px-4 text-right">Daily Low</th>
+                                            <th className="py-2 px-2 sm:px-4 text-right">평균</th>
+                                            <th className="py-2 px-2 sm:px-4 text-right">변동</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {dramData.price_data[selectedDramType].map((item, i) => (
+                                            <tr 
+                                                key={i} 
+                                                onClick={() => setSelectedDramProduct(item.product)}
+                                                className={`cursor-pointer border-b border-[#333] transition ${selectedDramProduct === item.product ? 'bg-purple-500/20' : 'hover:bg-[#262730]'}`}
+                                            >
+                                                <td className="py-2 px-2 sm:px-4 text-xs sm:text-sm">{item.product}</td>
+                                                <td className="py-2 px-2 sm:px-4 text-right font-mono text-xs sm:text-sm">${item.daily_high}</td>
+                                                <td className="py-2 px-2 sm:px-4 text-right font-mono text-xs sm:text-sm">${item.daily_low}</td>
+                                                <td className="py-2 px-2 sm:px-4 text-right font-mono text-xs sm:text-sm">${item.session_average}</td>
+                                                <td className={`py-2 px-2 sm:px-4 text-right font-mono text-xs sm:text-sm ${
+                                                    item.session_change.includes('+') ? 'text-red-400' : 
+                                                    item.session_change.includes('-') ? 'text-green-400' : 
+                                                    'text-gray-400'
+                                                }`}>
+                                                    {item.session_change}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="text-gray-500 text-sm py-4">선택된 타입에 데이터가 없습니다.</div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Product Detail Chart */}
+                {selectedDramProduct && (
+                    <div className="bg-[#0e1117] rounded-xl p-3 sm:p-6 border border-[#333] mt-4">
+                        {(() => {
+                            // Get price history for selected product
+                            const allHistory = dramData.price_history || {};
+                            const timestamps = Object.keys(allHistory).sort();
+                            const periodDays = parseInt(dramPeriod);
+                            const recentTimestamps = timestamps.slice(-periodDays);
+                            
+                            const chartData = recentTimestamps.map(timestamp => {
+                                const dayData = allHistory[timestamp];
+                                const typeData = dayData[selectedDramType];
+                                if (!typeData) return null;
+                                
+                                const productData = typeData.find(p => p.product === selectedDramProduct);
+                                if (!productData) return null;
+                                
+                                return {
+                                    name: timestamp.split(' ')[0].substring(5),
+                                    price: productData.session_average || 0
+                                };
+                            }).filter(Boolean);
+
+                            const prices = chartData.map(d => d.price).filter(p => p > 0);
+                            const stats = {
+                                max: prices.length > 0 ? Math.max(...prices) : 0,
+                                min: prices.length > 0 ? Math.min(...prices) : 0,
+                                avg: prices.length > 0 ? prices.reduce((a,b) => a+b, 0) / prices.length : 0,
+                                delta: prices.length >= 2 ? prices[prices.length - 1] - prices[0] : 0,
+                                pct: prices.length >= 2 ? ((prices[prices.length - 1] - prices[0]) / prices[0]) * 100 : 0,
+                                firstPrice: prices[0] || 0,
+                                lastPrice: prices[prices.length - 1] || 0,
+                                hasData: prices.length > 0
+                            };
+
+                            return (
+                                <>
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 sm:mb-6 gap-2">
+                                        <div>
+                                            <div className="text-xs sm:text-sm text-gray-400 mb-1">제품</div>
+                                            <div className="text-sm sm:text-xl font-bold leading-tight">{selectedDramProduct}</div>
+                                        </div>
+                                        <div className="text-left sm:text-right">
+                                            <div className="text-xs text-gray-500 mb-1">
+                                                {dramPeriod}일 변동 (첫날 → 오늘)
+                                            </div>
+                                            <div className={`text-base sm:text-xl font-bold ${stats.delta >= 0 ? 'text-[#ff5252]' : 'text-[#00e676]'}`}>
+                                                {stats.delta > 0 ? '+' : ''}${stats.delta !== 0 ? stats.delta.toFixed(2) : '0'} 
+                                                <span className="text-sm">({stats.pct >= 0 ? '+' : ''}{stats.pct.toFixed(2)}%)</span>
+                                            </div>
+                                            {stats.hasData && (
+                                                <div className="text-xs text-gray-500 mt-1">
+                                                    ${stats.firstPrice.toFixed(2)} → ${stats.lastPrice.toFixed(2)}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-8">
+                                        <div className="bg-[#1e1e1e] p-2 sm:p-3 rounded border border-[#333] text-center">
+                                            <div className="text-xs text-gray-500">최고가</div>
+                                            <div className="font-bold text-sm sm:text-lg">${stats.max !== 0 ? stats.max.toFixed(2) : '-'}</div>
+                                        </div>
+                                        <div className="bg-[#1e1e1e] p-2 sm:p-3 rounded border border-[#333] text-center">
+                                            <div className="text-xs text-gray-500">최저가</div>
+                                            <div className="font-bold text-sm sm:text-lg">${stats.min !== 0 ? stats.min.toFixed(2) : '-'}</div>
+                                        </div>
+                                        <div className="bg-[#1e1e1e] p-2 sm:p-3 rounded border border-[#333] text-center">
+                                            <div className="text-xs text-gray-500">평균가</div>
+                                            <div className="font-bold text-sm sm:text-lg">${stats.avg !== 0 ? stats.avg.toFixed(2) : '-'}</div>
+                                        </div>
+                                    </div>
+
+                                    {chartData.length > 0 ? (
+                                        <div className="h-48 sm:h-64 w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                                    <XAxis 
+                                                        dataKey="name" 
+                                                        stroke="#666" 
+                                                        tick={{fontSize: 10}} 
+                                                        interval="preserveStartEnd"
+                                                        tickMargin={8}
+                                                    />
+                                                    <YAxis 
+                                                        domain={['auto', 'auto']} 
+                                                        stroke="#666" 
+                                                        tick={{fontSize: 10}} 
+                                                        tickFormatter={(val) => `$${val.toFixed(1)}`}
+                                                        width={45}
+                                                    />
+                                                    <Tooltip 
+                                                        contentStyle={{backgroundColor: '#1e1e1e', border: '1px solid #444', fontSize: '12px'}} 
+                                                        formatter={(val) => [`$${val.toFixed(2)}`, '가격']} 
+                                                    />
+                                                    <Line type="monotone" dataKey="price" stroke="#a855f7" strokeWidth={2} dot={{r: 3, fill: '#a855f7'}} />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    ) : (
+                                        <div className="h-48 sm:h-64 flex items-center justify-center text-gray-500 border border-[#333] rounded text-sm">
+                                            아직 가격 히스토리 데이터가 없습니다.
+                                        </div>
+                                    )}
+                                </>
+                            );
+                        })()}
+                    </div>
+                )}
             </div>
         )}
 
