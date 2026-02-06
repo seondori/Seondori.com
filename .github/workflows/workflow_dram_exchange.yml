@@ -50,9 +50,10 @@ jobs:
       - name: Check crawler results
         if: always()
         run: |
-          if ls backend/dram_exchange_*.json 1> /dev/null 2>&1; then
+          # ⭐ [수정됨] 고정된 파일명 확인
+          if [ -f backend/dram_exchange_data.json ]; then
             echo "✅ DRAM Exchange 데이터 저장 완료"
-            ls -lah backend/dram_exchange_*.json
+            ls -lah backend/dram_exchange_data.json
           else
             echo "⚠️ 데이터 저장 실패"
           fi
