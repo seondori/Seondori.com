@@ -1,0 +1,75 @@
+name: RAM Price Crawler (Cookie-Based)
+
+on:
+  schedule:
+    - cron: '0 1 * * *'   # 한국시간 10:00
+    - cron: '0 4 * * *'   # 한국시간 13:00
+    - cron: '0 9 * * *'   # 한국시간 18:00
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Chrome browser
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install compatible ChromeDriver
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: '120.0.6099.217'  # 원하는 버전 지정
+
+      - name: Install Python dependencies
+        run: |
+          pip install selenium requests webdriver-manager
+
+      - name: Run crawler
+        env:
+          NAVER_COOKIES: ${{ secrets.NAVER_COOKIES }}
+          GITHUB_ACTIONS: true
+        run: |
+          cd backend
+          python crawler_cookie_based.py
+
+      - name: Check crawler results
+        if: always()
+        run: |
+          if [ -f backend/ram_*.json ]; then
+            echo "✅ 크롤러 결과 파일 확인됨"
+          else
+            echo "⚠️ 결과 파일 없음"
+          fi
+
+      - name: Commit and push changes
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "ℹ️ 변경사항 없음"
+          else
+            git commit -m "🤖 자동 업데이트: RAM 시세 $(date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawler-logs
+          path: backend/crawler.log
+          retention-days: 7
