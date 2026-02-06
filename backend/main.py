@@ -227,6 +227,23 @@ async def get_market_data(period: str = "1개월"):
     except: pass
     return result
 
+@app.get("/api/dramexchange-data")
+async def get_dramexchange_data():
+    """DRAMeXchange 데이터 반환"""
+    dram_file = os.path.join(BASE_DIR, "dramexchange_data.json")
+    
+    if not os.path.exists(dram_file):
+        # 데이터 파일이 없으면 빈 구조 반환
+        return {
+            "price_data": {},
+            "price_history": {}
+        }
+    
+    with open(dram_file, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    return data
+
 @app.get("/api/ram-data")
 async def get_ram_data():
     if not os.path.exists(DATA_PATH): 
