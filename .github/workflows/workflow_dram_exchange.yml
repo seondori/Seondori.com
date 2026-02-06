@@ -3,12 +3,12 @@ name: DRAM Exchange Crawler (US Times)
 on:
   schedule:
     # 미국 기준 시간 (UTC 기준)
-    # 11:00 EST = 16:00 UTC = 한국 기준 01:00 (다음날)
+    # 11:00 EST = 16:05 UTC = 한국 기준 01:00 (다음날)
     # 14:40 EST = 19:40 UTC = 한국 기준 04:40 (다음날)
     # 18:10 EST = 23:10 UTC = 한국 기준 08:10 (다음날)
-    - cron: '0 16 * * *'   # 미국 11:00 EST
-    - cron: '40 19 * * *'  # 미국 14:40 EST
-    - cron: '10 23 * * *'  # 미국 18:10 EST
+    - cron: '3 16 * * *'   # 미국 11:00 EST
+    - cron: '43 19 * * *'  # 미국 14:40 EST
+    - cron: '13 23 * * *'  # 미국 18:10 EST
   workflow_dispatch:
 
 jobs:
