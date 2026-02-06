@@ -28,7 +28,7 @@ import glob
 # ============================================
 CAFE_URL = "https://cafe.naver.com/joonggonara"
 SEARCH_KEYWORD = "베스트코리아컴 BKC"
-TARGET_TITLE_KEYWORD = "구입]채굴기"
+TARGET_TITLE_KEYWORD = "[매입]구입]채굴기"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -288,10 +288,46 @@ def search_cafe_post(driver):
         log(f"검색어 입력: {SEARCH_KEYWORD}")
         search_input.send_keys(SEARCH_KEYWORD)
         search_input.send_keys(Keys.RETURN)
-        time.sleep(3)
+        time.sleep(5)  # 검색 결과 로딩 대기 시간 증가
         
-        log("iframe 전환 중...")
-        driver.switch_to.frame("cafe_main")
+        # 디버깅: 현재 페이지 정보 출력
+        log(f"현재 URL: {driver.current_url}")
+        log("페이지 소스 일부 확인 중...")
+        
+        # iframe 찾기
+        iframes = driver.find_elements(By.TAG_NAME, "iframe")
+        log(f"발견된 iframe 개수: {len(iframes)}")
+        
+        for idx, iframe in enumerate(iframes):
+            iframe_id = iframe.get_attribute("id")
+            iframe_name = iframe.get_attribute("name")
+            iframe_src = iframe.get_attribute("src")
+            log(f"  iframe[{idx}]: id='{iframe_id}', name='{iframe_name}', src='{iframe_src[:100] if iframe_src else 'None'}'")
+        
+        # 스크린샷 저장 (디버깅용)
+        try:
+            screenshot_path = os.path.join(BASE_DIR, "debug_screenshot.png")
+            driver.save_screenshot(screenshot_path)
+            log(f"스크린샷 저장됨: {screenshot_path}")
+        except Exception as e:
+            log(f"스크린샷 저장 실패: {str(e)}", "WARN")
+        
+        log("iframe 대기 중...")
+        # iframe이 로드될 때까지 명시적 대기
+        try:
+            WebDriverWait(driver, 15).until(
+                EC.frame_to_be_available_and_switch_to_it("cafe_main")
+            )
+            log("iframe 전환 완료")
+        except Exception as e:
+            log(f"cafe_main iframe을 찾을 수 없음. 다른 방법 시도 중...", "WARN")
+            # 첫 번째 iframe으로 시도
+            if len(iframes) > 0:
+                log(f"첫 번째 iframe으로 전환 시도: {iframes[0].get_attribute('id') or iframes[0].get_attribute('name')}")
+                driver.switch_to.frame(iframes[0])
+                log("첫 번째 iframe 전환 완료")
+            else:
+                raise Exception("iframe을 전혀 찾을 수 없습니다")
         
         log("게시글 목록 찾는 중...")
         articles = WebDriverWait(driver, 10).until(
@@ -322,10 +358,36 @@ def get_article_content(driver, article_url):
     log(f"게시글 내용 가져오는 중: {article_url}")
     try:
         driver.get(article_url)
-        time.sleep(3)
+        time.sleep(5)  # 페이지 로딩 대기 시간 증가
         
-        log("iframe 전환 중...")
-        driver.switch_to.frame("cafe_main")
+        # 디버깅: 현재 페이지 정보 출력
+        log(f"현재 URL: {driver.current_url}")
+        
+        # iframe 찾기
+        iframes = driver.find_elements(By.TAG_NAME, "iframe")
+        log(f"발견된 iframe 개수: {len(iframes)}")
+        
+        for idx, iframe in enumerate(iframes):
+            iframe_id = iframe.get_attribute("id")
+            iframe_name = iframe.get_attribute("name")
+            log(f"  iframe[{idx}]: id='{iframe_id}', name='{iframe_name}'")
+        
+        log("iframe 대기 중...")
+        # iframe이 로드될 때까지 명시적 대기
+        try:
+            WebDriverWait(driver, 15).until(
+                EC.frame_to_be_available_and_switch_to_it("cafe_main")
+            )
+            log("iframe 전환 완료")
+        except Exception as e:
+            log(f"cafe_main iframe을 찾을 수 없음. 다른 방법 시도 중...", "WARN")
+            # 첫 번째 iframe으로 시도
+            if len(iframes) > 0:
+                log(f"첫 번째 iframe으로 전환 시도: {iframes[0].get_attribute('id') or iframes[0].get_attribute('name')}")
+                driver.switch_to.frame(iframes[0])
+                log("첫 번째 iframe 전환 완료")
+            else:
+                raise Exception("iframe을 전혀 찾을 수 없습니다")
         
         log("본문 찾는 중...")
         content_element = WebDriverWait(driver, 10).until(
