@@ -1,43 +1,41 @@
 name: RAM Price Crawler
 
 on:
-  # 하루 3번 자동 실행 (한국시간 기준)
   schedule:
-    # UTC 기준이므로 한국시간 -9시간
     - cron: '0 1 * * *'   # 한국시간 10:00
     - cron: '0 4 * * *'   # 한국시간 13:00
     - cron: '0 9 * * *'   # 한국시간 18:00
-  
-  # 수동 실행도 가능
   workflow_dispatch:
 
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
-      
-      - name: Install ChromeDriver
-        uses: nanasess/setup-chromedriver@v2
-      
+
+      - name: Install ChromeDriver (일치하는 버전)
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d. -f1,2,3)
+          echo "Chrome Version: $CHROME_VERSION"
+          wget https://googlechromelabs.github.io/chrome-for-testing/ -q -O -
+          pip install webdriver-manager
+
       - name: Install dependencies
         run: |
-          pip install selenium requests
-      
+          pip install selenium requests webdriver-manager
+
       - name: Run crawler
         env:
           NAVER_ID: ${{ secrets.NAVER_ID }}
@@ -45,7 +43,7 @@ jobs:
         run: |
           cd backend
           python crawler.py
-      
+
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
