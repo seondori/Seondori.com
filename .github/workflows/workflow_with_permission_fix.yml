@@ -44,7 +44,7 @@ jobs:
           GITHUB_ACTIONS: true
         run: |
           cd backend
-          python crawler_cookie_based.py
+          python crawler_cookie_based_fixed.py
 
       - name: Check crawler results
         if: always()
@@ -71,7 +71,10 @@ jobs:
             git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
             git push
           fi
-
+      - name: Trigger Vercel deployment
+        if: success()
+        run: |
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
