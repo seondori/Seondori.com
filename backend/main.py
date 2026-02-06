@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 def get_data_file(prefix="ram_"):
     """특정 접두어의 최신 JSON 파일 반환"""
     files = glob.glob(os.path.join(BASE_DIR, f"{prefix}*.json"))
-    if files: 
+    if files:
         return sorted(files)[-1]
     return os.path.join(BASE_DIR, f"{prefix}price_backup.json")
 
@@ -33,17 +33,7 @@ DRAM_EXCHANGE_PATH = get_data_file("dram_exchange_")
 
 @app.get("/")
 async def root():
-    return {
-        "status": "ok", 
-        "message": "Seondori API Server", 
-        "endpoints": [
-            "/api/market-data",
-            "/api/ram-data",
-            "/api/dram-exchange-data",
-            "/api/admin/update",
-            "/api/admin/test-parse"
-        ]
-    }
+    return {"status": "ok", "message": "Seondori API Server"}
 
 class UpdateRequest(BaseModel):
     date: str
@@ -51,7 +41,7 @@ class UpdateRequest(BaseModel):
     text: str
 
 # ============================================
-# [기존] 네이버 카페 RAM 시세 파싱
+# 기존 파싱 함수 (변경 없음)
 # ============================================
 def parse_price_data(price_text):
     """
@@ -158,7 +148,6 @@ def get_period_str(period_option):
 
 @app.get("/api/market-data")
 async def get_market_data(period: str = "1개월"):
-    """시장 데이터 (지수, 원자재, 환율 등)"""
     p, i = get_period_str(period)
     TICKERS = {
         "indices": {"^KS11": "🇰🇷 코스피", "^DJI": "🇺🇸 다우존스", "^GSPC": "🇺🇸 S&P 500", "^IXIC": "🇺🇸 나스닥"},
@@ -206,7 +195,7 @@ async def get_market_data(period: str = "1개월"):
 
 @app.get("/api/ram-data")
 async def get_ram_data():
-    """한국 네이버 카페 RAM 시세 데이터"""
+    """한국 RAM 시세 데이터"""
     if not os.path.exists(DATA_PATH): 
         return {"error": "No data file"}
     
@@ -230,21 +219,23 @@ async def get_ram_data():
         "current": json_data.get("price_data", {}),
         "trends": product_history,
         "total_days": len(sorted_dates),
-        "date_range": f"{sorted_dates[0]} ~ {sorted_dates[-1]}" if sorted_dates else "",
-        "currency": "KRW"
+        "date_range": f"{sorted_dates[0]} ~ {sorted_dates[-1]}" if sorted_dates else ""
     }
 
 # ============================================
-# [새로운] DRAM Exchange 데이터
+# DRAM Exchange 데이터 엔드포인트 추가
 # ============================================
 @app.get("/api/dram-exchange-data")
 async def get_dram_exchange_data():
-    """미국 DRAM Exchange RAM 시세 데이터"""
+    """DRAM Exchange 시세 데이터"""
     if not os.path.exists(DRAM_EXCHANGE_PATH): 
-        return {"error": "No DRAM Exchange data file"}
+        return {"error": "No DRAM Exchange data file", "current": {}, "trends": {}}
     
-    with open(DRAM_EXCHANGE_PATH, 'r', encoding='utf-8') as f:
-        json_data = json.load(f)
+    try:
+        with open(DRAM_EXCHANGE_PATH, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+    except:
+        return {"error": "Failed to read DRAM Exchange data", "current": {}, "trends": {}}
     
     product_history = {}
     raw_history = json_data.get("price_history", {})
@@ -257,31 +248,21 @@ async def get_dram_exchange_data():
                 p_name = item['product']
                 if p_name not in product_history: 
                     product_history[p_name] = []
-                
-                # session_average를 기본 가격으로 사용
                 product_history[p_name].append({
                     "date": date, 
-                    "price": item.get('session_average', 0),
-                    "daily_high": item.get('daily_high', 0),
-                    "daily_low": item.get('daily_low', 0),
-                    "session_change": item.get('session_change', 'N/A')
+                    "price": item.get('session_average', 0)
                 })
 
     return {
         "current": json_data.get("price_data", {}),
         "trends": product_history,
         "total_days": len(sorted_dates),
-        "date_range": f"{sorted_dates[0]} ~ {sorted_dates[-1]}" if sorted_dates else "",
-        "currency": "USD",
-        "source": "DRAM Exchange"
+        "date_range": f"{sorted_dates[0]} ~ {sorted_dates[-1]}" if sorted_dates else ""
     }
 
-# ============================================
-# [기존] 데이터 업데이트
-# ============================================
 @app.post("/api/admin/update")
 async def update_data(req: UpdateRequest):
-    """네이버 카페 데이터 수동 업데이트"""
+    """RAM 데이터 업데이트"""
     print(f"\n{'='*50}")
     print(f"[업데이트 요청] {req.date} {req.time}")
     print(f"[입력 텍스트 길이] {len(req.text)} 글자")
