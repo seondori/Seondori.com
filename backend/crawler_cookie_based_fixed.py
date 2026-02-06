@@ -2,6 +2,7 @@
 네이버 카페 RAM 시세 자동 크롤러 (쿠키 기반 로그인)
 - 변경사항: 데이터가 이전과 같더라도 타임슬롯별로 무조건 저장하여 그래프 끊김 방지
 - 로깅 개선: 모든 단계에서 상세 로그 출력
+- ChromeDriver 자동 관리: webdriver-manager 사용
 """
 
 import os
@@ -18,6 +19,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import glob
 
 # ============================================
@@ -170,19 +173,32 @@ def save_data(parsed_data, date_str, time_str):
 def setup_driver():
     log("Chrome 드라이버 설정 중...")
     options = Options()
+    
     if os.environ.get('GITHUB_ACTIONS'):
         log("GitHub Actions 환경 감지")
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
+    
     options.add_argument('--window-size=1920,1080')
     options.add_argument('--disable-blink-features=AutomationControlled')
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
     
-    driver = webdriver.Chrome(options=options)
-    log("Chrome 드라이버 초기화 완료")
-    return driver
+    try:
+        # webdriver-manager로 자동으로 적절한 ChromeDriver 다운로드
+        log("ChromeDriver 자동 설치 중...")
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=options)
+        log("Chrome 드라이버 초기화 완료")
+        return driver
+    except Exception as e:
+        log(f"ChromeDriver 설치 실패: {str(e)}", "ERROR")
+        log("기본 방식으로 재시도...", "WARN")
+        # 폴백: 기본 방식
+        driver = webdriver.Chrome(options=options)
+        log("Chrome 드라이버 초기화 완료 (폴백)")
+        return driver
 
 def load_cookies_from_env():
     log("쿠키 로드 시작...")
