@@ -1,0 +1,80 @@
+name: DRAM Exchange Crawler (US Times)
+
+on:
+  schedule:
+    # 미국 기준 시간 (UTC 기준)
+    # 11:00 EST = 16:00 UTC = 한국 기준 01:00 (다음날)
+    # 14:40 EST = 19:40 UTC = 한국 기준 04:40 (다음날)
+    # 18:10 EST = 23:10 UTC = 한국 기준 08:10 (다음날)
+    - cron: '0 16 * * *'   # 미국 11:00 EST
+    - cron: '40 19 * * *'  # 미국 14:40 EST
+    - cron: '10 23 * * *'  # 미국 18:10 EST
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install latest Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install Python dependencies
+        run: |
+          pip install selenium webdriver-manager requests
+
+      - name: Check Chrome version
+        run: google-chrome --version
+
+      - name: Run DRAM Exchange crawler
+        env:
+          GITHUB_ACTIONS: true
+        run: |
+          cd backend
+          python dram_exchange_crawler.py
+
+      - name: Check crawler results
+        if: always()
+        run: |
+          if ls backend/dram_exchange_*.json 1> /dev/null 2>&1; then
+            echo "✅ DRAM Exchange 데이터 저장 완료"
+            ls -lah backend/dram_exchange_*.json
+          else
+            echo "⚠️ 데이터 저장 실패"
+          fi
+
+      - name: Commit and push changes
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "ℹ️ 변경사항 없음"
+          else
+            git commit -m "🤖 자동 업데이트: DRAM Exchange 시세 $(date +'%Y-%m-%d %H:%M')"
+            git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+            git push
+          fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dram-crawler-logs-${{ github.run_id }}
+          path: backend/
+          retention-days: 7
