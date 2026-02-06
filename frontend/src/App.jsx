@@ -258,7 +258,7 @@ const App = () => {
         <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 border-b border-[#333] pb-1 overflow-x-auto scrollbar-hide">
             {[
               {id: 'ram', label: '💾 RAM 시세', shortLabel: '💾 RAM'},
-              {id: 'dramexchange', label: '📊 DRAMeXchange', shortLabel: '📊 DRAM'},
+              {id: 'dramexchange', label: '📊 RAM 시세 - DRAMeXchange', shortLabel: '📊 DRAM'},
               {id: 'tradingview', label: '🔍 Trading View', shortLabel: '🔍 차트'}, 
               {id: 'indices', label: '📈 주가지수', shortLabel: '📈 지수'}, 
               {id: 'forex', label: '💱 환율', shortLabel: '💱 환율'}, 
