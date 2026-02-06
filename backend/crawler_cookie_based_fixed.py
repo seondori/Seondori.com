@@ -364,37 +364,92 @@ def get_article_content(driver, article_url):
     log(f"게시글 내용 가져오는 중: {article_url}")
     try:
         driver.get(article_url)
-        time.sleep(5)
+        time.sleep(7)  # 동적 로딩 대기 시간 증가
         
         log(f"현재 URL: {driver.current_url}")
         
-        # 게시글 본문 찾기 (여러 셀렉터 시도)
+        # 스크린샷 저장
+        try:
+            screenshot_path = os.path.join(BASE_DIR, "debug_screenshot_article.png")
+            driver.save_screenshot(screenshot_path)
+            log(f"스크린샷 저장: {screenshot_path}")
+        except:
+            pass
+        
+        # 방법 1: 페이지 전체 텍스트에서 추출
+        log("방법 1: 페이지 전체 body에서 텍스트 추출 시도")
+        try:
+            body = driver.find_element(By.TAG_NAME, "body")
+            full_text = body.text
+            log(f"페이지 전체 텍스트: {len(full_text)} 글자")
+            
+            # RAM 시세 관련 키워드가 있는지 확인
+            if any(keyword in full_text for keyword in ["DDR", "삼성", "PC4", "PC3", "D5"]):
+                log("✅ RAM 시세 키워드 발견 - 전체 텍스트 사용")
+                return full_text
+        except Exception as e:
+            log(f"전체 텍스트 추출 실패: {str(e)}", "WARN")
+        
+        # 방법 2: 게시글 본문 찾기 (여러 셀렉터 시도)
         content_selectors = [
             "div.ArticleContentBox",
             "div[class*='article_viewer']",
             "div.se-main-container",
-            "div[class*='content']"
+            "div[class*='ArticleContentBox']",
+            "div[class*='content']",
+            "article",
+            "div[class*='Article']",
+            "#app > div > div > div > div"  # React 구조
         ]
         
-        content_element = None
         for selector in content_selectors:
             try:
                 log(f"본문 시도: {selector}")
+                
+                # element가 보일 때까지 대기
                 content_element = WebDriverWait(driver, 5).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, selector))
                 )
-                log(f"✅ 본문 발견: {selector}")
-                break
-            except:
+                
+                # 텍스트가 로드될 때까지 추가 대기
+                time.sleep(2)
+                
+                # innerText와 textContent 둘 다 시도
+                content = content_element.text.strip()
+                
+                if not content:
+                    # JavaScript로 직접 가져오기
+                    content = driver.execute_script("return arguments[0].innerText || arguments[0].textContent;", content_element)
+                
+                if content and len(content) > 100:  # 최소 100자 이상
+                    log(f"✅ 본문 발견: {selector} ({len(content)} 글자)")
+                    return content
+                else:
+                    log(f"본문이 너무 짧음: {len(content)} 글자", "WARN")
+                    
+            except Exception as e:
+                log(f"본문 찾기 실패 ({selector}): {str(e)}", "DEBUG")
                 continue
         
-        if not content_element:
-            log("❌ 본문을 찾을 수 없음", "ERROR")
-            return None
+        # 방법 3: 모든 텍스트 수집 (최후의 수단)
+        log("방법 3: 모든 div 텍스트 수집")
+        try:
+            all_divs = driver.find_elements(By.TAG_NAME, "div")
+            all_texts = []
+            for div in all_divs:
+                text = div.text.strip()
+                if len(text) > 50 and any(keyword in text for keyword in ["DDR", "삼성", "PC4"]):
+                    all_texts.append(text)
+            
+            if all_texts:
+                combined = "\n".join(all_texts)
+                log(f"✅ 텍스트 수집 완료: {len(combined)} 글자")
+                return combined
+        except Exception as e:
+            log(f"텍스트 수집 실패: {str(e)}", "WARN")
         
-        content = content_element.text.strip()
-        log(f"✅ 본문 가져오기 완료: {len(content)} 글자")
-        return content
+        log("❌ 본문을 찾을 수 없음", "ERROR")
+        return None
         
     except Exception as e:
         log(f"게시글 내용 가져오기 실패: {str(e)}", "ERROR")
@@ -443,8 +498,8 @@ def main():
         
         # 6. 게시글 내용 가져오기
         content = get_article_content(driver, url)
-        if not content:
-            log("❌ 게시글 내용 가져오기 실패", "ERROR")
+        if not content or len(content.strip()) < 50:
+            log("❌ 게시글 내용이 비어있거나 너무 짧음", "ERROR")
             return False
         
         # 7. 데이터 파싱
