@@ -74,5 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: crawler-logs
-          path: backend/crawler.log
+          path: |
+            backend/crawler.log
+            backend/debug_screenshot.png
           retention-days: 7
