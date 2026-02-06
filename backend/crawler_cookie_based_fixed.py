@@ -1,8 +1,7 @@
 """
 네이버 카페 RAM 시세 자동 크롤러 (쿠키 기반 로그인)
+- 신버전 네이버 카페 대응 (iframe 없음)
 - 변경사항: 데이터가 이전과 같더라도 타임슬롯별로 무조건 저장하여 그래프 끊김 방지
-- 로깅 개선: 모든 단계에서 상세 로그 출력
-- ChromeDriver 자동 관리: webdriver-manager 사용
 """
 
 import os
@@ -26,9 +25,7 @@ import glob
 # ============================================
 # 설정
 # ============================================
-# 구버전 카페 URL 사용 (iframe 기반)
-CAFE_URL = "https://cafe.naver.com/ArticleList.nhn?search.clubid=10050146&search.menuid=0&search.boardtype=L"
-CAFE_SEARCH_URL = "https://cafe.naver.com/ArticleSearchList.nhn?search.clubid=10050146&search.searchBy=0&search.query="
+CAFE_URL = "https://cafe.naver.com/joonggonara"
 SEARCH_KEYWORD = "베스트코리아컴 BKC"
 TARGET_TITLE_KEYWORD = "구입]채굴기"
 
@@ -162,7 +159,7 @@ def save_data(parsed_data, date_str, time_str):
             else:
                 full["price_data"][category].append(new_item)
     
-    # 3. 파일 저장 (수정된 데이터를 항상 기록)
+    # 3. 파일 저장
     with open(data_path, "w", encoding="utf-8") as f:
         json.dump(full, f, ensure_ascii=False, indent=2)
     
@@ -178,17 +175,17 @@ def setup_driver():
     
     if os.environ.get('GITHUB_ACTIONS'):
         log("GitHub Actions 환경 감지")
-        options.add_argument('--headless')
+        options.add_argument('--headless=new')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
     
     options.add_argument('--window-size=1920,1080')
     options.add_argument('--disable-blink-features=AutomationControlled')
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
     options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
     
     try:
-        # webdriver-manager로 자동으로 적절한 ChromeDriver 다운로드
         log("ChromeDriver 자동 설치 중...")
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
@@ -196,11 +193,7 @@ def setup_driver():
         return driver
     except Exception as e:
         log(f"ChromeDriver 설치 실패: {str(e)}", "ERROR")
-        log("기본 방식으로 재시도...", "WARN")
-        # 폴백: 기본 방식
-        driver = webdriver.Chrome(options=options)
-        log("Chrome 드라이버 초기화 완료 (폴백)")
-        return driver
+        raise
 
 def load_cookies_from_env():
     log("쿠키 로드 시작...")
@@ -220,13 +213,11 @@ def load_cookies_from_env():
         return cookies
     except Exception as e:
         log(f"쿠키 파싱 실패: {str(e)}", "ERROR")
-        log(traceback.format_exc(), "ERROR")
         return None
 
 def add_cookies_to_driver(driver, cookies):
     log("쿠키를 브라우저에 추가 중...")
     if not cookies:
-        log("쿠키가 없습니다", "ERROR")
         return False
     
     try:
@@ -244,15 +235,13 @@ def add_cookies_to_driver(driver, cookies):
                 }
                 driver.add_cookie(cookie_dict)
                 added_count += 1
-            except Exception as e:
-                log(f"쿠키 추가 실패: {cookie.get('name')} - {str(e)}", "WARN")
+            except:
                 continue
         
         log(f"쿠키 {added_count}개 추가 완료")
         return True
     except Exception as e:
         log(f"쿠키 추가 중 오류: {str(e)}", "ERROR")
-        log(traceback.format_exc(), "ERROR")
         return False
 
 def verify_login(driver):
@@ -265,149 +254,143 @@ def verify_login(driver):
         auth_cookies = [c for c in cookies if c['name'] in ['NID_AUT', 'NID_SES']]
         
         if auth_cookies:
-            log(f"✅ 로그인 확인됨: {[c['name'] for c in auth_cookies]}")
+            log(f"✅ 로그인 확인됨")
             return True
         else:
             log("❌ 로그인 쿠키 없음", "ERROR")
-            log(f"현재 쿠키: {[c['name'] for c in cookies]}", "DEBUG")
             return False
     except Exception as e:
         log(f"로그인 확인 중 오류: {str(e)}", "ERROR")
-        log(traceback.format_exc(), "ERROR")
         return False
 
 def search_cafe_post(driver):
-    log(f"카페 검색 시작: {SEARCH_KEYWORD}")
+    """신버전 네이버 카페 검색"""
+    log(f"카페 접속 시작: {CAFE_URL}")
     try:
-        # 구버전 검색 URL로 직접 이동
-        import urllib.parse
-        encoded_keyword = urllib.parse.quote(SEARCH_KEYWORD)
-        search_url = f"{CAFE_SEARCH_URL}{encoded_keyword}"
-        
-        log(f"검색 URL로 이동: {search_url}")
-        driver.get(search_url)
+        driver.get(CAFE_URL)
         time.sleep(5)
         
-        # 디버깅: 현재 페이지 정보 출력
         log(f"현재 URL: {driver.current_url}")
-        log("페이지 소스 일부 확인 중...")
         
-        # iframe 찾기
-        iframes = driver.find_elements(By.TAG_NAME, "iframe")
-        log(f"발견된 iframe 개수: {len(iframes)}")
-        
-        for idx, iframe in enumerate(iframes):
-            iframe_id = iframe.get_attribute("id")
-            iframe_name = iframe.get_attribute("name")
-            iframe_src = iframe.get_attribute("src")
-            log(f"  iframe[{idx}]: id='{iframe_id}', name='{iframe_name}', src='{iframe_src[:100] if iframe_src else 'None'}'")
-        
-        # 스크린샷 저장 (디버깅용)
+        # 스크린샷 저장
         try:
-            screenshot_path = os.path.join(BASE_DIR, "debug_screenshot.png")
+            screenshot_path = os.path.join(BASE_DIR, "debug_screenshot_search.png")
             driver.save_screenshot(screenshot_path)
-            log(f"스크린샷 저장됨: {screenshot_path}")
-        except Exception as e:
-            log(f"스크린샷 저장 실패: {str(e)}", "WARN")
+            log(f"스크린샷 저장: {screenshot_path}")
+        except:
+            pass
         
-        log("iframe 대기 중...")
-        # iframe이 로드될 때까지 명시적 대기
-        try:
-            WebDriverWait(driver, 15).until(
-                EC.frame_to_be_available_and_switch_to_it("cafe_main")
-            )
-            log("iframe 전환 완료")
-        except Exception as e:
-            log(f"cafe_main iframe을 찾을 수 없음. 다른 방법 시도 중...", "WARN")
-            
-            # id나 name에 'main' 포함된 iframe 찾기
-            main_iframe = None
-            for iframe in iframes:
-                iframe_id = iframe.get_attribute("id") or ""
-                iframe_name = iframe.get_attribute("name") or ""
-                if "main" in iframe_id.lower() or "main" in iframe_name.lower():
-                    main_iframe = iframe
-                    log(f"main 포함 iframe 발견: id='{iframe_id}', name='{iframe_name}'")
+        # 신버전 카페 검색창 찾기 (여러 셀렉터 시도)
+        search_selectors = [
+            "input[placeholder*='검색']",
+            "input[type='text'][class*='search']",
+            "input.BaseSearchBar_input_search__FbyOj",
+            "#topLayerQueryInput",
+            "input[name='query']"
+        ]
+        
+        search_input = None
+        for selector in search_selectors:
+            try:
+                log(f"검색창 시도: {selector}")
+                search_input = WebDriverWait(driver, 3).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, selector))
+                )
+                log(f"✅ 검색창 발견: {selector}")
+                break
+            except:
+                continue
+        
+        if not search_input:
+            log("❌ 검색창을 찾을 수 없음", "ERROR")
+            return None
+        
+        # 검색 실행
+        log(f"검색어 입력: {SEARCH_KEYWORD}")
+        search_input.clear()
+        search_input.send_keys(SEARCH_KEYWORD)
+        search_input.send_keys(Keys.RETURN)
+        time.sleep(5)
+        
+        log(f"검색 후 URL: {driver.current_url}")
+        
+        # 게시글 목록 찾기 (여러 셀렉터 시도)
+        article_selectors = [
+            "a.article-board__title--link",
+            "a[class*='article']",
+            "div.article-board article a",
+            "a[href*='ArticleRead']"
+        ]
+        
+        articles = []
+        for selector in article_selectors:
+            try:
+                log(f"게시글 목록 시도: {selector}")
+                articles = WebDriverWait(driver, 5).until(
+                    EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector))
+                )
+                if articles:
+                    log(f"✅ 게시글 {len(articles)}개 발견: {selector}")
                     break
-            
-            if main_iframe:
-                driver.switch_to.frame(main_iframe)
-                log("main iframe 전환 완료")
-            elif len(iframes) > 0:
-                # 마지막 수단: 가장 큰 iframe 찾기
-                log("가장 큰 iframe 찾는 중...")
-                largest_iframe = max(iframes, key=lambda x: x.size['width'] * x.size['height'])
-                driver.switch_to.frame(largest_iframe)
-                log(f"가장 큰 iframe 전환 완료: {largest_iframe.get_attribute('id') or largest_iframe.get_attribute('name')}")
-            else:
-                # iframe이 없는 신버전일 수 있음 - 신버전 셀렉터 시도
-                log("iframe 없음 - 신버전 카페로 추정", "WARN")
-                raise Exception("구버전 카페 접근 실패")
+            except:
+                continue
         
-        log("게시글 목록 찾는 중...")
-        articles = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.article"))
-        )
-        log(f"게시글 {len(articles)}개 발견")
+        if not articles:
+            log("❌ 게시글 목록을 찾을 수 없음", "ERROR")
+            return None
         
+        # 목표 게시글 찾기
         for article in articles:
-            if TARGET_TITLE_KEYWORD in article.text:
-                url = article.get_attribute("href")
-                log(f"✅ 목표 게시글 발견: {url}")
-                return url
+            try:
+                title = article.text or article.get_attribute('title') or ""
+                if TARGET_TITLE_KEYWORD in title:
+                    url = article.get_attribute("href")
+                    log(f"✅ 목표 게시글 발견: {title[:50]}...")
+                    log(f"URL: {url}")
+                    return url
+            except:
+                continue
         
-        log(f"❌ '{TARGET_TITLE_KEYWORD}' 제목을 찾지 못함", "ERROR")
+        log(f"❌ '{TARGET_TITLE_KEYWORD}' 제목을 찾지 못함", "WARN")
         return None
         
     except Exception as e:
         log(f"카페 검색 중 오류: {str(e)}", "ERROR")
         log(traceback.format_exc(), "ERROR")
         return None
-    finally:
-        try:
-            driver.switch_to.default_content()
-        except:
-            pass
 
 def get_article_content(driver, article_url):
+    """신버전 네이버 카페 게시글 내용 가져오기"""
     log(f"게시글 내용 가져오는 중: {article_url}")
     try:
         driver.get(article_url)
-        time.sleep(5)  # 페이지 로딩 대기 시간 증가
+        time.sleep(5)
         
-        # 디버깅: 현재 페이지 정보 출력
         log(f"현재 URL: {driver.current_url}")
         
-        # iframe 찾기
-        iframes = driver.find_elements(By.TAG_NAME, "iframe")
-        log(f"발견된 iframe 개수: {len(iframes)}")
+        # 게시글 본문 찾기 (여러 셀렉터 시도)
+        content_selectors = [
+            "div.ArticleContentBox",
+            "div[class*='article_viewer']",
+            "div.se-main-container",
+            "div[class*='content']"
+        ]
         
-        for idx, iframe in enumerate(iframes):
-            iframe_id = iframe.get_attribute("id")
-            iframe_name = iframe.get_attribute("name")
-            log(f"  iframe[{idx}]: id='{iframe_id}', name='{iframe_name}'")
+        content_element = None
+        for selector in content_selectors:
+            try:
+                log(f"본문 시도: {selector}")
+                content_element = WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, selector))
+                )
+                log(f"✅ 본문 발견: {selector}")
+                break
+            except:
+                continue
         
-        log("iframe 대기 중...")
-        # iframe이 로드될 때까지 명시적 대기
-        try:
-            WebDriverWait(driver, 15).until(
-                EC.frame_to_be_available_and_switch_to_it("cafe_main")
-            )
-            log("iframe 전환 완료")
-        except Exception as e:
-            log(f"cafe_main iframe을 찾을 수 없음. 다른 방법 시도 중...", "WARN")
-            # 첫 번째 iframe으로 시도
-            if len(iframes) > 0:
-                log(f"첫 번째 iframe으로 전환 시도: {iframes[0].get_attribute('id') or iframes[0].get_attribute('name')}")
-                driver.switch_to.frame(iframes[0])
-                log("첫 번째 iframe 전환 완료")
-            else:
-                raise Exception("iframe을 전혀 찾을 수 없습니다")
-        
-        log("본문 찾는 중...")
-        content_element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".se-main-container"))
-        )
+        if not content_element:
+            log("❌ 본문을 찾을 수 없음", "ERROR")
+            return None
         
         content = content_element.text.strip()
         log(f"✅ 본문 가져오기 완료: {len(content)} 글자")
@@ -417,11 +400,6 @@ def get_article_content(driver, article_url):
         log(f"게시글 내용 가져오기 실패: {str(e)}", "ERROR")
         log(traceback.format_exc(), "ERROR")
         return None
-    finally:
-        try:
-            driver.switch_to.default_content()
-        except:
-            pass
 
 def get_current_time_slot():
     hour = datetime.now().hour
@@ -431,11 +409,9 @@ def get_current_time_slot():
 
 def main():
     log("=" * 60)
-    log(f"🚀 RAM 시세 크롤러 시작")
+    log(f"🚀 RAM 시세 크롤러 시작 (신버전 카페 대응)")
     log(f"실행 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     log(f"작업 디렉토리: {BASE_DIR}")
-    log(f"Python 버전: {sys.version}")
-    log(f"GitHub Actions: {os.environ.get('GITHUB_ACTIONS', 'False')}")
     log("=" * 60)
     
     driver = None
@@ -498,10 +474,7 @@ def main():
         if driver:
             log("브라우저 종료 중...")
             driver.quit()
-            log("브라우저 종료 완료")
 
 if __name__ == "__main__":
     success = main()
-    exit_code = 0 if success else 1
-    log(f"프로그램 종료: exit code {exit_code}")
-    sys.exit(exit_code)
+    sys.exit(0 if success else 1)
