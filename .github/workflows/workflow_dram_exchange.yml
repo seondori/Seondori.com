@@ -73,7 +73,7 @@ jobs:
       - name: Trigger Vercel deployment
         if: success()
         run: |
-        curl -X POST "https://api.vercel.com/v1/integrations/deploy/${{ secrets.VERCEL_DEPLOY_HOOK }}"
+          curl -X POST "https://api.vercel.com/v1/integrations/deploy/${{ secrets.VERCEL_DEPLOY_HOOK }}"
         
       - name: Upload logs on failure
         if: failure()
