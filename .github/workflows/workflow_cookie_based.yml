@@ -73,8 +73,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: crawler-logs
-          path: |
-            backend/crawler.log
-            backend/debug_screenshot.png
+          name: crawler-logs-${{ github.run_id }}
+          path: backend/
+          if-no-files-found: warn
           retention-days: 7
