@@ -364,9 +364,20 @@ def get_article_content(driver, article_url):
     log(f"게시글 내용 가져오는 중: {article_url}")
     try:
         driver.get(article_url)
-        time.sleep(7)  # 동적 로딩 대기 시간 증가
+        time.sleep(3)
         
         log(f"현재 URL: {driver.current_url}")
+        
+        # 페이지 끝까지 스크롤 (동적 로딩 트리거)
+        log("페이지 스크롤 중...")
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(2)
+        driver.execute_script("window.scrollTo(0, 0);")
+        time.sleep(3)
+        
+        # 추가 대기 - 본문 로딩 완료까지
+        log("본문 로딩 대기 중... (10초)")
+        time.sleep(10)
         
         # 스크린샷 저장
         try:
@@ -383,19 +394,20 @@ def get_article_content(driver, article_url):
             full_text = body.text
             log(f"페이지 전체 텍스트: {len(full_text)} 글자")
             
-            # 디버깅: 텍스트 일부 출력
-            log(f"텍스트 샘플 (처음 200자): {full_text[:200]}")
+            # 디버깅: 텍스트 일부 출력 (더 많이)
+            log(f"텍스트 샘플 (처음 500자): {full_text[:500]}")
+            log(f"텍스트 샘플 (중간 500자): {full_text[1000:1500] if len(full_text) > 1500 else 'N/A'}")
             
-            # RAM 시세 관련 키워드가 있는지 확인 (더 관대하게)
+            # RAM 시세 관련 키워드가 있는지 확인
             keywords = ["DDR", "삼성", "PC4", "PC3", "D5", "RAM", "램", "메모리", "채굴"]
             found_keywords = [kw for kw in keywords if kw in full_text]
             log(f"발견된 키워드: {found_keywords}")
             
-            if found_keywords:
+            if found_keywords and len(full_text) > 500:  # 최소 500자 이상
                 log(f"✅ RAM 시세 키워드 발견 - 전체 텍스트 사용 (키워드: {', '.join(found_keywords)})")
                 return full_text
             else:
-                log("⚠️ RAM 시세 키워드를 찾지 못함 - 다른 방법 시도", "WARN")
+                log(f"⚠️ 조건 미충족 - 키워드: {len(found_keywords)}개, 길이: {len(full_text)}자", "WARN")
         except Exception as e:
             log(f"전체 텍스트 추출 실패: {str(e)}", "WARN")
         
