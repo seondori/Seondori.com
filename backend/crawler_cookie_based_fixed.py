@@ -383,10 +383,19 @@ def get_article_content(driver, article_url):
             full_text = body.text
             log(f"페이지 전체 텍스트: {len(full_text)} 글자")
             
-            # RAM 시세 관련 키워드가 있는지 확인
-            if any(keyword in full_text for keyword in ["DDR", "삼성", "PC4", "PC3", "D5"]):
-                log("✅ RAM 시세 키워드 발견 - 전체 텍스트 사용")
+            # 디버깅: 텍스트 일부 출력
+            log(f"텍스트 샘플 (처음 200자): {full_text[:200]}")
+            
+            # RAM 시세 관련 키워드가 있는지 확인 (더 관대하게)
+            keywords = ["DDR", "삼성", "PC4", "PC3", "D5", "RAM", "램", "메모리", "채굴"]
+            found_keywords = [kw for kw in keywords if kw in full_text]
+            log(f"발견된 키워드: {found_keywords}")
+            
+            if found_keywords:
+                log(f"✅ RAM 시세 키워드 발견 - 전체 텍스트 사용 (키워드: {', '.join(found_keywords)})")
                 return full_text
+            else:
+                log("⚠️ RAM 시세 키워드를 찾지 못함 - 다른 방법 시도", "WARN")
         except Exception as e:
             log(f"전체 텍스트 추출 실패: {str(e)}", "WARN")
         
