@@ -70,7 +70,11 @@ jobs:
             git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
             git push
           fi
-
+      - name: Trigger Vercel deployment
+        if: success()
+        run: |
+        curl -X POST "https://api.vercel.com/v1/integrations/deploy/${{ secrets.VERCEL_DEPLOY_HOOK }}"
+        
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
