@@ -227,22 +227,32 @@ async def get_market_data(period: str = "1개월"):
     except: pass
     return result
 
+# main (2).py 수정 부분
+
 @app.get("/api/dramexchange-data")
 async def get_dramexchange_data():
-    """DRAMeXchange 데이터 반환"""
-    dram_file = os.path.join(BASE_DIR, "dramexchange_data.json")
-    
-    if not os.path.exists(dram_file):
-        # 데이터 파일이 없으면 빈 구조 반환
-        return {
-            "price_data": {},
-            "price_history": {}
-        }
-    
-    with open(dram_file, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    return data
+    """DRAMeXchange 최신 데이터 파일을 찾아 반환"""
+    try:
+        # dram_exchange_로 시작하는 모든 json 파일을 찾음
+        dram_files = glob.glob(os.path.join(BASE_DIR, "dram_exchange_*.json"))
+        
+        if not dram_files:
+            # 파일이 없을 경우 기존 백업용 파일명 확인
+            fallback_file = os.path.join(BASE_DIR, "dramexchange_data.json")
+            if os.path.exists(fallback_file):
+                with open(fallback_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            return {"price_data": {}, "price_history": {}}
+
+        # 파일 이름 정렬 후 가장 마지막(최신) 파일 선택
+        latest_file = sorted(dram_files)[-1]
+        
+        with open(latest_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            return data
+    except Exception as e:
+        print(f"DRAMeXchange data error: {e}")
+        return {"price_data": {}, "price_history": {}, "error": str(e)}
 
 @app.get("/api/ram-data")
 async def get_ram_data():
