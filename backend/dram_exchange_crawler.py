@@ -72,20 +72,6 @@ def parse_dram_exchange_price(price_str):
 def crawl_dram_exchange():
     """
     DRAM Exchange에서 RAM 시세 데이터 크롤링
-    
-    Returns:
-        dict: {
-            "status": "success/error",
-            "timestamp": "2026-02-06 11:00",
-            "data": {
-                "DDR5": [
-                    {"product": "DDR5 16Gb (2Gx8) 4800/5600", "high": 52.00, "low": 25.50, ...},
-                    ...
-                ],
-                "DDR4": [...],
-                "DDR3": [...]
-            }
-        }
     """
     driver = None
     try:
@@ -104,7 +90,7 @@ def crawl_dram_exchange():
         # DDR5, DDR4, DDR3 섹션 찾기
         results = {}
         
-        # ⭐ 핵심: 테이블 셀렉터 (DRAM Exchange 구조에 따라 수정 필요)
+        # ⭐ 핵심: 테이블 셀렉터
         try:
             # 방법 1: 테이블 행 찾기
             rows = driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
@@ -142,7 +128,7 @@ def crawl_dram_exchange():
                     if current_category not in results:
                         results[current_category] = []
                     
-                    # 가격 데이터 추출 (열 순서: Product, High, Low, Session High, Session Low, Average, Change)
+                    # 가격 데이터 추출
                     try:
                         data_point = {
                             "product": product_cell,
@@ -196,44 +182,40 @@ def crawl_dram_exchange():
 
 
 def save_dram_data(data, base_dir="."):
-    """DRAM Exchange 데이터 저장"""
+    """DRAM Exchange 데이터 저장 (단일 파일 덮어쓰기 및 누적)"""
     if data["status"] != "success":
         print(f"❌ 데이터 저장 실패: {data['message']}")
         return False
     
-    # 파일명: dram_exchange_2026-02-06_11-00.json
-    now = datetime.now()
-    filename = f"dram_exchange_{now.strftime('%Y-%m-%d_%H-%M')}.json"
+    # ⭐ [수정됨] 파일명을 고정 (날짜 제거)
+    filename = "dram_exchange_data.json"
     filepath = os.path.join(base_dir, filename)
     
-    # 기존 데이터 로드 (누적용)
+    # 데이터 구조 초기화
     dram_data = {
-        "price_data": data["data"],
+        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "current_data": data["data"], # 현재 시세
         "price_history": {}
     }
     
-    # 이전 파일들 찾기 (누적 데이터 구조 유지)
-    import glob
-    files = glob.glob(os.path.join(base_dir, "dram_exchange_*.json"))
-    
-    if files:
-        latest_file = sorted(files)[-1]
+    # ⭐ [수정됨] 기존 파일이 있다면 로드하여 히스토리 유지
+    if os.path.exists(filepath):
         try:
-            with open(latest_file, 'r', encoding='utf-8') as f:
+            with open(filepath, 'r', encoding='utf-8') as f:
                 existing_data = json.load(f)
             dram_data["price_history"] = existing_data.get("price_history", {})
-        except:
-            pass
+        except Exception as e:
+            print(f"⚠️ 기존 데이터 로드 실패 (새로 생성): {e}")
     
-    # 현재 데이터를 히스토리에 추가
-    history_key = now.strftime("%Y-%m-%d %H:%M")
-    dram_data["price_history"][history_key] = data["data"]
+    # 현재 데이터를 히스토리에 추가 (키: 날짜시간)
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    dram_data["price_history"][now_str] = data["data"]
     
-    # 파일 저장
+    # 파일 저장 (덮어쓰기)
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(dram_data, f, ensure_ascii=False, indent=2)
     
-    print(f"✅ 데이터 저장 완료: {filepath}")
+    print(f"✅ 데이터 업데이트 완료: {filepath}")
     return True
 
 
@@ -250,11 +232,6 @@ if __name__ == "__main__":
     
     if data["status"] == "success":
         print(f"\n📊 크롤링 결과: {data['count']}개 제품")
-        for category, products in data["data"].items():
-            print(f"\n  {category}:")
-            for p in products[:3]:  # 처음 3개만 출력
-                print(f"    - {p['product']}: ${p['session_average']:.2f}")
-        
         # 저장
         save_dram_data(data)
     else:
