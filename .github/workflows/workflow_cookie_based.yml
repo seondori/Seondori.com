@@ -44,7 +44,7 @@ jobs:
           GITHUB_ACTIONS: true
         run: |
           cd backend
-          python crawler_cookie_based.py
+          python crawler_cookie_based_fixed.py
 
       - name: Check crawler results
         if: always()
