@@ -364,20 +364,19 @@ def get_article_content(driver, article_url):
     log(f"게시글 내용 가져오는 중: {article_url}")
     try:
         driver.get(article_url)
-        time.sleep(3)
+        time.sleep(5)
         
         log(f"현재 URL: {driver.current_url}")
         
-        # 페이지 끝까지 스크롤 (동적 로딩 트리거)
+        # 페이지 끝까지 스크롤 여러 번 (동적 로딩 트리거)
         log("페이지 스크롤 중...")
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)
-        driver.execute_script("window.scrollTo(0, 0);")
-        time.sleep(3)
+        for _ in range(3):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(1)
+            driver.execute_script("window.scrollTo(0, 0);")
+            time.sleep(1)
         
-        # 추가 대기 - 본문 로딩 완료까지
-        log("본문 로딩 대기 중... (10초)")
-        time.sleep(10)
+        time.sleep(5)
         
         # 스크린샷 저장
         try:
@@ -387,29 +386,104 @@ def get_article_content(driver, article_url):
         except:
             pass
         
-        # 방법 1: 페이지 전체 텍스트에서 추출
-        log("방법 1: 페이지 전체 body에서 텍스트 추출 시도")
+        # 방법 1: JavaScript로 직접 모든 텍스트 추출
+        log("방법 1: JavaScript로 모든 텍스트 추출")
         try:
-            body = driver.find_element(By.TAG_NAME, "body")
-            full_text = body.text
-            log(f"페이지 전체 텍스트: {len(full_text)} 글자")
+            full_text = driver.execute_script("""
+                // 모든 텍스트 노드 수집
+                function getAllText() {
+                    return document.body.innerText || document.body.textContent || '';
+                }
+                return getAllText();
+            """)
+            log(f"JavaScript 추출 텍스트: {len(full_text)} 글자")
+            log(f"텍스트 샘플: {full_text[:1000]}")
             
-            # 디버깅: 텍스트 일부 출력 (더 많이)
-            log(f"텍스트 샘플 (처음 500자): {full_text[:500]}")
-            log(f"텍스트 샘플 (중간 500자): {full_text[1000:1500] if len(full_text) > 1500 else 'N/A'}")
-            
-            # RAM 시세 관련 키워드가 있는지 확인
-            keywords = ["DDR", "삼성", "PC4", "PC3", "D5", "RAM", "램", "메모리", "채굴"]
-            found_keywords = [kw for kw in keywords if kw in full_text]
-            log(f"발견된 키워드: {found_keywords}")
-            
-            if found_keywords and len(full_text) > 500:  # 최소 500자 이상
-                log(f"✅ RAM 시세 키워드 발견 - 전체 텍스트 사용 (키워드: {', '.join(found_keywords)})")
-                return full_text
-            else:
-                log(f"⚠️ 조건 미충족 - 키워드: {len(found_keywords)}개, 길이: {len(full_text)}자", "WARN")
+            if len(full_text) > 500:
+                # DDR, 삼성, PC4 등의 패턴 찾기
+                if any(kw in full_text for kw in ["DDR5", "DDR4", "DDR3", "PC4", "PC3", "삼성"]):
+                    log("✅ RAM 시세 패턴 발견 (방법 1)")
+                    return full_text
         except Exception as e:
-            log(f"전체 텍스트 추출 실패: {str(e)}", "WARN")
+            log(f"JavaScript 추출 실패: {str(e)}", "WARN")
+        
+        # 방법 2: 특정 요소들에서 텍스트 수집
+        log("방법 2: 주요 요소에서 텍스트 수집")
+        try:
+            # 가능한 본문 셀렉터들
+            selectors = [
+                "div[class*='ArticleContentBox']",
+                "div[class*='article']",
+                "div[class*='content']",
+                "div[class*='Article']", 
+                "main",
+                "article",
+                "#app"
+            ]
+            
+            all_texts = []
+            for selector in selectors:
+                try:
+                    elements = driver.find_elements(By.CSS_SELECTOR, selector)
+                    for elem in elements:
+                        text = elem.text.strip()
+                        if len(text) > 100:
+                            all_texts.append(text)
+                            log(f"  {selector}: {len(text)} 글자")
+                except:
+                    continue
+            
+            if all_texts:
+                # 가장 긴 텍스트 사용
+                longest = max(all_texts, key=len)
+                log(f"✅ 가장 긴 텍스트: {len(longest)} 글자")
+                
+                if any(kw in longest for kw in ["DDR", "삼성", "PC4", "PC3"]):
+                    return longest
+        except Exception as e:
+            log(f"요소 수집 실패: {str(e)}", "WARN")
+        
+        # 방법 3: HTML 전체에서 정규식으로 추출
+        log("방법 3: HTML에서 RAM 데이터 정규식 추출")
+        try:
+            html_source = driver.page_source
+            log(f"HTML 소스 길이: {len(html_source)} 글자")
+            
+            # RAM 시세 패턴 찾기
+            import re
+            patterns = [
+                r'(데스크탑|노트북).{0,20}DDR[345]',
+                r'삼성.{0,50}(\d+G).{0,50}(PC[34]|D5)',
+                r'DDR[345].{0,200}원'
+            ]
+            
+            matches = []
+            for pattern in patterns:
+                found = re.findall(pattern, html_source, re.IGNORECASE)
+                if found:
+                    matches.extend(found)
+                    log(f"  패턴 매칭: {pattern} → {len(found)}개")
+            
+            if matches:
+                log(f"✅ HTML에서 RAM 관련 패턴 발견: {len(matches)}개")
+                # HTML에서 script, style 제거 후 텍스트 추출
+                import re as regex
+                clean_html = regex.sub(r'<script[^>]*>.*?</script>', '', html_source, flags=regex.DOTALL)
+                clean_html = regex.sub(r'<style[^>]*>.*?</style>', '', clean_html, flags=regex.DOTALL)
+                clean_html = regex.sub(r'<[^>]+>', ' ', clean_html)
+                clean_text = regex.sub(r'\s+', ' ', clean_html).strip()
+                log(f"정제된 텍스트: {len(clean_text)} 글자")
+                return clean_text
+        except Exception as e:
+            log(f"HTML 추출 실패: {str(e)}", "WARN")
+        
+        log("❌ 모든 방법 실패", "ERROR")
+        return None
+        
+    except Exception as e:
+        log(f"게시글 내용 가져오기 실패: {str(e)}", "ERROR")
+        log(traceback.format_exc(), "ERROR")
+        return None
         
         # 방법 2: 게시글 본문 찾기 (여러 셀렉터 시도)
         content_selectors = [
