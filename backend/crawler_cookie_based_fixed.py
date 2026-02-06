@@ -371,9 +371,9 @@ def get_article_content(driver, article_url):
         # 본문이 실제로 로드될 때까지 대기 (핵심!)
         log("본문 로드 대기 중...")
         try:
-            # "구입", "구매", "채굴기" 같은 키워드가 포함된 텍스트가 나타날 때까지 대기
+            
             WebDriverWait(driver, 20).until(
-                lambda d: "구입" in d.page_source or "구매" in d.page_source or "채굴" in d.page_source
+                lambda d: "DDR" in d.page_source or "삼성" in d.page_source or "RAM" in d.page_source
             )
             log("✅ 본문 키워드 감지됨")
         except:
