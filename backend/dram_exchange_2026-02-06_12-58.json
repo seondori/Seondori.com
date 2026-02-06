@@ -1,0 +1,1324 @@
+{
+  "price_data": {
+    "DDR5": [
+      {
+        "product": "DDR5 16Gb (2Gx8) 4800/5600",
+        "daily_high": 53.0,
+        "daily_low": 25.5,
+        "session_high": 53.0,
+        "session_low": 25.5,
+        "session_average": 38.0,
+        "session_change": "0.18 %"
+      },
+      {
+        "product": "DDR5 16Gb (2Gx8) eTT",
+        "daily_high": 21.2,
+        "daily_low": 18.7,
+        "session_high": 21.2,
+        "session_low": 18.7,
+        "session_average": 19.7,
+        "session_change": "0.00 %"
+      },
+      {
+        "product": "DDR5 UDIMM 16GB 4800/5600",
+        "daily_high": 280.0,
+        "daily_low": 230.0,
+        "session_high": 280.0,
+        "session_low": 230.0,
+        "session_average": 250.0,
+        "session_change": "16.28 %"
+      },
+      {
+        "product": "DDR5 RDIMM 32GB 4800/5600",
+        "daily_high": 1000.0,
+        "daily_low": 700.0,
+        "session_high": 1000.0,
+        "session_low": 700.0,
+        "session_average": 850.0,
+        "session_change": "18.88 %"
+      },
+      {
+        "product": "GDDR5 8Gb",
+        "daily_high": 15.5,
+        "daily_low": 7.0,
+        "session_high": 15.5,
+        "session_low": 7.0,
+        "session_average": 8.682,
+        "session_change": "10.15 %"
+      },
+      {
+        "product": "GDDR6 8Gb",
+        "daily_high": 16.0,
+        "daily_low": 7.5,
+        "session_high": 16.0,
+        "session_low": 7.5,
+        "session_average": 8.865,
+        "session_change": "10.29 %"
+      },
+      {
+        "product": "LPDDR 3 32Gb",
+        "daily_high": 316.0,
+        "daily_low": 38.0,
+        "session_high": 0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "LPDDR 4 32Gb",
+        "daily_high": 416.0,
+        "daily_low": 48.0,
+        "session_high": 0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "512Gb TLC",
+        "daily_high": 17.5,
+        "daily_low": 14.5,
+        "session_high": 17.5,
+        "session_low": 14.5,
+        "session_average": 16.31,
+        "session_change": "5.58 %"
+      },
+      {
+        "product": "256Gb TLC",
+        "daily_high": 8.5,
+        "daily_low": 7.0,
+        "session_high": 8.5,
+        "session_low": 7.0,
+        "session_average": 7.572,
+        "session_change": "0.00 %"
+      },
+      {
+        "product": "128Gb TLC",
+        "daily_high": 6.0,
+        "daily_low": 4.0,
+        "session_high": 6.0,
+        "session_low": 4.0,
+        "session_average": 4.987,
+        "session_change": "0.00 %"
+      },
+      {
+        "product": "eMMC 128GB",
+        "daily_high": 64.0,
+        "daily_low": 32.0,
+        "session_high": 0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "eMMC 16GB",
+        "daily_high": 8.0,
+        "daily_low": 4.0,
+        "session_high": 0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "MicroSD 16GB",
+        "daily_high": 2.7,
+        "daily_low": 2.15,
+        "session_high": 2.7,
+        "session_low": 2.15,
+        "session_average": 2.24,
+        "session_change": "0.67 %"
+      },
+      {
+        "product": "MicroSD 32GB",
+        "daily_high": 4.7,
+        "daily_low": 3.9,
+        "session_high": 4.7,
+        "session_low": 3.9,
+        "session_average": 4.285,
+        "session_change": "9.87 %"
+      },
+      {
+        "product": "MicroSD 64GB",
+        "daily_high": 6.6,
+        "daily_low": 5.7,
+        "session_high": 6.6,
+        "session_low": 5.7,
+        "session_average": 6.0,
+        "session_change": "4.35 %"
+      },
+      {
+        "product": "MicroSD 128GB",
+        "daily_high": 13.5,
+        "daily_low": 11.3,
+        "session_high": 13.5,
+        "session_low": 11.3,
+        "session_average": 11.8,
+        "session_change": "10.80 %"
+      },
+      {
+        "product": "LPDDR5X 16GB",
+        "daily_high": 512.0,
+        "daily_low": 58.0,
+        "session_high": 0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "1TB-mSATA/M.2 TLC PCIe-Value Grade",
+        "daily_high": 76.0,
+        "daily_low": 70.0,
+        "session_high": 73.2,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "512GB-mSATA/M.2 TLC PCIe-Value Grade",
+        "daily_high": 48.0,
+        "daily_low": 44.0,
+        "session_high": 46.4,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "256GB-mSATA/M.2 TLC PCIe-Value Grade",
+        "daily_high": 32.0,
+        "daily_low": 28.0,
+        "session_high": 30.0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "ADATA",
+        "daily_high": 4.04,
+        "daily_low": 70.0,
+        "session_high": 1.0,
+        "session_low": 185.23,
+        "session_average": 185.23,
+        "session_change": "185.23"
+      },
+      {
+        "product": "Kimtigo",
+        "daily_high": 4.0,
+        "daily_low": 5000.0,
+        "session_high": 1.0,
+        "session_low": 141.3,
+        "session_average": 108.8,
+        "session_change": "125.00"
+      },
+      {
+        "product": "Samsung",
+        "daily_high": 4.04,
+        "daily_low": 990.0,
+        "session_high": 1.0,
+        "session_low": 199.99,
+        "session_average": 199.99,
+        "session_change": "199.99"
+      },
+      {
+        "product": "Silicon Power",
+        "daily_high": 4.04,
+        "daily_low": 75.0,
+        "session_high": 1.0,
+        "session_low": 155.79,
+        "session_average": 155.79,
+        "session_change": "155.79"
+      },
+      {
+        "product": "DDR5 8GB SO-DIMM",
+        "daily_high": 42.5,
+        "daily_low": 37.0,
+        "session_high": 39.5,
+        "session_low": 8.22,
+        "session_average": 8.82,
+        "session_change": ""
+      }
+    ],
+    "DDR4": [
+      {
+        "product": "DDR4 16Gb (2Gx8) 3200",
+        "daily_high": 92.0,
+        "daily_low": 26.0,
+        "session_high": 92.0,
+        "session_low": 26.0,
+        "session_average": 76.966,
+        "session_change": "0.02 %"
+      },
+      {
+        "product": "DDR4 16Gb (2Gx8) eTT",
+        "daily_high": 14.0,
+        "daily_low": 12.0,
+        "session_high": 14.0,
+        "session_low": 12.0,
+        "session_average": 13.125,
+        "session_change": "0.00 %"
+      },
+      {
+        "product": "DDR4 8Gb (1Gx8) 3200",
+        "daily_high": 47.0,
+        "daily_low": 10.7,
+        "session_high": 47.0,
+        "session_low": 10.7,
+        "session_average": 31.0,
+        "session_change": "0.52 %"
+      },
+      {
+        "product": "DDR4 8Gb (1Gx8) eTT",
+        "daily_high": 7.8,
+        "daily_low": 5.75,
+        "session_high": 7.8,
+        "session_low": 5.75,
+        "session_average": 6.655,
+        "session_change": "0.00 %"
+      },
+      {
+        "product": "DDR4 UDIMM 16GB 3200",
+        "daily_high": 145.0,
+        "daily_low": 95.0,
+        "session_high": 145.0,
+        "session_low": 95.0,
+        "session_average": 110.0,
+        "session_change": "10.37 %"
+      },
+      {
+        "product": "SLC 2Gb 256MBx8",
+        "daily_high": 2.4,
+        "daily_low": 1.7,
+        "session_high": 2.4,
+        "session_low": 1.7,
+        "session_average": 1.967,
+        "session_change": "7.37 %"
+      },
+      {
+        "product": "SLC 1Gb 128MBx8",
+        "daily_high": 2.2,
+        "daily_low": 1.5,
+        "session_high": 2.2,
+        "session_low": 1.5,
+        "session_average": 1.623,
+        "session_change": "6.92 %"
+      },
+      {
+        "product": "MLC 64Gb 8GBx8",
+        "daily_high": 8.0,
+        "daily_low": 7.4,
+        "session_high": 8.0,
+        "session_low": 7.4,
+        "session_average": 7.7,
+        "session_change": "2.33 %"
+      },
+      {
+        "product": "MLC 32Gb 4GBx8",
+        "daily_high": 6.2,
+        "daily_low": 4.35,
+        "session_high": 6.2,
+        "session_low": 4.35,
+        "session_average": 4.905,
+        "session_change": "4.14 %"
+      },
+      {
+        "product": "eMMC 16GB MLC",
+        "daily_high": 64.0,
+        "daily_low": 256.0,
+        "session_high": 0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "eMMC 8GB MLC",
+        "daily_high": 32.0,
+        "daily_low": 128.0,
+        "session_high": 0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      },
+      {
+        "product": "DDR4 16GB SO-DIMM",
+        "daily_high": 113.5,
+        "daily_low": 49.0,
+        "session_high": 87.0,
+        "session_low": 18.37,
+        "session_average": 0.0,
+        "session_change": ""
+      },
+      {
+        "product": "DDR4 8GB SO-DIMM",
+        "daily_high": 57.0,
+        "daily_low": 25.5,
+        "session_high": 46.5,
+        "session_low": 19.23,
+        "session_average": 0.0,
+        "session_change": ""
+      },
+      {
+        "product": "DDR4 16Gb 2Gx8",
+        "daily_high": 22.2,
+        "daily_low": 19.8,
+        "session_high": 21.0,
+        "session_low": 16.67,
+        "session_average": 16.47,
+        "session_change": ""
+      },
+      {
+        "product": "DDR4 8Gb 1Gx8",
+        "daily_high": 10.2,
+        "daily_low": 8.5,
+        "session_high": 9.3,
+        "session_low": 14.82,
+        "session_average": 14.87,
+        "session_change": ""
+      },
+      {
+        "product": "DDR4 4Gb 256Mx16",
+        "daily_high": 5.0,
+        "daily_low": 4.0,
+        "session_high": 4.5,
+        "session_low": 36.36,
+        "session_average": 42.86,
+        "session_change": ""
+      }
+    ],
+    "DDR3": [
+      {
+        "product": "DDR3 4Gb 512Mx8 1600/1866",
+        "daily_high": 5.8,
+        "daily_low": 4.5,
+        "session_high": 5.8,
+        "session_low": 4.5,
+        "session_average": 5.495,
+        "session_change": "0.27 %"
+      },
+      {
+        "product": "DDR3 4Gb 256Mx16",
+        "daily_high": 4.5,
+        "daily_low": 3.6,
+        "session_high": 4.0,
+        "session_low": 48.15,
+        "session_average": 50.0,
+        "session_change": ""
+      },
+      {
+        "product": "NAND 128Gb 16Gx8 MLC",
+        "daily_high": 5.8,
+        "daily_low": 5.6,
+        "session_high": 5.738,
+        "session_low": 10.56,
+        "session_average": 9.8,
+        "session_change": ""
+      },
+      {
+        "product": "NAND 64Gb 8Gx8 MLC",
+        "daily_high": 5.0,
+        "daily_low": 4.25,
+        "session_high": 4.59,
+        "session_low": 14.18,
+        "session_average": 11.84,
+        "session_change": ""
+      },
+      {
+        "product": "NAND 32Gb 4Gx8 MLC",
+        "daily_high": 3.8,
+        "daily_low": 3.35,
+        "session_high": 3.66,
+        "session_low": 11.08,
+        "session_average": 8.07,
+        "session_change": ""
+      },
+      {
+        "product": "TLC 1Tb",
+        "daily_high": 512.0,
+        "daily_low": 256.0,
+        "session_high": 0,
+        "session_low": 0,
+        "session_average": 0,
+        "session_change": "N/A"
+      }
+    ]
+  },
+  "price_history": {
+    "2026-02-06 05:03": {
+      "DDR5": [
+        {
+          "product": "DDR5 16Gb (2Gx8) 4800/5600",
+          "daily_high": 52.0,
+          "daily_low": 25.5,
+          "session_high": 52.0,
+          "session_low": 25.5,
+          "session_average": 37.9,
+          "session_change": "-0.09 %"
+        },
+        {
+          "product": "DDR5 16Gb (2Gx8) eTT",
+          "daily_high": 21.2,
+          "daily_low": 18.7,
+          "session_high": 21.2,
+          "session_low": 18.7,
+          "session_average": 19.7,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "DDR5 UDIMM 16GB 4800/5600",
+          "daily_high": 280.0,
+          "daily_low": 230.0,
+          "session_high": 280.0,
+          "session_low": 230.0,
+          "session_average": 250.0,
+          "session_change": "16.28 %"
+        },
+        {
+          "product": "DDR5 RDIMM 32GB 4800/5600",
+          "daily_high": 1000.0,
+          "daily_low": 700.0,
+          "session_high": 1000.0,
+          "session_low": 700.0,
+          "session_average": 850.0,
+          "session_change": "18.88 %"
+        },
+        {
+          "product": "GDDR5 8Gb",
+          "daily_high": 15.5,
+          "daily_low": 7.0,
+          "session_high": 15.5,
+          "session_low": 7.0,
+          "session_average": 8.682,
+          "session_change": "10.15 %"
+        },
+        {
+          "product": "GDDR6 8Gb",
+          "daily_high": 16.0,
+          "daily_low": 7.5,
+          "session_high": 16.0,
+          "session_low": 7.5,
+          "session_average": 8.865,
+          "session_change": "10.29 %"
+        },
+        {
+          "product": "LPDDR 3 32Gb",
+          "daily_high": 316.0,
+          "daily_low": 38.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "LPDDR 4 32Gb",
+          "daily_high": 416.0,
+          "daily_low": 48.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "512Gb TLC",
+          "daily_high": 17.5,
+          "daily_low": 14.5,
+          "session_high": 17.5,
+          "session_low": 14.5,
+          "session_average": 16.31,
+          "session_change": "5.58 %"
+        },
+        {
+          "product": "256Gb TLC",
+          "daily_high": 8.5,
+          "daily_low": 7.0,
+          "session_high": 8.5,
+          "session_low": 7.0,
+          "session_average": 7.572,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "128Gb TLC",
+          "daily_high": 6.0,
+          "daily_low": 4.0,
+          "session_high": 6.0,
+          "session_low": 4.0,
+          "session_average": 4.987,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "eMMC 128GB",
+          "daily_high": 64.0,
+          "daily_low": 32.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "eMMC 16GB",
+          "daily_high": 8.0,
+          "daily_low": 4.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "MicroSD 16GB",
+          "daily_high": 2.7,
+          "daily_low": 2.15,
+          "session_high": 2.7,
+          "session_low": 2.15,
+          "session_average": 2.24,
+          "session_change": "0.67 %"
+        },
+        {
+          "product": "MicroSD 32GB",
+          "daily_high": 4.7,
+          "daily_low": 3.9,
+          "session_high": 4.7,
+          "session_low": 3.9,
+          "session_average": 4.285,
+          "session_change": "9.87 %"
+        },
+        {
+          "product": "MicroSD 64GB",
+          "daily_high": 6.6,
+          "daily_low": 5.7,
+          "session_high": 6.6,
+          "session_low": 5.7,
+          "session_average": 6.0,
+          "session_change": "4.35 %"
+        },
+        {
+          "product": "MicroSD 128GB",
+          "daily_high": 13.5,
+          "daily_low": 11.3,
+          "session_high": 13.5,
+          "session_low": 11.3,
+          "session_average": 11.8,
+          "session_change": "10.80 %"
+        },
+        {
+          "product": "LPDDR5X 16GB",
+          "daily_high": 512.0,
+          "daily_low": 58.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "1TB-mSATA/M.2 TLC PCIe-Value Grade",
+          "daily_high": 76.0,
+          "daily_low": 70.0,
+          "session_high": 73.2,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "512GB-mSATA/M.2 TLC PCIe-Value Grade",
+          "daily_high": 48.0,
+          "daily_low": 44.0,
+          "session_high": 46.4,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "256GB-mSATA/M.2 TLC PCIe-Value Grade",
+          "daily_high": 32.0,
+          "daily_low": 28.0,
+          "session_high": 30.0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "ADATA",
+          "daily_high": 4.04,
+          "daily_low": 70.0,
+          "session_high": 1.0,
+          "session_low": 185.23,
+          "session_average": 185.23,
+          "session_change": "185.23"
+        },
+        {
+          "product": "Kimtigo",
+          "daily_high": 4.0,
+          "daily_low": 5000.0,
+          "session_high": 1.0,
+          "session_low": 141.3,
+          "session_average": 108.8,
+          "session_change": "125.00"
+        },
+        {
+          "product": "Samsung",
+          "daily_high": 4.04,
+          "daily_low": 990.0,
+          "session_high": 1.0,
+          "session_low": 199.99,
+          "session_average": 199.99,
+          "session_change": "199.99"
+        },
+        {
+          "product": "Silicon Power",
+          "daily_high": 4.04,
+          "daily_low": 75.0,
+          "session_high": 1.0,
+          "session_low": 155.79,
+          "session_average": 155.79,
+          "session_change": "155.79"
+        },
+        {
+          "product": "DDR5 8GB SO-DIMM",
+          "daily_high": 42.5,
+          "daily_low": 37.0,
+          "session_high": 39.5,
+          "session_low": 8.22,
+          "session_average": 8.82,
+          "session_change": ""
+        }
+      ],
+      "DDR4": [
+        {
+          "product": "DDR4 16Gb (2Gx8) 3200",
+          "daily_high": 90.0,
+          "daily_low": 26.0,
+          "session_high": 90.0,
+          "session_low": 26.0,
+          "session_average": 76.831,
+          "session_change": "-0.15 %"
+        },
+        {
+          "product": "DDR4 16Gb (2Gx8) eTT",
+          "daily_high": 14.0,
+          "daily_low": 12.0,
+          "session_high": 14.0,
+          "session_low": 12.0,
+          "session_average": 13.125,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "DDR4 8Gb (1Gx8) 3200",
+          "daily_high": 45.0,
+          "daily_low": 10.7,
+          "session_high": 45.0,
+          "session_low": 10.7,
+          "session_average": 30.78,
+          "session_change": "-0.20 %"
+        },
+        {
+          "product": "DDR4 8Gb (1Gx8) eTT",
+          "daily_high": 7.8,
+          "daily_low": 5.75,
+          "session_high": 7.8,
+          "session_low": 5.75,
+          "session_average": 6.655,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "DDR4 UDIMM 16GB 3200",
+          "daily_high": 145.0,
+          "daily_low": 95.0,
+          "session_high": 145.0,
+          "session_low": 95.0,
+          "session_average": 110.0,
+          "session_change": "10.37 %"
+        },
+        {
+          "product": "SLC 2Gb 256MBx8",
+          "daily_high": 2.4,
+          "daily_low": 1.7,
+          "session_high": 2.4,
+          "session_low": 1.7,
+          "session_average": 1.967,
+          "session_change": "7.37 %"
+        },
+        {
+          "product": "SLC 1Gb 128MBx8",
+          "daily_high": 2.2,
+          "daily_low": 1.5,
+          "session_high": 2.2,
+          "session_low": 1.5,
+          "session_average": 1.623,
+          "session_change": "6.92 %"
+        },
+        {
+          "product": "MLC 64Gb 8GBx8",
+          "daily_high": 8.0,
+          "daily_low": 7.4,
+          "session_high": 8.0,
+          "session_low": 7.4,
+          "session_average": 7.7,
+          "session_change": "2.33 %"
+        },
+        {
+          "product": "MLC 32Gb 4GBx8",
+          "daily_high": 6.2,
+          "daily_low": 4.35,
+          "session_high": 6.2,
+          "session_low": 4.35,
+          "session_average": 4.905,
+          "session_change": "4.14 %"
+        },
+        {
+          "product": "eMMC 16GB MLC",
+          "daily_high": 64.0,
+          "daily_low": 256.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "eMMC 8GB MLC",
+          "daily_high": 32.0,
+          "daily_low": 128.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "DDR4 16GB SO-DIMM",
+          "daily_high": 113.5,
+          "daily_low": 49.0,
+          "session_high": 87.0,
+          "session_low": 18.37,
+          "session_average": 0.0,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 8GB SO-DIMM",
+          "daily_high": 57.0,
+          "daily_low": 25.5,
+          "session_high": 46.5,
+          "session_low": 19.23,
+          "session_average": 0.0,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 16Gb 2Gx8",
+          "daily_high": 22.2,
+          "daily_low": 19.8,
+          "session_high": 21.0,
+          "session_low": 16.67,
+          "session_average": 16.47,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 8Gb 1Gx8",
+          "daily_high": 10.2,
+          "daily_low": 8.5,
+          "session_high": 9.3,
+          "session_low": 14.82,
+          "session_average": 14.87,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 4Gb 256Mx16",
+          "daily_high": 5.0,
+          "daily_low": 4.0,
+          "session_high": 4.5,
+          "session_low": 36.36,
+          "session_average": 42.86,
+          "session_change": ""
+        }
+      ],
+      "DDR3": [
+        {
+          "product": "DDR3 4Gb 512Mx8 1600/1866",
+          "daily_high": 5.8,
+          "daily_low": 4.5,
+          "session_high": 5.8,
+          "session_low": 4.5,
+          "session_average": 5.495,
+          "session_change": "0.27 %"
+        },
+        {
+          "product": "DDR3 4Gb 256Mx16",
+          "daily_high": 4.5,
+          "daily_low": 3.6,
+          "session_high": 4.0,
+          "session_low": 48.15,
+          "session_average": 50.0,
+          "session_change": ""
+        },
+        {
+          "product": "NAND 128Gb 16Gx8 MLC",
+          "daily_high": 5.8,
+          "daily_low": 5.6,
+          "session_high": 5.738,
+          "session_low": 10.56,
+          "session_average": 9.8,
+          "session_change": ""
+        },
+        {
+          "product": "NAND 64Gb 8Gx8 MLC",
+          "daily_high": 5.0,
+          "daily_low": 4.25,
+          "session_high": 4.59,
+          "session_low": 14.18,
+          "session_average": 11.84,
+          "session_change": ""
+        },
+        {
+          "product": "NAND 32Gb 4Gx8 MLC",
+          "daily_high": 3.8,
+          "daily_low": 3.35,
+          "session_high": 3.66,
+          "session_low": 11.08,
+          "session_average": 8.07,
+          "session_change": ""
+        },
+        {
+          "product": "TLC 1Tb",
+          "daily_high": 512.0,
+          "daily_low": 256.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        }
+      ]
+    },
+    "2026-02-06 12:58": {
+      "DDR5": [
+        {
+          "product": "DDR5 16Gb (2Gx8) 4800/5600",
+          "daily_high": 53.0,
+          "daily_low": 25.5,
+          "session_high": 53.0,
+          "session_low": 25.5,
+          "session_average": 38.0,
+          "session_change": "0.18 %"
+        },
+        {
+          "product": "DDR5 16Gb (2Gx8) eTT",
+          "daily_high": 21.2,
+          "daily_low": 18.7,
+          "session_high": 21.2,
+          "session_low": 18.7,
+          "session_average": 19.7,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "DDR5 UDIMM 16GB 4800/5600",
+          "daily_high": 280.0,
+          "daily_low": 230.0,
+          "session_high": 280.0,
+          "session_low": 230.0,
+          "session_average": 250.0,
+          "session_change": "16.28 %"
+        },
+        {
+          "product": "DDR5 RDIMM 32GB 4800/5600",
+          "daily_high": 1000.0,
+          "daily_low": 700.0,
+          "session_high": 1000.0,
+          "session_low": 700.0,
+          "session_average": 850.0,
+          "session_change": "18.88 %"
+        },
+        {
+          "product": "GDDR5 8Gb",
+          "daily_high": 15.5,
+          "daily_low": 7.0,
+          "session_high": 15.5,
+          "session_low": 7.0,
+          "session_average": 8.682,
+          "session_change": "10.15 %"
+        },
+        {
+          "product": "GDDR6 8Gb",
+          "daily_high": 16.0,
+          "daily_low": 7.5,
+          "session_high": 16.0,
+          "session_low": 7.5,
+          "session_average": 8.865,
+          "session_change": "10.29 %"
+        },
+        {
+          "product": "LPDDR 3 32Gb",
+          "daily_high": 316.0,
+          "daily_low": 38.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "LPDDR 4 32Gb",
+          "daily_high": 416.0,
+          "daily_low": 48.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "512Gb TLC",
+          "daily_high": 17.5,
+          "daily_low": 14.5,
+          "session_high": 17.5,
+          "session_low": 14.5,
+          "session_average": 16.31,
+          "session_change": "5.58 %"
+        },
+        {
+          "product": "256Gb TLC",
+          "daily_high": 8.5,
+          "daily_low": 7.0,
+          "session_high": 8.5,
+          "session_low": 7.0,
+          "session_average": 7.572,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "128Gb TLC",
+          "daily_high": 6.0,
+          "daily_low": 4.0,
+          "session_high": 6.0,
+          "session_low": 4.0,
+          "session_average": 4.987,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "eMMC 128GB",
+          "daily_high": 64.0,
+          "daily_low": 32.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "eMMC 16GB",
+          "daily_high": 8.0,
+          "daily_low": 4.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "MicroSD 16GB",
+          "daily_high": 2.7,
+          "daily_low": 2.15,
+          "session_high": 2.7,
+          "session_low": 2.15,
+          "session_average": 2.24,
+          "session_change": "0.67 %"
+        },
+        {
+          "product": "MicroSD 32GB",
+          "daily_high": 4.7,
+          "daily_low": 3.9,
+          "session_high": 4.7,
+          "session_low": 3.9,
+          "session_average": 4.285,
+          "session_change": "9.87 %"
+        },
+        {
+          "product": "MicroSD 64GB",
+          "daily_high": 6.6,
+          "daily_low": 5.7,
+          "session_high": 6.6,
+          "session_low": 5.7,
+          "session_average": 6.0,
+          "session_change": "4.35 %"
+        },
+        {
+          "product": "MicroSD 128GB",
+          "daily_high": 13.5,
+          "daily_low": 11.3,
+          "session_high": 13.5,
+          "session_low": 11.3,
+          "session_average": 11.8,
+          "session_change": "10.80 %"
+        },
+        {
+          "product": "LPDDR5X 16GB",
+          "daily_high": 512.0,
+          "daily_low": 58.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "1TB-mSATA/M.2 TLC PCIe-Value Grade",
+          "daily_high": 76.0,
+          "daily_low": 70.0,
+          "session_high": 73.2,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "512GB-mSATA/M.2 TLC PCIe-Value Grade",
+          "daily_high": 48.0,
+          "daily_low": 44.0,
+          "session_high": 46.4,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "256GB-mSATA/M.2 TLC PCIe-Value Grade",
+          "daily_high": 32.0,
+          "daily_low": 28.0,
+          "session_high": 30.0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "ADATA",
+          "daily_high": 4.04,
+          "daily_low": 70.0,
+          "session_high": 1.0,
+          "session_low": 185.23,
+          "session_average": 185.23,
+          "session_change": "185.23"
+        },
+        {
+          "product": "Kimtigo",
+          "daily_high": 4.0,
+          "daily_low": 5000.0,
+          "session_high": 1.0,
+          "session_low": 141.3,
+          "session_average": 108.8,
+          "session_change": "125.00"
+        },
+        {
+          "product": "Samsung",
+          "daily_high": 4.04,
+          "daily_low": 990.0,
+          "session_high": 1.0,
+          "session_low": 199.99,
+          "session_average": 199.99,
+          "session_change": "199.99"
+        },
+        {
+          "product": "Silicon Power",
+          "daily_high": 4.04,
+          "daily_low": 75.0,
+          "session_high": 1.0,
+          "session_low": 155.79,
+          "session_average": 155.79,
+          "session_change": "155.79"
+        },
+        {
+          "product": "DDR5 8GB SO-DIMM",
+          "daily_high": 42.5,
+          "daily_low": 37.0,
+          "session_high": 39.5,
+          "session_low": 8.22,
+          "session_average": 8.82,
+          "session_change": ""
+        }
+      ],
+      "DDR4": [
+        {
+          "product": "DDR4 16Gb (2Gx8) 3200",
+          "daily_high": 92.0,
+          "daily_low": 26.0,
+          "session_high": 92.0,
+          "session_low": 26.0,
+          "session_average": 76.966,
+          "session_change": "0.02 %"
+        },
+        {
+          "product": "DDR4 16Gb (2Gx8) eTT",
+          "daily_high": 14.0,
+          "daily_low": 12.0,
+          "session_high": 14.0,
+          "session_low": 12.0,
+          "session_average": 13.125,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "DDR4 8Gb (1Gx8) 3200",
+          "daily_high": 47.0,
+          "daily_low": 10.7,
+          "session_high": 47.0,
+          "session_low": 10.7,
+          "session_average": 31.0,
+          "session_change": "0.52 %"
+        },
+        {
+          "product": "DDR4 8Gb (1Gx8) eTT",
+          "daily_high": 7.8,
+          "daily_low": 5.75,
+          "session_high": 7.8,
+          "session_low": 5.75,
+          "session_average": 6.655,
+          "session_change": "0.00 %"
+        },
+        {
+          "product": "DDR4 UDIMM 16GB 3200",
+          "daily_high": 145.0,
+          "daily_low": 95.0,
+          "session_high": 145.0,
+          "session_low": 95.0,
+          "session_average": 110.0,
+          "session_change": "10.37 %"
+        },
+        {
+          "product": "SLC 2Gb 256MBx8",
+          "daily_high": 2.4,
+          "daily_low": 1.7,
+          "session_high": 2.4,
+          "session_low": 1.7,
+          "session_average": 1.967,
+          "session_change": "7.37 %"
+        },
+        {
+          "product": "SLC 1Gb 128MBx8",
+          "daily_high": 2.2,
+          "daily_low": 1.5,
+          "session_high": 2.2,
+          "session_low": 1.5,
+          "session_average": 1.623,
+          "session_change": "6.92 %"
+        },
+        {
+          "product": "MLC 64Gb 8GBx8",
+          "daily_high": 8.0,
+          "daily_low": 7.4,
+          "session_high": 8.0,
+          "session_low": 7.4,
+          "session_average": 7.7,
+          "session_change": "2.33 %"
+        },
+        {
+          "product": "MLC 32Gb 4GBx8",
+          "daily_high": 6.2,
+          "daily_low": 4.35,
+          "session_high": 6.2,
+          "session_low": 4.35,
+          "session_average": 4.905,
+          "session_change": "4.14 %"
+        },
+        {
+          "product": "eMMC 16GB MLC",
+          "daily_high": 64.0,
+          "daily_low": 256.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "eMMC 8GB MLC",
+          "daily_high": 32.0,
+          "daily_low": 128.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "DDR4 16GB SO-DIMM",
+          "daily_high": 113.5,
+          "daily_low": 49.0,
+          "session_high": 87.0,
+          "session_low": 18.37,
+          "session_average": 0.0,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 8GB SO-DIMM",
+          "daily_high": 57.0,
+          "daily_low": 25.5,
+          "session_high": 46.5,
+          "session_low": 19.23,
+          "session_average": 0.0,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 16Gb 2Gx8",
+          "daily_high": 22.2,
+          "daily_low": 19.8,
+          "session_high": 21.0,
+          "session_low": 16.67,
+          "session_average": 16.47,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 8Gb 1Gx8",
+          "daily_high": 10.2,
+          "daily_low": 8.5,
+          "session_high": 9.3,
+          "session_low": 14.82,
+          "session_average": 14.87,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 4Gb 256Mx16",
+          "daily_high": 5.0,
+          "daily_low": 4.0,
+          "session_high": 4.5,
+          "session_low": 36.36,
+          "session_average": 42.86,
+          "session_change": ""
+        }
+      ],
+      "DDR3": [
+        {
+          "product": "DDR3 4Gb 512Mx8 1600/1866",
+          "daily_high": 5.8,
+          "daily_low": 4.5,
+          "session_high": 5.8,
+          "session_low": 4.5,
+          "session_average": 5.495,
+          "session_change": "0.27 %"
+        },
+        {
+          "product": "DDR3 4Gb 256Mx16",
+          "daily_high": 4.5,
+          "daily_low": 3.6,
+          "session_high": 4.0,
+          "session_low": 48.15,
+          "session_average": 50.0,
+          "session_change": ""
+        },
+        {
+          "product": "NAND 128Gb 16Gx8 MLC",
+          "daily_high": 5.8,
+          "daily_low": 5.6,
+          "session_high": 5.738,
+          "session_low": 10.56,
+          "session_average": 9.8,
+          "session_change": ""
+        },
+        {
+          "product": "NAND 64Gb 8Gx8 MLC",
+          "daily_high": 5.0,
+          "daily_low": 4.25,
+          "session_high": 4.59,
+          "session_low": 14.18,
+          "session_average": 11.84,
+          "session_change": ""
+        },
+        {
+          "product": "NAND 32Gb 4Gx8 MLC",
+          "daily_high": 3.8,
+          "daily_low": 3.35,
+          "session_high": 3.66,
+          "session_low": 11.08,
+          "session_average": 8.07,
+          "session_change": ""
+        },
+        {
+          "product": "TLC 1Tb",
+          "daily_high": 512.0,
+          "daily_low": 256.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        }
+      ]
+    }
+  }
+}
