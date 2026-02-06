@@ -364,19 +364,32 @@ def get_article_content(driver, article_url):
     log(f"게시글 내용 가져오는 중: {article_url}")
     try:
         driver.get(article_url)
-        time.sleep(5)
+        time.sleep(3)
         
         log(f"현재 URL: {driver.current_url}")
         
-        # 페이지 끝까지 스크롤 여러 번 (동적 로딩 트리거)
+        # 본문이 실제로 로드될 때까지 대기 (핵심!)
+        log("본문 로드 대기 중...")
+        try:
+            # "구입", "구매", "채굴기" 같은 키워드가 포함된 텍스트가 나타날 때까지 대기
+            WebDriverWait(driver, 20).until(
+                lambda d: "구입" in d.page_source or "구매" in d.page_source or "채굴" in d.page_source
+            )
+            log("✅ 본문 키워드 감지됨")
+        except:
+            log("⚠️ 본문 키워드 감지 타임아웃 - 계속 진행", "WARN")
+        
+        time.sleep(3)
+        
+        # 페이지 스크롤 (추가 콘텐츠 로드)
         log("페이지 스크롤 중...")
-        for _ in range(3):
+        for _ in range(2):
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(1)
             driver.execute_script("window.scrollTo(0, 0);")
             time.sleep(1)
         
-        time.sleep(5)
+        time.sleep(2)
         
         # 스크린샷 저장
         try:
@@ -390,20 +403,40 @@ def get_article_content(driver, article_url):
         log("방법 1: JavaScript로 모든 텍스트 추출")
         try:
             full_text = driver.execute_script("""
-                // 모든 텍스트 노드 수집
-                function getAllText() {
-                    return document.body.innerText || document.body.textContent || '';
-                }
-                return getAllText();
+                return document.body.innerText || document.body.textContent || '';
             """)
             log(f"JavaScript 추출 텍스트: {len(full_text)} 글자")
-            log(f"텍스트 샘플: {full_text[:1000]}")
             
-            if len(full_text) > 500:
-                # DDR, 삼성, PC4 등의 패턴 찾기
-                if any(kw in full_text for kw in ["DDR5", "DDR4", "DDR3", "PC4", "PC3", "삼성"]):
-                    log("✅ RAM 시세 패턴 발견 (방법 1)")
+            # 샘플 출력 (본문 시작 부분 찾기)
+            lines = full_text.split('\n')
+            log(f"총 {len(lines)} 줄")
+            
+            # "[구입]" 이나 "베스트코리아" 찾기
+            target_line_idx = -1
+            for idx, line in enumerate(lines):
+                if "[구입]" in line or "베스트코리아" in line or "구매합니다" in line:
+                    target_line_idx = idx
+                    log(f"본문 시작 감지 (줄 {idx}): {line[:50]}")
+                    break
+            
+            if target_line_idx >= 0:
+                # 본문 부분만 추출
+                article_text = '\n'.join(lines[target_line_idx:])
+                log(f"✅ 본문 추출 완료: {len(article_text)} 글자")
+                log(f"본문 샘플: {article_text[:500]}")
+                
+                # "데스크탑 DDR" 같은 시세 키워드 체크
+                if any(kw in article_text for kw in ["데스크탑", "DDR", "삼성", "PC4", "PC3"]):
+                    log("✅ 시세 데이터 패턴 발견")
+                    return article_text
+                else:
+                    log("⚠️ 시세 데이터 패턴 없음 - 전체 텍스트 반환", "WARN")
                     return full_text
+            else:
+                # 본문 시작점을 못 찾으면 전체 반환
+                log("⚠️ 본문 시작점 못 찾음 - 전체 반환", "WARN")
+                return full_text
+                
         except Exception as e:
             log(f"JavaScript 추출 실패: {str(e)}", "WARN")
         
