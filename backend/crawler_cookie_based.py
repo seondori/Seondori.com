@@ -2,6 +2,7 @@
 네이버 카페 RAM 시세 자동 크롤러 (쿠키 기반 로그인)
 - 미리 저장된 쿠키를 사용해서 로그인
 - GitHub Actions 환경에서도 안정적으로 작동
+- UTC -> KST 시간 변환 로직 적용 완료
 """
 
 import os
@@ -9,7 +10,7 @@ import json
 import time
 import re
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta  # ⭐ timedelta 추가됨
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -166,7 +167,6 @@ def setup_driver():
     """Selenium WebDriver 설정"""
     options = Options()
     
-    # GitHub Actions 환경 감지
     if os.environ.get('GITHUB_ACTIONS'):
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
@@ -192,7 +192,6 @@ def load_cookies_from_env():
         return None
     
     try:
-        # Base64로 인코딩된 경우 디코딩
         if cookies_json.startswith('base64:'):
             cookies_json = base64.b64decode(cookies_json[7:]).decode('utf-8')
         
@@ -226,13 +225,11 @@ def add_cookies_to_driver(driver, cookies):
         return False
     
     try:
-        # 먼저 네이버 페이지에 방문해야 쿠키 설정 가능
         driver.get("https://naver.com")
         time.sleep(2)
         
         for cookie in cookies:
             try:
-                # 필요한 필드만 추출
                 cookie_dict = {
                     'name': cookie.get('name'),
                     'value': cookie.get('value'),
@@ -241,11 +238,8 @@ def add_cookies_to_driver(driver, cookies):
                     'secure': cookie.get('secure', False),
                     'httpOnly': cookie.get('httpOnly', False),
                 }
-                
-                # httpOnly나 sameSite 속성이 있으면 제거 (Selenium에서 설정 불가)
                 driver.add_cookie(cookie_dict)
             except Exception as e:
-                # 일부 쿠키 추가 실패는 무시
                 continue
         
         print(f"✅ {len(cookies)}개의 쿠키를 드라이버에 추가")
@@ -261,7 +255,6 @@ def verify_login(driver):
         driver.get("https://naver.com")
         time.sleep(2)
         
-        # 프로필 아이콘이나 로그인 상태 확인
         cookies = driver.get_cookies()
         has_nid_auth = any(c['name'] in ['NID_AUT', 'NID_SES'] for c in cookies)
         
@@ -284,7 +277,6 @@ def search_cafe_post(driver):
     time.sleep(3)
     
     try:
-        # 검색창 찾기 (여러 방식 시도)
         search_selectors = [
             "input[placeholder*='검색']",
             "#topLayerQueryInput",
@@ -311,13 +303,11 @@ def search_cafe_post(driver):
         search_input.send_keys(Keys.RETURN)
         time.sleep(3)
         
-        # iframe 전환 시도
         try:
             driver.switch_to.frame("cafe_main")
         except:
             pass
         
-        # 검색 결과에서 글 찾기
         articles = WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.article, a[class*='article']"))
         )
@@ -330,7 +320,6 @@ def search_cafe_post(driver):
                 print(f"📄 찾은 글: {title}")
                 break
         
-        # iframe 나가기
         try:
             driver.switch_to.default_content()
         except:
@@ -359,13 +348,11 @@ def get_article_content(driver, article_url):
     time.sleep(3)
     
     try:
-        # iframe 전환 시도
         try:
             driver.switch_to.frame("cafe_main")
         except:
             pass
         
-        # 여러 셀렉터 시도
         selectors = [
             ".se-main-container",
             "#postContent",
@@ -387,7 +374,6 @@ def get_article_content(driver, article_url):
             except:
                 continue
         
-        # iframe 나가기
         try:
             driver.switch_to.default_content()
         except:
@@ -408,9 +394,14 @@ def get_article_content(driver, article_url):
         return None
 
 
-def get_current_time_slot():
-    """현재 시간에 맞는 타임슬롯 반환"""
-    hour = datetime.now().hour
+# ⭐ [핵심 수정] KST 시간 변환 로직 적용
+def get_current_time_slot_kst():
+    """현재 한국 시간(KST)에 맞는 타임슬롯 반환"""
+    # UTC + 9시간 = KST
+    utc_now = datetime.now()
+    kst_now = utc_now + timedelta(hours=9)
+    
+    hour = kst_now.hour
     
     if hour < 12:
         return "10:00"
@@ -419,53 +410,52 @@ def get_current_time_slot():
     else:
         return "18:00"
 
+def get_today_kst():
+    """현재 한국 날짜 반환"""
+    utc_now = datetime.now()
+    kst_now = utc_now + timedelta(hours=9)
+    return kst_now.strftime("%Y-%m-%d")
+
 
 def main():
     """메인 실행 함수"""
     print("=" * 60)
-    print("🚀 RAM 시세 자동 크롤러 (쿠키 기반)")
-    print(f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("🚀 RAM 시세 자동 크롤러 (쿠키 기반 + KST 시간)")
+    print(f"📅 Server Time (UTC): {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"🇰🇷 KST Time: {(datetime.now() + timedelta(hours=9)).strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 60)
     
     driver = None
     try:
         driver = setup_driver()
         
-        # 1. 쿠키 로드
         print("\n📥 쿠키 로드 중...")
         cookies = None
         
-        # GitHub Actions 환경에서는 환경변수에서 로드
         if os.environ.get('GITHUB_ACTIONS'):
             cookies = load_cookies_from_env()
         else:
-            # 로컬 환경에서는 파일에서 로드
             cookies = load_cookies_from_file(os.path.join(BASE_DIR, "naver_cookies.json"))
         
         if not cookies:
             print("❌ 쿠키를 로드할 수 없습니다")
             return False
         
-        # 2. 드라이버에 쿠키 추가
         if not add_cookies_to_driver(driver, cookies):
             return False
         
-        # 3. 로그인 상태 확인
         if not verify_login(driver):
             print("❌ 로그인 상태를 확인할 수 없습니다")
             return False
         
-        # 4. 카페 글 검색
         article_url = search_cafe_post(driver)
         if not article_url:
             return False
         
-        # 5. 글 내용 가져오기
         content = get_article_content(driver, article_url)
         if not content:
             return False
         
-        # 6. 파싱
         parsed = parse_price_data(content)
         if not parsed:
             print("❌ 파싱 실패 - 인식된 제품 없음")
@@ -473,9 +463,12 @@ def main():
         
         print(f"✅ 파싱 완료: {sum(len(v) for v in parsed.values())}개 제품")
         
-        # 7. 저장
-        today = datetime.now().strftime("%Y-%m-%d")
-        time_slot = get_current_time_slot()
+        # ⭐ [수정됨] KST 시간 사용
+        today = get_today_kst()
+        time_slot = get_current_time_slot_kst()
+        
+        print(f"💾 저장 시점 (KST): {today} {time_slot}")
+        
         save_data(parsed, today, time_slot)
         
         print("=" * 60)
