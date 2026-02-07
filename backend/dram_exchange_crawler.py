@@ -1,204 +1,119 @@
 """
 DRAM Exchange 크롤링 모듈
-https://www.dramexchange.com/ 웹페이지에서 RAM 시세 데이터 추출
-
-사용 시간:
-- 미국 기준 11:00 (한국 기준 다음날 04:00)
-- 미국 기준 14:40 (한국 기준 다음날 07:40)
-- 미국 기준 18:10 (한국 기준 다음날 11:10)
 """
 
 import os
 import json
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import re
 
-# ============================================
-# DRAM Exchange 크롤링
-# ============================================
-
 def setup_driver():
     """Selenium WebDriver 설정"""
     options = Options()
-    
     if os.environ.get('GITHUB_ACTIONS'):
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-    
     options.add_argument('--disable-gpu')
     options.add_argument('--window-size=1920,1080')
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    options.add_experimental_option('useAutomationExtension', False)
     options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
     
-    print("📥 webdriver-manager로 ChromeDriver 다운로드 중...")
     try:
         driver_path = ChromeDriverManager().install()
-        print(f"✅ ChromeDriver 경로: {driver_path}")
-        
         service = Service(driver_path)
         driver = webdriver.Chrome(service=service, options=options)
-        
-        print("✅ WebDriver 생성 성공")
         return driver
     except Exception as e:
         print(f"❌ WebDriver 생성 실패: {e}")
         raise
 
-
-def parse_dram_exchange_price(price_str):
-    """
-    DRAM Exchange 가격 문자열 파싱
-    예: "$52.00" → 52.00
-    """
-    try:
-        # $ 기호 제거 및 숫자만 추출
-        price = float(re.sub(r'[^0-9.]', '', price_str))
-        return price
-    except:
-        return 0.0
-
-
 def crawl_dram_exchange():
-    """
-    DRAM Exchange에서 RAM 시세 데이터 크롤링
-    """
+    """DRAM Exchange 크롤링 실행"""
     driver = None
     try:
         driver = setup_driver()
-        
         print("\n🌐 DRAM Exchange 접속 중...")
         driver.get("https://www.dramexchange.com/")
-        
-        # 페이지 로딩 대기
-        print("⏳ 페이지 로딩 중...")
         time.sleep(5)
         
-        # 테이블 찾기
-        print("🔍 테이블 데이터 추출 중...")
-        
-        # DDR5, DDR4, DDR3 섹션 찾기
         results = {}
         
-        # ⭐ 핵심: 테이블 셀렉터
         try:
-            # 방법 1: 테이블 행 찾기
             rows = driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
-            
             if not rows:
-                # 방법 2: 테이블 구조가 다른 경우
                 rows = driver.find_elements(By.CSS_SELECTOR, "tr")
             
             print(f"📊 발견된 행: {len(rows)}")
             
-            current_category = None
-            
             for row in rows:
                 try:
                     cells = row.find_elements(By.TAG_NAME, "td")
+                    if not cells or len(cells) < 3: continue
                     
-                    if not cells or len(cells) < 3:
-                        continue
-                    
-                    # 첫 번째 셀: 제품명
                     product_cell = cells[0].text.strip()
                     
-                    # 카테고리 감지
-                    if "DDR5" in product_cell:
-                        current_category = "DDR5"
-                    elif "DDR4" in product_cell:
-                        current_category = "DDR4"
-                    elif "DDR3" in product_cell:
-                        current_category = "DDR3"
+                    current_category = None
+                    if "DDR5" in product_cell: current_category = "DDR5"
+                    elif "DDR4" in product_cell: current_category = "DDR4"
+                    elif "DDR3" in product_cell: current_category = "DDR3"
                     
-                    if not current_category:
-                        continue
+                    if not current_category: continue
+                    if current_category not in results: results[current_category] = []
                     
-                    # 카테고리별 데이터 저장
-                    if current_category not in results:
-                        results[current_category] = []
+                    data_point = {
+                        "product": product_cell,
+                        "daily_high": float(re.sub(r'[^0-9.]', '', cells[1].text)) if len(cells) > 1 else 0,
+                        "daily_low": float(re.sub(r'[^0-9.]', '', cells[2].text)) if len(cells) > 2 else 0,
+                        "session_high": float(re.sub(r'[^0-9.]', '', cells[3].text)) if len(cells) > 3 else 0,
+                        "session_low": float(re.sub(r'[^0-9.]', '', cells[4].text)) if len(cells) > 4 else 0,
+                        "session_average": float(re.sub(r'[^0-9.]', '', cells[5].text)) if len(cells) > 5 else 0,
+                        "session_change": cells[6].text.strip() if len(cells) > 6 else "N/A",
+                    }
+                    results[current_category].append(data_point)
+                    print(f"  ✅ {product_cell}: ${data_point['session_average']:.2f}")
                     
-                    # 가격 데이터 추출
-                    try:
-                        data_point = {
-                            "product": product_cell,
-                            "daily_high": float(re.sub(r'[^0-9.]', '', cells[1].text)) if len(cells) > 1 else 0,
-                            "daily_low": float(re.sub(r'[^0-9.]', '', cells[2].text)) if len(cells) > 2 else 0,
-                            "session_high": float(re.sub(r'[^0-9.]', '', cells[3].text)) if len(cells) > 3 else 0,
-                            "session_low": float(re.sub(r'[^0-9.]', '', cells[4].text)) if len(cells) > 4 else 0,
-                            "session_average": float(re.sub(r'[^0-9.]', '', cells[5].text)) if len(cells) > 5 else 0,
-                            "session_change": cells[6].text.strip() if len(cells) > 6 else "N/A",
-                        }
-                        
-                        results[current_category].append(data_point)
-                        print(f"  ✅ {product_cell}: ${data_point['session_average']:.2f}")
-                    
-                    except Exception as e:
-                        print(f"  ⚠️ 데이터 파싱 실패 ({product_cell}): {e}")
-                        continue
-                
-                except Exception as e:
-                    continue
-            
-            print(f"\n✅ 크롤링 완료: {len(results)}개 카테고리")
+                except Exception: continue
             
             return {
                 "status": "success",
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
                 "data": results,
                 "count": sum(len(v) for v in results.values())
             }
         
         except Exception as e:
-            print(f"❌ 테이블 파싱 실패: {e}")
-            return {
-                "status": "error",
-                "message": f"테이블 파싱 실패: {e}",
-                "timestamp": datetime.now().isoformat()
-            }
+            return {"status": "error", "message": f"테이블 파싱 실패: {e}"}
     
     except Exception as e:
-        print(f"❌ 크롤링 실패: {e}")
-        return {
-            "status": "error",
-            "message": str(e),
-            "timestamp": datetime.now().isoformat()
-        }
+        return {"status": "error", "message": str(e)}
     
     finally:
-        if driver:
-            driver.quit()
-            print("🏁 드라이버 종료")
-
+        if driver: driver.quit()
 
 def save_dram_data(data, base_dir="."):
-    """DRAM Exchange 데이터 저장 (단일 파일 덮어쓰기 및 누적)"""
+    """DRAM Exchange 데이터 저장 (단일 파일 누적 방식)"""
     if data["status"] != "success":
         print(f"❌ 데이터 저장 실패: {data['message']}")
         return False
     
-    # ⭐ [수정됨] 파일명을 고정 (날짜 제거)
+    # ⭐ [핵심] 파일명을 고정합니다.
     filename = "dram_exchange_data.json"
     filepath = os.path.join(base_dir, filename)
     
-    # 데이터 구조 초기화
+    # 저장할 데이터 구조
     dram_data = {
-        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "current_data": data["data"], # 현재 시세
+        "last_updated": data["timestamp"],
+        "current_data": data["data"], # 프론트엔드 키와 맞춤 (current_data)
         "price_history": {}
     }
     
-    # ⭐ [수정됨] 기존 파일이 있다면 로드하여 히스토리 유지
+    # ⭐ [핵심] 기존 파일이 있다면 불러와서 히스토리 복원
     if os.path.exists(filepath):
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
@@ -207,32 +122,21 @@ def save_dram_data(data, base_dir="."):
         except Exception as e:
             print(f"⚠️ 기존 데이터 로드 실패 (새로 생성): {e}")
     
-    # 현재 데이터를 히스토리에 추가 (키: 날짜시간)
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-    dram_data["price_history"][now_str] = data["data"]
+    # 현재 데이터를 히스토리에 추가 (키: 2026-02-07 15:00)
+    history_key = data["timestamp"]
+    dram_data["price_history"][history_key] = data["data"]
     
-    # 파일 저장 (덮어쓰기)
+    # 파일 덮어쓰기
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(dram_data, f, ensure_ascii=False, indent=2)
     
-    print(f"✅ 데이터 업데이트 완료: {filepath}")
+    print(f"✅ 데이터 업데이트 완료: {filepath} (총 {len(dram_data['price_history'])}개 시점 데이터)")
     return True
 
-
-# ============================================
-# 테스트 실행
-# ============================================
 if __name__ == "__main__":
-    print("=" * 60)
-    print("🚀 DRAM Exchange 크롤러 테스트")
-    print(f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 60)
-    
+    print("🚀 DRAM Exchange 크롤러 시작")
     data = crawl_dram_exchange()
-    
     if data["status"] == "success":
-        print(f"\n📊 크롤링 결과: {data['count']}개 제품")
-        # 저장
         save_dram_data(data)
     else:
-        print(f"\n❌ 크롤링 실패: {data['message']}")
+        print(f"❌ 실패: {data.get('message')}")
