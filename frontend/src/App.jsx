@@ -20,7 +20,7 @@ const App = () => {
   const [ramSearch, setRamSearch] = useState("");
 
   // DRAMeXchange states
-  const [dramData, setDramData] = useState({ price_data: {}, price_history: {} });
+  const [dramData, setDramData] = useState({ current_data: {}, price_history: {} });
   const [selectedDramType, setSelectedDramType] = useState('DDR5');
   const [selectedDramProduct, setSelectedDramProduct] = useState('');
   const [dramPeriod, setDramPeriod] = useState('30');
@@ -52,10 +52,10 @@ const App = () => {
       setDramData(dramRes.data);
       
       // Set initial DRAM product selection
-      if (dramRes.data.price_data && Object.keys(dramRes.data.price_data).length > 0) {
-        const firstType = Object.keys(dramRes.data.price_data)[0];
+      if (dramRes.data.current_data && Object.keys(dramRes.data.current_data).length > 0) {
+        const firstType = Object.keys(dramRes.data.current_data)[0];
         setSelectedDramType(firstType);
-        const firstProduct = dramRes.data.price_data[firstType]?.[0]?.product;
+        const firstProduct = dramRes.data.current_data[firstType]?.[0]?.product;
         if (firstProduct) setSelectedDramProduct(firstProduct);
       }
       
@@ -455,17 +455,17 @@ const App = () => {
                     <div className="bg-[#1e1e1e] rounded-xl p-3 sm:p-4 border border-[#333]">
                         <h3 className="text-sm font-bold mb-3 text-gray-400">메모리 타입</h3>
                         <div className="flex flex-col gap-2">
-                            {Object.keys(dramData.price_data).map(type => (
+                            {Object.keys(dramData.current_data).map(type => (
                                 <button 
                                     key={type} 
                                     onClick={() => {
                                         setSelectedDramType(type);
-                                        const firstProduct = dramData.price_data[type]?.[0]?.product;
+                                        const firstProduct = dramData.current_data[type]?.[0]?.product;
                                         if (firstProduct) setSelectedDramProduct(firstProduct);
                                     }}
                                     className={`text-left px-3 py-2 rounded text-xs sm:text-sm transition ${selectedDramType === type ? 'bg-purple-600 text-white font-bold' : 'bg-[#262730] hover:bg-[#333] text-gray-300'}`}
                                 >
-                                    {type} ({dramData.price_data[type]?.length || 0})
+                                    {type} ({dramData.current_data[type]?.length || 0})
                                 </button>
                             ))}
                         </div>
@@ -474,7 +474,7 @@ const App = () => {
                     {/* Product List */}
                     <div className="bg-[#1e1e1e] rounded-xl p-3 sm:p-4 border border-[#333] lg:col-span-2">
                         <h3 className="text-sm font-bold mb-3 text-gray-400">제품 목록</h3>
-                        {dramData.price_data[selectedDramType] && dramData.price_data[selectedDramType].length > 0 ? (
+                        {dramData.current_data[selectedDramType] && dramData.current_data[selectedDramType].length > 0 ? (
                             <div className="overflow-x-auto max-h-96 overflow-y-auto">
                                 <table className="w-full text-sm">
                                     <thead className="bg-[#262730] text-gray-400 sticky top-0">
@@ -487,7 +487,7 @@ const App = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {dramData.price_data[selectedDramType].map((item, i) => (
+                                        {dramData.current_data[selectedDramType].map((item, i) => (
                                             <tr 
                                                 key={i} 
                                                 onClick={() => setSelectedDramProduct(item.product)}
