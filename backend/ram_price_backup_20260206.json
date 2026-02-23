@@ -3,13 +3,13 @@
     "DDR5 RAM (데스크탑)": [
       {
         "product": "삼성 DDR5 32G 5600MHz",
-        "price": 410000,
-        "price_formatted": "410,000원"
+        "price": 360000,
+        "price_formatted": "360,000원"
       },
       {
         "product": "삼성 DDR5 16G 4800MHz",
-        "price": 185000,
-        "price_formatted": "185,000원"
+        "price": 160000,
+        "price_formatted": "160,000원"
       },
       {
         "product": "삼성 DDR5 32G 4800MHz",
@@ -23,8 +23,8 @@
       },
       {
         "product": "삼성 DDR5 16G 5600MHz",
-        "price": 220000,
-        "price_formatted": "220,000원"
+        "price": 1800000,
+        "price_formatted": "1,800,000원"
       },
       {
         "product": "삼성 DDR5 8G 4800MHz",
@@ -218,8 +218,8 @@
       },
       {
         "product": "삼성 DDR5 16G 5600MHz (노트북)",
-        "price": 110000,
-        "price_formatted": "110,000원"
+        "price": 120000,
+        "price_formatted": "120,000원"
       },
       {
         "product": "삼성 DDR5 8G 5600 (노트북)",
@@ -12890,13 +12890,13 @@
         },
         {
           "product": "삼성 DDR5 16G 5600MHz",
-          "price": 220000,
-          "price_formatted": "220,000원"
+          "price": 1800000,
+          "price_formatted": "1,800,000원"
         },
         {
           "product": "삼성 DDR5 32G 5600MHz",
-          "price": 410000,
-          "price_formatted": "410,000원"
+          "price": 360000,
+          "price_formatted": "360,000원"
         },
         {
           "product": "삼성 DDR5 8G 4800MHz",
@@ -12905,8 +12905,8 @@
         },
         {
           "product": "삼성 DDR5 16G 4800MHz",
-          "price": 185000,
-          "price_formatted": "185,000원"
+          "price": 160000,
+          "price_formatted": "160,000원"
         },
         {
           "product": "삼성 DDR5 32G 4800MHz",
@@ -12984,8 +12984,8 @@
         },
         {
           "product": "삼성 DDR5 16G 5600MHz (노트북)",
-          "price": 110000,
-          "price_formatted": "110,000원"
+          "price": 120000,
+          "price_formatted": "120,000원"
         }
       ],
       "DDR4 RAM (노트북)": [
