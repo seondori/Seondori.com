@@ -7,6 +7,7 @@ import json
 import os
 import glob
 import re
+import requests
 import pandas as pd
 from datetime import datetime, timedelta
 
@@ -19,13 +20,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-def get_data_file():
-    files = glob.glob(os.path.join(BASE_DIR, "ram_*.json"))
-    if files: return sorted(files)[-1]
-    return os.path.join(BASE_DIR, "ram_price_backup.json")
+GITHUB_RAW = "https://raw.githubusercontent.com/seondori/Seondori.com/main/backend/"
 
-DATA_PATH = get_data_file()
+def load_ram_data():
+    try:
+        url = GITHUB_RAW + "ram_price_backup_20260206.json"
+        res = requests.get(url, timeout=10)
+        res.raise_for_status()
+        return res.json()
+    except Exception as e:
+        print(f"GitHub에서 RAM 데이터 로드 실패: {e}")
+        return None
+
+def load_dram_data():
+    try:
+        url = GITHUB_RAW + "dram_exchange_data.json"
+        res = requests.get(url, timeout=10)
+        res.raise_for_status()
+        return res.json()
+    except Exception as e:
+        print(f"GitHub에서 DRAM 데이터 로드 실패: {e}")
+        return None
 
 @app.get("/")
 async def root():
@@ -40,28 +55,17 @@ class UpdateRequest(BaseModel):
 # [완전 재작성] 네이버 카페 글 형식 파싱
 # ============================================
 def parse_price_data(price_text):
-    """
-    네이버 카페 RAM 시세 글 형식 파싱
-    
-    구조:
-    - "데스크탑 DDR3", "데스크탑용 DDR5", "노트북용 DDR4" 등으로 카테고리 구분
-    - "삼성 8G PC3 12800 - 3,000원" 형식으로 제품/가격 추출
-    """
     prices = {}
     current_category = None
-    current_mem_type = "데스크탑"  # 기본값
+    current_mem_type = "데스크탑"
     
-    # 카테고리 감지 패턴들
-    # "13.데스크탑 DDR3", "16-1.데스크탑용 DDR5", "노트북용 DDR4" 등
     category_patterns = [
-        # 데스크탑
         (r'데스크탑\s*용?\s*DDR5', 'DDR5 RAM (데스크탑)'),
         (r'데스크탑\s*용?\s*DDR4', 'DDR4 RAM (데스크탑)'),
         (r'데스크탑\s*용?\s*DDR3', 'DDR3 RAM (데스크탑)'),
         (r'데스크탑\s+DDR5', 'DDR5 RAM (데스크탑)'),
         (r'데스크탑\s+DDR4', 'DDR4 RAM (데스크탑)'),
         (r'데스크탑\s+DDR3', 'DDR3 RAM (데스크탑)'),
-        # 노트북
         (r'노트북\s*용?\s*DDR5', 'DDR5 RAM (노트북)'),
         (r'노트북\s*용?\s*DDR4', 'DDR4 RAM (노트북)'),
         (r'노트북\s*용?\s*DDR3', 'DDR3 RAM (노트북)'),
@@ -70,22 +74,10 @@ def parse_price_data(price_text):
         (r'노트북\s+DDR3', 'DDR3 RAM (노트북)'),
     ]
     
-    # 제품 가격 패턴들 (다양한 형식 지원)
-    # DDR5: "삼성 D5 16G - 5600 [44800] - 220,000원" 또는 "삼성 D5 8G- 5600 - 100,000원"
-    # DDR4: "삼성 16G PC4 25600 [3200mhz] - 130.000원" 또는 "삼성 8G PC4 21300 - 49,000원"
-    # DDR3: "삼성 8G PC3 12800 - 3,000원"
-    
     product_patterns = [
-        # DDR5: 삼성 D5 16G - 5600 [44800] - 220,000원  또는 삼성 D5 16G 5600 - 140,000원
         (r'삼성\s*D5\s*(\d+G)\s*[,\-]?\s*(\d{4,5})\s*(?:\[?\d*\]?)?\s*-\s*([\d,\.]+)\s*원', 'DDR5'),
-        
-        # DDR4 (PC4 있음): 삼성 16G PC4 25600 - 130,000원
         (r'삼성\s*(\d+G)\s*PC4[\s\-]*(\d{5})\s*(?:\[\d+mhz\])?\s*-\s*([\d,\.]+)\s*원', 'DDR4'),
-        
-        # DDR4 (PC4 없음, 노트북): 삼성 16G 21300[2666mhz] - 82,000원 또는 삼성 8G- 19200 - 40,000원
         (r'삼성\s*(\d+G)\s*-?\s*(\d{5})\s*(?:\[\d+mhz\])?\s*-\s*([\d,\.]+)\s*원', 'DDR4'),
-        
-        # DDR3: 삼성 8G PC3 12800 - 3,000원
         (r'삼성\s*(\d+G)\s*PC3[\s\-]*(\d{5})\s*-?\s*([\d,\.]+)\s*원', 'DDR3'),
     ]
     
@@ -96,11 +88,9 @@ def parse_price_data(price_text):
         if not line:
             continue
         
-        # 1. 카테고리 감지
         for pattern, cat_name in category_patterns:
             if re.search(pattern, line, re.IGNORECASE):
                 current_category = cat_name
-                # 데스크탑/노트북 타입도 업데이트
                 if '노트북' in cat_name:
                     current_mem_type = "노트북"
                 else:
@@ -108,7 +98,6 @@ def parse_price_data(price_text):
                 print(f"[카테고리 감지] {cat_name}")
                 break
         
-        # 2. 제품 가격 추출
         if current_category is None:
             continue
             
@@ -117,36 +106,29 @@ def parse_price_data(price_text):
             if match:
                 try:
                     capacity, speed, price_str = match.groups()
-                    
-                    # 가격 파싱 (3,000 / 3.000 / 3000 모두 지원)
                     price_clean = price_str.replace(',', '')
                     if '.' in price_clean:
-                        # "3.000" → 3000, "130.000" → 130000
                         parts = price_clean.split('.')
-                        if len(parts) == 2 and len(parts[1]) == 3:  # .000 형식
+                        if len(parts) == 2 and len(parts[1]) == 3:
                             price = int(parts[0]) * 1000
                         else:
                             price = int(float(price_clean))
                     else:
                         price = int(price_clean)
                     
-                    # 제품명 생성
                     if ddr_type == 'DDR5':
                         product_name = f"삼성 DDR5 {capacity} {speed}MHz"
                     elif ddr_type == 'DDR4':
                         product_name = f"삼성 DDR4 {capacity} PC4-{speed}"
-                    else:  # DDR3
+                    else:
                         product_name = f"삼성 DDR3 {capacity} PC3-{speed}"
                     
-                    # 노트북용이면 제품명에 표시
                     if current_mem_type == "노트북":
                         product_name += " (노트북)"
                     
-                    # 카테고리에 추가
                     if current_category not in prices:
                         prices[current_category] = []
                     
-                    # 중복 체크
                     existing = [p['product'] for p in prices[current_category]]
                     if product_name not in existing:
                         prices[current_category].append({
@@ -156,13 +138,12 @@ def parse_price_data(price_text):
                         })
                         print(f"  [제품 추가] {product_name} = {price:,}원")
                     
-                    break  # 매칭 성공하면 다른 패턴 시도 안 함
+                    break
                     
                 except Exception as e:
                     print(f"[파싱 오류] {line}: {e}")
                     continue
     
-    # 결과 요약
     print(f"\n[파싱 완료] 총 {len(prices)}개 카테고리")
     for cat, items in prices.items():
         print(f"  - {cat}: {len(items)}개 제품")
@@ -227,40 +208,19 @@ async def get_market_data(period: str = "1개월"):
     except: pass
     return result
 
-# main (2).py 수정 부분
-
 @app.get("/api/dramexchange-data")
 async def get_dramexchange_data():
-    """DRAMeXchange 최신 데이터 파일을 찾아 반환"""
-    try:
-        # dram_exchange_로 시작하는 모든 json 파일을 찾음
-        dram_files = glob.glob(os.path.join(BASE_DIR, "dram_exchange_*.json"))
-        
-        if not dram_files:
-            # 파일이 없을 경우 기존 백업용 파일명 확인
-            fallback_file = os.path.join(BASE_DIR, "dramexchange_data.json")
-            if os.path.exists(fallback_file):
-                with open(fallback_file, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-            return {"price_data": {}, "price_history": {}}
-
-        # 파일 이름 정렬 후 가장 마지막(최신) 파일 선택
-        latest_file = sorted(dram_files)[-1]
-        
-        with open(latest_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            return data
-    except Exception as e:
-        print(f"DRAMeXchange data error: {e}")
-        return {"price_data": {}, "price_history": {}, "error": str(e)}
+    """GitHub에서 DRAM Exchange 데이터를 직접 읽어 반환"""
+    data = load_dram_data()
+    if data is None:
+        return {"price_data": {}, "price_history": {}, "error": "데이터 로드 실패"}
+    return data
 
 @app.get("/api/ram-data")
 async def get_ram_data():
-    if not os.path.exists(DATA_PATH): 
-        return {"error": "No data file"}
-    
-    with open(DATA_PATH, 'r', encoding='utf-8') as f:
-        json_data = json.load(f)
+    json_data = load_ram_data()
+    if json_data is None:
+        return {"error": "데이터 로드 실패"}
     
     product_history = {}
     raw_history = json_data.get("price_history", {})
@@ -282,9 +242,6 @@ async def get_ram_data():
         "date_range": f"{sorted_dates[0]} ~ {sorted_dates[-1]}" if sorted_dates else ""
     }
 
-# ============================================
-# [개선] 데이터 업데이트 with 상세 로그
-# ============================================
 @app.post("/api/admin/update")
 async def update_data(req: UpdateRequest):
     print(f"\n{'='*50}")
@@ -297,37 +254,24 @@ async def update_data(req: UpdateRequest):
     if not parsed: 
         return {"status": "error", "message": "파싱 실패 - 인식된 제품이 없습니다"}
     
-    # 기존 파일 로드
-    full = {"price_data": {}, "price_history": {}}
-    if os.path.exists(DATA_PATH):
-        with open(DATA_PATH, "r", encoding="utf-8") as f: 
-            full = json.load(f)
+    full = load_ram_data() or {"price_data": {}, "price_history": {}}
     
-    # 히스토리에 추가 (날짜+시간으로 각각 저장)
-    history_key = f"{req.date} {req.time}"  # "2026-02-04 10:00" 형식
+    history_key = f"{req.date} {req.time}"
     full["price_history"][history_key] = parsed
     
-    # price_data 병합 (기존 데이터 유지 + 새 데이터 추가/업데이트)
     for category, items in parsed.items():
         if category not in full["price_data"]:
             full["price_data"][category] = []
         
-        # 기존 제품 목록
         existing_products = {item['product']: idx for idx, item in enumerate(full["price_data"][category])}
         
         for new_item in items:
             prod_name = new_item['product']
             if prod_name in existing_products:
-                # 기존 제품 가격 업데이트
                 idx = existing_products[prod_name]
                 full["price_data"][category][idx] = new_item
             else:
-                # 새 제품 추가
                 full["price_data"][category].append(new_item)
-    
-    # 파일 저장
-    with open(DATA_PATH, "w", encoding="utf-8") as f:
-        json.dump(full, f, ensure_ascii=False, indent=2)
     
     total_products = sum(len(v) for v in parsed.values())
     
@@ -341,16 +285,16 @@ async def update_data(req: UpdateRequest):
 
 @app.get("/api/admin/download")
 async def download():
-    if os.path.exists(DATA_PATH):
-        return FileResponse(DATA_PATH, filename=f"backup_{datetime.now().strftime('%Y%m%d')}.json")
+    data = load_ram_data()
+    if data:
+        tmp_path = "/tmp/backup.json"
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return FileResponse(tmp_path, filename=f"backup_{datetime.now().strftime('%Y%m%d')}.json")
     return {"error": "No file"}
 
-# ============================================
-# [추가] 파싱 테스트 엔드포인트
-# ============================================
 @app.post("/api/admin/test-parse")
 async def test_parse(req: UpdateRequest):
-    """파싱 결과만 미리보기 (저장 안 함)"""
     parsed = parse_price_data(req.text)
     
     if not parsed:
