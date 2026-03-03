@@ -23,8 +23,8 @@
       },
       {
         "product": "삼성 DDR5 16G 5600MHz",
-        "price": 1700000,
-        "price_formatted": "1,700,000원"
+        "price": 170000,
+        "price_formatted": "1,70,000원"
       },
       {
         "product": "삼성 DDR5 8G 4800MHz",
@@ -16154,8 +16154,8 @@
         },
         {
           "product": "삼성 DDR5 16G 5600MHz",
-          "price": 1700000,
-          "price_formatted": "1,700,000원"
+          "price": 170000,
+          "price_formatted": "1,70,000원"
         },
         {
           "product": "삼성 DDR5 32G 5600MHz",
