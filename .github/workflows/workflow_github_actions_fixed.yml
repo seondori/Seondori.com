@@ -63,8 +63,8 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
-          git fetch origin/main
-          git rebase origin/main
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          git pull --rebase
           git add -A
           if git diff --staged --quiet; then
             echo "ℹ️ 변경사항 없음"
