@@ -64,13 +64,18 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-          git pull --rebase
           git add -A
           if git diff --staged --quiet; then
             echo "ℹ️ 변경사항 없음"
           else
             git commit -m "🤖 자동 업데이트: RAM 시세 $(date +'%Y-%m-%d %H:%M')"
-            git push
+            
+            # ⭐ push 실패 시 최대 3번 재시도
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              echo "⚠️ Push 실패 (시도 $i/3), 5초 후 재시도..."
+              sleep 5
+            done
           fi
       - name: Upload logs on failure
         if: failure()
