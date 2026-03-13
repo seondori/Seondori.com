@@ -63,6 +63,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
+          git pull --rebase origin main
           git add -A
           if git diff --staged --quiet; then
             echo "ℹ️ 변경사항 없음"
@@ -70,7 +71,6 @@ jobs:
             git commit -m "🤖 자동 업데이트: RAM 시세 $(date +'%Y-%m-%d %H:%M')"
             git push
           fi
-
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
