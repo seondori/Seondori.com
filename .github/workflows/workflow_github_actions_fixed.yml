@@ -63,7 +63,8 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
-          git pull --rebase origin main
+          git fetch origin/main
+          git rebase origin/main
           git add -A
           if git diff --staged --quiet; then
             echo "ℹ️ 변경사항 없음"
