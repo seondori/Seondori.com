@@ -420,7 +420,7 @@ const App = () => {
             {[
               {id: 'compuzone', label: '🛒 RAM 컴퓨존', shortLabel: '🛒 컴퓨존'},
               {id: 'ram', label: '💾 RAM 중고 매입시세', shortLabel: '💾 중고'},
-              {id: 'ram-new', label: '🏷️ RAM 다나와', shortLabel: '🏷️ '다나와'},
+              {id: 'ram-new', label: '🏷️ RAM 다나와', shortLabel: '🏷️ 다나와'},
               {id: 'dramexchange', label: '📊 DRAMeXchange', shortLabel: '📊 미국시세'},
               {id: 'tradingview', label: '🔍 Trading View', shortLabel: '🔍 차트'}, 
               {id: 'indices', label: '📈 주가지수', shortLabel: '📈 지수'}, 
