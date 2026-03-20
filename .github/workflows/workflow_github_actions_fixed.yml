@@ -28,9 +28,9 @@ jobs:
       - name: Check results
         if: always()
         run: |
-          if (Test-Path "backend\ram_*.json") {
+          if (Test-Path "backend\ram_price_junggo.json") {
             echo "✅ 결과 파일 확인됨"
-            dir backend\ram_*.json
+            dir backend\ram_price_junngo.json
           } else {
             echo "⚠️ 결과 파일 없음"
           }
