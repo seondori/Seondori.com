@@ -3,7 +3,6 @@ name: Compuzone Price Crawler
 on:
   schedule:
     - cron: '0 1 * * *'   # 한국시간 10:00
-    - cron: '0 1 * * *'
     - cron: '0 9 * * *'   # 한국시간 18:00
   workflow_dispatch:
 
@@ -22,10 +21,17 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install latest Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install selenium webdriver-manager requests beautifulsoup4
 
       - name: Run compuzone crawler
+        env:
+          GITHUB_ACTIONS: true
         run: |
           cd backend
           python crawler_compuzone.py
@@ -35,17 +41,19 @@ jobs:
         run: |
           if [ -f backend/compuzone_data.json ]; then
             echo "✅ 컴퓨존 데이터 파일 확인됨"
-            cat backend/compuzone_data.json | python3 -m json.tool | head -50
+            cat backend/compuzone_data.json | python3 -m json.tool | head -60
           else
             echo "⚠️ 결과 파일 없음"
           fi
 
-      - name: Upload debug HTML on failure
+      - name: Upload debug on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: compuzone-debug-${{ github.run_id }}
-          path: backend/compuzone_debug.html
+          path: |
+            backend/compuzone_debug.png
+            backend/compuzone_debug.html
           retention-days: 3
 
       - name: Commit and push
