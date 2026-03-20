@@ -628,7 +628,7 @@ const App = () => {
           product: newSelectedProduct, setProduct: setNewSelectedProduct,
           period: newPricePeriod, setPeriod: setNewPricePeriod,
           colorAccent: '#22c55e',
-          title: '🏷️ 신품 최저가 히스토리 (네이버 쇼핑)',
+          title: '🏷️ RAM 신품 다나와 가격',
           showSource: true,
         })}
 
