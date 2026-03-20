@@ -1,7 +1,8 @@
 """
-네이버 쇼핑 API 기반 RAM 시세 자동 수집기
+네이버 쇼핑 API 기반 RAM 신품 최저가 수집기
 - 쿠키/로그인 불필요, API 키만 있으면 동작
-- 기존 crawler_cookie_based.py와 동일한 JSON 형식 출력
+- ram_new_YYYYMMDD.json 으로 별도 저장
+- 기존 카페 크롤러(중고 매입 시세)와 병렬 운영
 """
 
 import os
@@ -19,9 +20,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 KST = timezone(timedelta(hours=9))
 
 # 수집 대상 RAM 목록
-# (카테고리, 검색어, 용량 목록)
 RAM_TARGETS = [
-    # 데스크탑 DDR5
     {
         "category": "DDR5 RAM (데스크탑)",
         "items": [
@@ -30,7 +29,6 @@ RAM_TARGETS = [
             {"query": "삼성 DDR5 데스크탑 32GB", "capacity": "32GB"},
         ]
     },
-    # 데스크탑 DDR4
     {
         "category": "DDR4 RAM (데스크탑)",
         "items": [
@@ -40,7 +38,6 @@ RAM_TARGETS = [
             {"query": "삼성 DDR4 데스크탑 32GB", "capacity": "32GB"},
         ]
     },
-    # 데스크탑 DDR3
     {
         "category": "DDR3 RAM (데스크탑)",
         "items": [
@@ -48,31 +45,28 @@ RAM_TARGETS = [
             {"query": "삼성 DDR3 데스크탑 8GB", "capacity": "8GB"},
         ]
     },
-    # 노트북 DDR5
     {
         "category": "DDR5 RAM (노트북)",
         "items": [
-            {"query": "삼성 DDR5 노트북 8GB", "capacity": "8GB"},
-            {"query": "삼성 DDR5 노트북 16GB", "capacity": "16GB"},
-            {"query": "삼성 DDR5 노트북 32GB", "capacity": "32GB"},
+            {"query": "삼성 DDR5 노트북 8GB SO-DIMM", "capacity": "8GB"},
+            {"query": "삼성 DDR5 노트북 16GB SO-DIMM", "capacity": "16GB"},
+            {"query": "삼성 DDR5 노트북 32GB SO-DIMM", "capacity": "32GB"},
         ]
     },
-    # 노트북 DDR4
     {
         "category": "DDR4 RAM (노트북)",
         "items": [
-            {"query": "삼성 DDR4 노트북 4GB", "capacity": "4GB"},
-            {"query": "삼성 DDR4 노트북 8GB", "capacity": "8GB"},
-            {"query": "삼성 DDR4 노트북 16GB", "capacity": "16GB"},
-            {"query": "삼성 DDR4 노트북 32GB", "capacity": "32GB"},
+            {"query": "삼성 DDR4 노트북 4GB SO-DIMM", "capacity": "4GB"},
+            {"query": "삼성 DDR4 노트북 8GB SO-DIMM", "capacity": "8GB"},
+            {"query": "삼성 DDR4 노트북 16GB SO-DIMM", "capacity": "16GB"},
+            {"query": "삼성 DDR4 노트북 32GB SO-DIMM", "capacity": "32GB"},
         ]
     },
-    # 노트북 DDR3
     {
         "category": "DDR3 RAM (노트북)",
         "items": [
-            {"query": "삼성 DDR3 노트북 4GB", "capacity": "4GB"},
-            {"query": "삼성 DDR3 노트북 8GB", "capacity": "8GB"},
+            {"query": "삼성 DDR3 노트북 4GB SO-DIMM", "capacity": "4GB"},
+            {"query": "삼성 DDR3 노트북 8GB SO-DIMM", "capacity": "8GB"},
         ]
     },
 ]
@@ -85,10 +79,9 @@ def log(msg, level="INFO"):
     print(f"[{now}] [{level}] {msg}", flush=True)
 
 # ============================================
-# 네이버 쇼핑 API 호출
+# 네이버 쇼핑 API
 # ============================================
-def search_shopping(query, client_id, client_secret, display=5):
-    """네이버 쇼핑 검색 API 호출"""
+def search_shopping(query, client_id, client_secret, display=10):
     url = "https://openapi.naver.com/v1/search/shop.json"
     headers = {
         "X-Naver-Client-Id": client_id,
@@ -97,7 +90,7 @@ def search_shopping(query, client_id, client_secret, display=5):
     params = {
         "query": query,
         "display": display,
-        "sort": "sim",  # 정확도순
+        "sort": "asc",
     }
 
     response = requests.get(url, headers=headers, params=params)
@@ -110,11 +103,10 @@ def search_shopping(query, client_id, client_secret, display=5):
 
 
 def get_lowest_price(query, client_id, client_secret):
-    """검색 결과에서 최저가 추출"""
-    result = search_shopping(query, client_id, client_secret, display=10)
+    result = search_shopping(query, client_id, client_secret)
 
     if not result or not result.get("items"):
-        log(f"검색 결과 없음: {query}", "WARN")
+        log(f"  검색 결과 없음: {query}", "WARN")
         return None
 
     prices = []
@@ -134,7 +126,6 @@ def get_lowest_price(query, client_id, client_secret):
     if not prices:
         return None
 
-    # 최저가 기준 정렬
     prices.sort(key=lambda x: x["price"])
     return prices[0]
 
@@ -142,9 +133,8 @@ def get_lowest_price(query, client_id, client_secret):
 # 데이터 수집
 # ============================================
 def collect_prices(client_id, client_secret):
-    """모든 RAM 카테고리의 시세 수집"""
     log("=" * 50)
-    log("RAM 시세 수집 시작")
+    log("📊 RAM 신품 최저가 수집 시작")
     log("=" * 50)
 
     parsed_data = {}
@@ -163,7 +153,6 @@ def collect_prices(client_id, client_secret):
             result = get_lowest_price(query, client_id, client_secret)
 
             if result:
-                # DDR 타입 추출
                 ddr_type = "DDR5" if "DDR5" in category else ("DDR4" if "DDR4" in category else "DDR3")
                 mem_type = "(노트북)" if "노트북" in category else ""
                 product_name = f"삼성 {ddr_type} {capacity} {mem_type}".strip()
@@ -174,6 +163,7 @@ def collect_prices(client_id, client_secret):
                     "price_formatted": f"{result['price']:,}원",
                     "source": result["mall"],
                     "source_title": result["title"],
+                    "link": result["link"],
                 }
                 parsed_data[category].append(entry)
                 log(f"  ✅ {product_name}: {result['price']:,}원 ({result['mall']})")
@@ -185,22 +175,20 @@ def collect_prices(client_id, client_secret):
     return parsed_data
 
 # ============================================
-# 데이터 저장 (기존 형식 호환)
+# 데이터 저장 (ram_new_*.json)
 # ============================================
 def get_data_file():
-    """가장 최근의 ram_*.json 파일을 찾거나 새 파일명 생성"""
-    files = glob.glob(os.path.join(BASE_DIR, "ram_*.json"))
+    files = glob.glob(os.path.join(BASE_DIR, "ram_new_*.json"))
     if files:
         latest = sorted(files)[-1]
         log(f"기존 데이터 파일 사용: {latest}")
         return latest
-    new_file = os.path.join(BASE_DIR, f"ram_{datetime.now(KST).strftime('%Y%m%d')}.json")
+    new_file = os.path.join(BASE_DIR, f"ram_new_{datetime.now(KST).strftime('%Y%m%d')}.json")
     log(f"새 데이터 파일 생성: {new_file}")
     return new_file
 
 
 def save_data(parsed_data, date_str, time_str):
-    """기존 형식과 동일하게 저장"""
     log(f"데이터 저장 시작: {date_str} {time_str}")
     data_path = get_data_file()
 
@@ -209,33 +197,32 @@ def save_data(parsed_data, date_str, time_str):
         try:
             with open(data_path, "r", encoding="utf-8") as f:
                 full = json.load(f)
-            log(f"기존 데이터 로드 완료: {len(full.get('price_history', {}))} 히스토리")
+            log(f"기존 데이터 로드: {len(full.get('price_history', {}))} 히스토리")
         except Exception as e:
             log(f"기존 파일 로드 실패, 새로 생성: {str(e)}", "WARN")
 
-    # 1. 히스토리에 추가
     history_key = f"{date_str} {time_str}"
     full["price_history"][history_key] = parsed_data
 
-    # 2. 최신 시세 업데이트
     for category, items in parsed_data.items():
         if category not in full["price_data"]:
             full["price_data"][category] = []
 
-        existing_products = {item["product"]: idx for idx, item in enumerate(full["price_data"][category])}
+        existing_products = {
+            item["product"]: idx
+            for idx, item in enumerate(full["price_data"][category])
+        }
         for new_item in items:
             prod_name = new_item["product"]
             if prod_name in existing_products:
-                idx = existing_products[prod_name]
-                full["price_data"][category][idx] = new_item
+                full["price_data"][category][existing_products[prod_name]] = new_item
             else:
                 full["price_data"][category].append(new_item)
 
-    # 3. 저장
     with open(data_path, "w", encoding="utf-8") as f:
         json.dump(full, f, ensure_ascii=False, indent=2)
 
-    log(f"✅ 데이터 저장 완료: {history_key}")
+    log(f"✅ 저장 완료: {history_key}")
     return True
 
 
@@ -254,49 +241,43 @@ def get_current_time_slot():
 def main():
     now = datetime.now(KST)
     log("=" * 60)
-    log("🚀 RAM 시세 수집기 (네이버 쇼핑 API)")
+    log("🚀 RAM 신품 최저가 수집기 (네이버 쇼핑 API)")
     log(f"📅 KST: {now.strftime('%Y-%m-%d %H:%M:%S')}")
     log(f"📂 작업 디렉토리: {BASE_DIR}")
-    log(f"🐍 Python: {sys.version}")
     log("=" * 60)
 
-    # API 키 확인
     client_id = os.environ.get("NAVER_CLIENT_ID")
     client_secret = os.environ.get("NAVER_CLIENT_SECRET")
 
     if not client_id or not client_secret:
-        log("❌ NAVER_CLIENT_ID 또는 NAVER_CLIENT_SECRET 환경변수가 없습니다", "ERROR")
+        log("❌ NAVER_CLIENT_ID 또는 NAVER_CLIENT_SECRET 환경변수 없음", "ERROR")
         log("GitHub Secrets에 API 키를 등록해주세요", "ERROR")
         return False
 
-    log(f"✅ API 키 확인됨 (Client ID: {client_id[:4]}...)")
+    log(f"✅ API 키 확인됨 (ID: {client_id[:4]}...)")
 
     try:
-        # 1. 시세 수집
         parsed_data = collect_prices(client_id, client_secret)
 
         if not parsed_data or all(len(v) == 0 for v in parsed_data.values()):
-            log("❌ 수집된 데이터가 없습니다", "ERROR")
+            log("❌ 수집된 데이터 없음", "ERROR")
             return False
 
-        # 2. 저장
         today = now.strftime("%Y-%m-%d")
         time_slot = get_current_time_slot()
         save_data(parsed_data, today, time_slot)
 
         log("=" * 60)
-        log("✅ 수집 완료!")
+        log("✅ 신품 최저가 수집 완료!")
         log("=" * 60)
         return True
 
     except Exception as e:
-        log(f"❌ 오류 발생: {str(e)}", "ERROR")
+        log(f"❌ 오류: {str(e)}", "ERROR")
         log(traceback.format_exc(), "ERROR")
         return False
 
 
 if __name__ == "__main__":
     success = main()
-    exit_code = 0 if success else 1
-    log(f"프로그램 종료: exit code {exit_code}")
-    sys.exit(exit_code)
+    sys.exit(0 if success else 1)
