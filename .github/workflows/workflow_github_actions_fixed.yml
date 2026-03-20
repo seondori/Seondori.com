@@ -2,9 +2,9 @@ name: RAM Price Crawler (Self-Hosted)
 
 on:
   schedule:
-    - cron: '0 1 * * *'   # 한국시간 10:00
-    - cron: '0 4 * * *'   # 한국시간 13:00
-    - cron: '0 9 * * *'   # 한국시간 18:00
+    - cron: '0 1 * * *'
+    - cron: '0 4 * * *'
+    - cron: '0 9 * * *'
   workflow_dispatch:
 
 jobs:
@@ -35,7 +35,6 @@ jobs:
         run: |
           if exist backend\ram_price_junggo.json (
             echo ✅ 결과 파일 확인됨
-            dir backend\ram_price_junggo.json
           ) else (
             echo ⚠️ 결과 파일 없음
           )
@@ -50,13 +49,4 @@ jobs:
           git config --local user.name "GitHub Action Bot"
           git remote set-url origin https://x-access-token:%GITHUB_TOKEN%@github.com/${{ github.repository }}.git
           git add -A
-          git diff --staged --quiet || (git commit -m "🤖 중고 시세 업데이트" && git pull --rebase origin main && git push origin main)
-          if ($changed) {
-            $date = Get-Date -Format "yyyy-MM-dd HH:mm"
-            git commit -m "🤖 중고 시세 업데이트: $date"
-            git pull --rebase origin main
-            git push origin main
-          } else {
-            echo "ℹ️ 변경사항 없음"
-          }
-        shell: pwsh
+          git diff --staged --quiet || (git commit -m "중고 시세 업데이트" && git pull --rebase origin main && git push origin main)
