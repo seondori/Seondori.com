@@ -3,6 +3,7 @@ name: Compuzone Price Crawler
 on:
   schedule:
     - cron: '0 1 * * *'   # 한국시간 10:00
+    - cron: '0 1 * * *'
     - cron: '0 9 * * *'   # 한국시간 18:00
   workflow_dispatch:
 
@@ -39,6 +40,14 @@ jobs:
             echo "⚠️ 결과 파일 없음"
           fi
 
+      - name: Upload debug HTML on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compuzone-debug-${{ github.run_id }}
+          path: backend/compuzone_debug.html
+          retention-days: 3
+
       - name: Commit and push
         if: success()
         env:
@@ -47,7 +56,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-          git add -A
+          git add backend/compuzone_data.json
           if git diff --staged --quiet; then
             echo "ℹ️ 변경사항 없음"
           else
