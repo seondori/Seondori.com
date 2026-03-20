@@ -231,7 +231,7 @@ def setup_driver():
             shutil.copy2(local_state, os.path.join(temp_profile, "Local State"))
 
         options.add_argument(r"--user-data-dir=C:\Users\stellaaa\AppData\Local\Google\Chrome\User Data")
-        options.add_argument("--profile-directory=Profile 12")
+        options.add_argument("--profile-directory=Profile 10")
         log("✅ Chrome 프로필 복사 완료")
 
     options.add_argument("--no-sandbox")
