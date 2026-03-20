@@ -47,10 +47,15 @@ def log(msg, level="INFO"):
 # Chrome 프로필 경로 찾기 (Windows)
 # ============================================
 def get_chrome_profile_path():
-    """Windows Chrome 기본 프로필 경로 반환"""
+    # Self-hosted runner에서 서비스 계정으로 실행될 때를 위해 직접 지정
+    direct_path = r"C:\Users\stellaaa\AppData\Local\Google\Chrome\User Data"
+    if os.path.exists(direct_path):
+        log(f"✅ Chrome 프로필 경로: {direct_path}")
+        return direct_path
+
+    # 기본 방식 (환경변수)
     local_app_data = os.environ.get("LOCALAPPDATA", "")
     if not local_app_data:
-        # 일반적인 Windows 경로 시도
         local_app_data = os.path.expanduser("~") + "\\AppData\\Local"
 
     chrome_path = os.path.join(local_app_data, "Google", "Chrome", "User Data")
@@ -209,12 +214,10 @@ def setup_driver():
     chrome_profile = get_chrome_profile_path()
 
     if chrome_profile:
-        # ⭐ 프로필을 임시 폴더로 복사 (Chrome 실행 중 충돌 방지)
-        temp_profile = os.path.join(os.environ.get("TEMP", "C:\\Temp"), "chrome_crawler_profile")
+        temp_profile = os.path.join(os.environ.get("TEMP", r"C:\Temp"), "chrome_crawler_profile")
         if os.path.exists(temp_profile):
             shutil.rmtree(temp_profile, ignore_errors=True)
-        
-        # 쿠키 등 핵심 파일만 복사 (전체 복사는 느림)
+
         os.makedirs(os.path.join(temp_profile, "Default"), exist_ok=True)
         for filename in ["Cookies", "Cookies-journal", "Login Data", "Web Data"]:
             src = os.path.join(chrome_profile, "Default", filename)
@@ -222,8 +225,7 @@ def setup_driver():
             if os.path.exists(src):
                 shutil.copy2(src, dst)
                 log(f"  쿠키 파일 복사: {filename}")
-        
-        # Local State 파일도 복사
+
         local_state = os.path.join(chrome_profile, "Local State")
         if os.path.exists(local_state):
             shutil.copy2(local_state, os.path.join(temp_profile, "Local State"))
@@ -231,7 +233,7 @@ def setup_driver():
         options.add_argument(f"--user-data-dir={temp_profile}")
         options.add_argument("--profile-directory=Default")
         log("✅ Chrome 프로필 복사 완료")
-    
+
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
