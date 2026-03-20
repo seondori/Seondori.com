@@ -24,7 +24,7 @@ GITHUB_RAW = "https://raw.githubusercontent.com/seondori/Seondori.com/main/backe
 
 def load_ram_data():
     try:
-        url = GITHUB_RAW + "ram_price_backup_20260206.json"
+        url = GITHUB_RAW + "ram_price_junggo.json"
         res = requests.get(url, timeout=10)
         res.raise_for_status()
         return res.json()
