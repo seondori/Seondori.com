@@ -1,51 +1,48 @@
-name: RAM Price Crawler (Cookie-Based)
+name: RAM Price Collector (API-Based)
+
 on:
   schedule:
     - cron: '0 1 * * *'   # 한국시간 10:00
     - cron: '0 4 * * *'   # 한국시간 13:00
     - cron: '0 9 * * *'   # 한국시간 18:00
   workflow_dispatch:
+
 jobs:
-  crawl:
+  collect:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install latest Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: stable
+
       - name: Install Python dependencies
-        run: |
-          pip install --upgrade pip
-          pip install selenium webdriver-manager requests
-      - name: Check Chrome version
-        run: |
-          google-chrome --version
-          which google-chrome
-      - name: Run crawler
+        run: pip install requests
+
+      - name: Run collector
         env:
-          NAVER_COOKIES: ${{ secrets.NAVER_COOKIES }}
-          GITHUB_ACTIONS: true
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
         run: |
           cd backend
-          python crawler_cookie_based.py
-      - name: Check crawler results
+          python crawler_api_based.py
+
+      - name: Check results
         if: always()
         run: |
           if ls backend/ram_*.json 1> /dev/null 2>&1; then
-            echo "✅ 크롤러 결과 파일 확인됨"
+            echo "✅ 결과 파일 확인됨"
             ls -lah backend/ram_*.json
           else
             echo "⚠️ 결과 파일 없음"
           fi
+
       - name: Commit and push changes
         if: success()
         env:
@@ -65,10 +62,3 @@ jobs:
               sleep 5
             done
           fi
-      - name: Upload logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: crawler-logs-${{ github.run_id }}
-          path: backend/
-          retention-days: 7
