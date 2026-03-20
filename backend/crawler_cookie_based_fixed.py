@@ -35,7 +35,12 @@ KST = timezone(timedelta(hours=9))
 # ============================================
 def log(msg, level="INFO"):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{now}] [{level}] {msg}", flush=True)
+    try:
+        print(f"[{now}] [{level}] {msg}", flush=True)
+    except UnicodeEncodeError:
+        # Windows cp949에서 이모지 출력 실패 시
+        safe_msg = msg.encode('ascii', 'replace').decode('ascii')
+        print(f"[{now}] [{level}] {safe_msg}", flush=True)
 
 # ============================================
 # Chrome 프로필 경로 찾기 (Windows)
