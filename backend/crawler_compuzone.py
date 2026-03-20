@@ -1,8 +1,7 @@
 """
 컴퓨존(Compuzone) RAM 가격 크롤러
-- Selenium headless Chrome으로 JavaScript 렌더링 후 가격 추출
-- 컴퓨존 검색 결과는 AJAX로 동적 로딩되므로 requests 사용 불가
-- compuzone_data.json 으로 저장
+- Selenium으로 검색 결과 페이지 렌더링
+- 옵션 행(tr/li/div) 단위로 용량+가격 함께 추출
 """
 
 import os
@@ -18,13 +17,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 
-# ============================================
-# 설정
-# ============================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 KST = timezone(timedelta(hours=9))
-
-SEARCH_URL = "https://www.compuzone.co.kr/search/search.htm"
 
 TARGETS = [
     {
@@ -47,9 +41,6 @@ def log(msg, level="INFO"):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{now}] [{level}] {msg}", flush=True)
 
-# ============================================
-# Selenium 드라이버
-# ============================================
 def setup_driver():
     log("Chrome 드라이버 설정 중...")
     options = Options()
@@ -60,136 +51,238 @@ def setup_driver():
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-    
     driver = webdriver.Chrome(options=options)
     driver.set_page_load_timeout(30)
     log("Chrome 드라이버 초기화 완료")
     return driver
 
-# ============================================
-# 검색 결과 페이지에서 제품 + 옵션 가격 추출
-# ============================================
 def extract_products(driver, keyword):
-    """검색 결과 페이지를 렌더링한 후 제품 + 옵션 가격 추출"""
-    url = f"{SEARCH_URL}?SearchProductKey={keyword.replace(' ', '+')}"
-    log(f"검색 페이지 접속: {url}")
-    
+    """검색 결과 페이지에서 제품 + 옵션별 가격 추출"""
+    url = f"https://www.compuzone.co.kr/search/search.htm?SearchProductKey={keyword.replace(' ', '+')}"
+    log(f"검색: {url}")
+
     driver.get(url)
-    
-    # AJAX 로딩 대기 (제품 목록이 나타날 때까지)
-    log("AJAX 제품 목록 로딩 대기...")
+
+    # AJAX 로딩 대기
+    log("AJAX 로딩 대기...")
     try:
         WebDriverWait(driver, 15).until(
-            lambda d: "DDR5" in d.page_source and "원" in d.page_source and "PC5-44800" in d.page_source
+            lambda d: "DDR5" in d.page_source and "원" in d.page_source
         )
-        log("✅ 제품 목록 로딩 완료")
+        log("✅ 제품 로딩 완료")
     except:
-        log("⚠️ 15초 대기 후에도 제품 목록 미확인, 추가 대기...", "WARN")
+        log("⚠️ 15초 대기 후에도 제품 미확인, 추가 대기...", "WARN")
         time.sleep(5)
+
+    # ============================================
+    # 핵심: JavaScript로 옵션 행 데이터 직접 추출
+    # ============================================
+    # 컴퓨존 옵션은 체크박스 행으로 되어있음
+    # 각 행에서 [XGB] 텍스트와 가격을 함께 추출
     
-    # 렌더링된 페이지 텍스트 추출
-    page_text = driver.find_element(By.TAG_NAME, "body").text
+    products_js = driver.execute_script("""
+        var results = [];
+        
+        // 모든 제품 블록을 찾기 (제품명 + 옵션)
+        var allText = document.body.innerText;
+        
+        // 제품 제목과 옵션을 포함하는 영역 찾기
+        // 방법 1: 체크박스 input의 부모 행에서 추출
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var optionRows = [];
+        
+        checkboxes.forEach(function(cb) {
+            var row = cb.closest('tr') || cb.closest('li') || cb.closest('div');
+            if (row) {
+                var text = row.innerText || row.textContent || '';
+                // [8GB] (5600) ... 179,000원 패턴 확인
+                if (text.match(/\\[\\d+GB\\]/)) {
+                    optionRows.push(text.trim());
+                }
+            }
+        });
+        
+        // 방법 2: 테이블 행에서 추출
+        if (optionRows.length === 0) {
+            var rows = document.querySelectorAll('tr, li, .opt_item, .option_item');
+            rows.forEach(function(row) {
+                var text = row.innerText || row.textContent || '';
+                if (text.match(/\\[\\d+GB\\]/) && text.match(/[\\d,]+원/)) {
+                    optionRows.push(text.trim());
+                }
+            });
+        }
+        
+        // 방법 3: 모든 텍스트 노드에서 GB와 원이 근접한 것 찾기
+        if (optionRows.length === 0) {
+            var allElements = document.querySelectorAll('*');
+            allElements.forEach(function(el) {
+                if (el.children.length === 0 || el.children.length < 5) {
+                    var text = el.innerText || '';
+                    if (text.match(/\\[\\d+GB\\]/) && text.match(/[\\d,]+원/) && text.length < 500) {
+                        optionRows.push(text.trim());
+                    }
+                }
+            });
+        }
+        
+        return {
+            optionRows: optionRows,
+            // 제품 제목도 추출
+            titles: Array.from(document.querySelectorAll('a, span, div')).filter(function(el) {
+                var t = el.innerText || '';
+                return t.indexOf('[삼성전자]') >= 0 && t.indexOf('DDR5') >= 0 && t.indexOf('PC5-44800') >= 0 && t.length < 200;
+            }).map(function(el) { return el.innerText.trim(); }).filter(function(v, i, a) { return a.indexOf(v) === i; })
+        };
+    """)
+
+    option_rows = products_js.get("optionRows", [])
+    titles = products_js.get("titles", [])
+
+    log(f"\nJS 추출 결과:")
+    log(f"  제목 후보: {len(titles)}개")
+    for t in titles[:5]:
+        log(f"    {t[:80]}")
+    log(f"  옵션 행: {len(option_rows)}개")
+    for r in option_rows[:20]:
+        log(f"    {r[:120]}")
+
+    # ============================================
+    # 옵션 행에서 용량 + 가격 파싱
+    # ============================================
+    all_options = []
+    for row_text in option_rows:
+        cap_match = re.search(r'\[(\d+GB)\]', row_text)
+        # 가격: 쉼표 포함 숫자 + 원 (마지막에 나오는 큰 가격)
+        price_matches = re.findall(r'([\d,]+)원', row_text)
+        
+        if cap_match and price_matches:
+            capacity = cap_match.group(1)
+            # 여러 가격 중 가장 큰 것 선택 (수량 '1'이 아닌 실제 가격)
+            prices = []
+            for p in price_matches:
+                val = int(p.replace(",", ""))
+                if val > 1000:  # 수량(1) 등 제외
+                    prices.append(val)
+            
+            if prices:
+                price = prices[0]  # 첫 번째 유효 가격
+                all_options.append({"capacity": capacity, "price": price})
+                log(f"  ✅ {capacity}: {price:,}원")
+
+    # 중복 제거 (같은 용량이 여러 번 나올 수 있음 - 다른 제품)
+    # 제품별로 그룹화하기 위해 텍스트 기반으로 제목 매칭
     
-    # 디버그: DDR5 관련 내용 확인
-    ddr5_count = page_text.count("DDR5")
-    price_count = page_text.count("원")
-    log(f"렌더링 후 - DDR5 언급: {ddr5_count}회, '원' 언급: {price_count}회")
-    
-    if ddr5_count == 0:
-        log("❌ 렌더링 후에도 DDR5 제품 없음", "ERROR")
-        # 디버그용 스크린샷
+    # 페이지 전체 텍스트도 추출 (fallback)
+    if not all_options:
+        log("\nJS 추출 실패, 전체 텍스트 fallback...")
+        page_text = driver.find_element(By.TAG_NAME, "body").text
+        lines = page_text.split('\n')
+        
+        for i, line in enumerate(lines):
+            cap_match = re.search(r'\[(\d+GB)\]', line)
+            if cap_match:
+                capacity = cap_match.group(1)
+                # 같은 줄에서 가격 찾기
+                price_match = re.search(r'([\d,]+)원', line)
+                if price_match:
+                    price = int(price_match.group(1).replace(",", ""))
+                    if price > 1000:
+                        all_options.append({"capacity": capacity, "price": price})
+                        log(f"  ✅ (텍스트) {capacity}: {price:,}원")
+                        continue
+                
+                # 다음 줄에서 가격 찾기
+                for j in range(i+1, min(i+3, len(lines))):
+                    price_match = re.search(r'([\d,]+)원', lines[j])
+                    if price_match:
+                        price = int(price_match.group(1).replace(",", ""))
+                        if price > 1000:
+                            all_options.append({"capacity": capacity, "price": price})
+                            log(f"  ✅ (다음줄) {capacity}: {price:,}원")
+                            break
+
+    if not all_options:
+        # 디버그 스크린샷
         debug_path = os.path.join(BASE_DIR, "compuzone_debug.png")
         driver.save_screenshot(debug_path)
         log(f"스크린샷 저장: {debug_path}")
-        return []
+
+    # ============================================
+    # 제품별로 옵션 그룹화
+    # ============================================
+    # 옵션들을 제품 제목과 매칭
+    # 컴퓨존 검색 결과에서 제품 순서: 데스크탑 → 서버 → 노트북
+    # 용량으로 구분: 8/16/24/32GB = 데스크탑, 16/32/64/128GB = 서버
     
-    # 제품 파싱
+    desktop_caps = {"8GB", "16GB", "24GB", "32GB"}
+    server_caps = {"64GB", "128GB"}
+    
     products = []
-    lines = page_text.split('\n')
     
-    # [삼성전자] 삼성 DDR5 PC5-44800 ... 제목 라인 찾기
-    for i, line in enumerate(lines):
-        line = line.strip()
-        if not line:
-            continue
-        
-        # 제품 제목 탐지
-        if '[삼성전자]' in line and 'DDR5' in line and 'PC5-44800' in line:
-            product_title = line
-            log(f"\n📦 제품 발견 (라인 {i}): {product_title[:80]}")
-            
-            # 제목 이후 라인들에서 옵션 가격 추출
-            options = []
-            for j in range(i + 1, min(i + 60, len(lines))):
-                opt_line = lines[j].strip()
-                
-                # 다음 제품 제목이 나오면 중단
-                if '[삼성전자]' in opt_line and 'DDR5' in opt_line and j > i + 2:
-                    break
-                
-                # [16GB] (5600) ... 345,000원 패턴
-                cap_match = re.search(r'\[(\d+GB)\]', opt_line)
-                if cap_match:
-                    capacity = cap_match.group(1)
-                    # 같은 줄 또는 바로 다음 줄에서 가격 찾기
-                    price_text = opt_line
-                    if j + 1 < len(lines):
-                        price_text += " " + lines[j + 1].strip()
-                    
-                    price_match = re.search(r'([\d,]+)원', price_text)
-                    if price_match:
-                        price = int(price_match.group(1).replace(",", ""))
-                        if price > 10000:
-                            options.append({"capacity": capacity, "price": price})
-                            log(f"  ✅ {capacity}: {price:,}원")
-            
-            if options:
-                products.append({"title": product_title, "options": options})
-    
-    # 방법 2: 위 방법으로 못 찾으면 전체 텍스트에서 패턴 매칭
-    if not products:
-        log("\n📋 전체 텍스트 패턴 매칭 시도...")
-        
-        # 전체 텍스트에서 [XGB] (XXXX) ... X,XXX원 또는 X,XXX,XXX원 패턴
-        all_text = " ".join(lines)
-        
-        # 제품 블록 분리: [삼성전자] 기준으로 분할
-        blocks = re.split(r'(?=\[삼성전자\])', all_text)
-        
-        for block in blocks:
-            if 'DDR5' not in block or 'PC5-44800' not in block:
-                continue
-            
-            title_match = re.match(r'(\[삼성전자\][^\[]*?)(?=\[\d+GB\]|$)', block)
-            title = title_match.group(1).strip()[:100] if title_match else "삼성 DDR5"
-            
-            options = []
-            for m in re.finditer(r'\[(\d+GB)\]\s*\(\d+\)', block):
-                cap = m.group(1)
-                after = block[m.end():m.end() + 300]
-                pm = re.search(r'([\d,]+)원', after)
-                if pm:
-                    price = int(pm.group(1).replace(",", ""))
-                    if price > 10000:
-                        options.append({"capacity": cap, "price": price})
-            
-            if options:
-                products.append({"title": title, "options": options})
-                log(f"📦 제품(패턴): {title[:60]} ({len(options)}개 옵션)")
-    
-    log(f"\n총 {len(products)}개 제품 추출")
+    # 데스크탑 제품 옵션
+    desktop_options = [o for o in all_options if o["capacity"] in desktop_caps]
+    # 서버 제품 옵션 (64GB, 128GB는 서버 전용)
+    server_options = [o for o in all_options if o["capacity"] in server_caps]
+    # 16GB, 32GB는 둘 다 있을 수 있음 - 가격으로 구분
+    # 서버 16GB는 보통 90만원+, 데스크탑 16GB는 보통 30만원대
+    for o in all_options:
+        if o["capacity"] in {"16GB", "32GB"}:
+            if o["capacity"] == "16GB" and o["price"] > 500000:
+                if o not in server_options:
+                    server_options.append(o)
+            elif o["capacity"] == "32GB" and o["price"] > 1000000:
+                if o not in server_options:
+                    server_options.append(o)
+
+    # 중복 제거
+    seen = set()
+    desktop_unique = []
+    for o in desktop_options:
+        key = o["capacity"]
+        if key not in seen:
+            seen.add(key)
+            desktop_unique.append(o)
+
+    seen = set()
+    server_unique = []
+    for o in server_options:
+        key = o["capacity"]
+        if key not in seen:
+            seen.add(key)
+            server_unique.append(o)
+
+    if desktop_unique:
+        desktop_title = ""
+        for t in titles:
+            if "ECC" not in t.upper() and "서버" not in t:
+                desktop_title = t
+                break
+        products.append({
+            "title": desktop_title or "[삼성전자] 삼성 DDR5 PC5-44800",
+            "options": desktop_unique,
+        })
+
+    if server_unique:
+        server_title = ""
+        for t in titles:
+            if "ECC" in t.upper() or "서버" in t:
+                server_title = t
+                break
+        products.append({
+            "title": server_title or "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용",
+            "options": server_unique,
+        })
+
+    log(f"\n총 {len(products)}개 제품, {len(all_options)}개 옵션 추출")
     return products
 
-# ============================================
-# 타겟 매칭
-# ============================================
 def match_target(products, target):
     for product in products:
         title_upper = product["title"].upper()
-        
         must_include = all(kw.upper() in title_upper for kw in target["title_must_include"])
         must_exclude = any(kw.upper() in title_upper for kw in target["title_must_exclude"])
-        
+
         if must_include and not must_exclude:
             filtered = [
                 {
@@ -200,7 +293,6 @@ def match_target(products, target):
                 for opt in product["options"]
                 if opt["capacity"] in target["capacities"]
             ]
-            
             if filtered:
                 return {
                     "product_name": target["name"],
@@ -210,15 +302,11 @@ def match_target(products, target):
                 }
     return None
 
-# ============================================
-# 데이터 저장
-# ============================================
 def save_data(results):
     now = datetime.now(KST)
     data_path = os.path.join(BASE_DIR, "compuzone_data.json")
 
     full = {"products": {}, "price_history": {}, "last_updated": ""}
-
     if os.path.exists(data_path):
         try:
             with open(data_path, "r", encoding="utf-8") as f:
@@ -242,37 +330,28 @@ def save_data(results):
 
     if history_entry:
         full["price_history"][timestamp] = history_entry
-
     full["last_updated"] = timestamp
 
     with open(data_path, "w", encoding="utf-8") as f:
         json.dump(full, f, ensure_ascii=False, indent=2)
-
     log(f"✅ 데이터 저장: {data_path}")
 
-# ============================================
-# 메인
-# ============================================
 def main():
     now = datetime.now(KST)
     log("=" * 60)
     log("🛒 컴퓨존 RAM 가격 크롤러 (Selenium)")
     log(f"📅 KST: {now.strftime('%Y-%m-%d %H:%M:%S')}")
-    log(f"📂 작업 디렉토리: {BASE_DIR}")
     log("=" * 60)
 
     driver = None
     try:
         driver = setup_driver()
-        
-        # 검색 & 추출
         products = extract_products(driver, "삼성 DDR5 PC5-44800")
-        
+
         if not products:
             log("❌ 제품을 찾지 못했습니다", "ERROR")
             return False
-        
-        # 타겟 매칭
+
         results = []
         for target in TARGETS:
             log(f"\n🎯 매칭: {target['name']}")
@@ -284,14 +363,14 @@ def main():
             else:
                 log(f"  ❌ 실패", "WARN")
             results.append(result)
-        
+
         valid = [r for r in results if r is not None]
         if not valid:
             log("❌ 매칭된 제품 없음", "ERROR")
             return False
-        
+
         save_data(results)
-        
+
         log("=" * 60)
         log(f"✅ 완료! {len(valid)}/{len(TARGETS)} 제품 수집")
         log("=" * 60)
@@ -305,7 +384,6 @@ def main():
         if driver:
             driver.quit()
             log("브라우저 종료")
-
 
 if __name__ == "__main__":
     success = main()
