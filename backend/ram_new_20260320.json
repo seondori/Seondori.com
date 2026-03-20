@@ -1,0 +1,320 @@
+{
+  "price_data": {
+    "DDR5 RAM (데스크탑)": [
+      {
+        "product": "삼성 DDR5 8GB",
+        "price": 1,
+        "price_formatted": "1원",
+        "source": "네이버",
+        "source_title": "삼성전자 갤럭시 S24 5G 256GB [KT]",
+        "link": "https://search.shopping.naver.com/catalog/45321395619"
+      },
+      {
+        "product": "삼성 DDR5 16GB",
+        "price": 990,
+        "price_formatted": "990원",
+        "source": "그린나래621",
+        "source_title": "크라프트 연습장 필기 메모 스케치 무지 공책 노트 B5 36장",
+        "link": "https://smartstore.naver.com/main/products/12049729283"
+      },
+      {
+        "product": "삼성 DDR5 32GB",
+        "price": 990,
+        "price_formatted": "990원",
+        "source": "그린나래621",
+        "source_title": "크라프트 연습장 필기 메모 스케치 무지 공책 노트 B5 36장",
+        "link": "https://smartstore.naver.com/main/products/12049729283"
+      }
+    ],
+    "DDR4 RAM (데스크탑)": [
+      {
+        "product": "삼성 DDR4 4GB",
+        "price": 100,
+        "price_formatted": "100원",
+        "source": "11번가",
+        "source_title": "삼성전자 갤럭시 A17 4G 128GB SM-A175N 학생폰 무료폰",
+        "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=9132331001&tid=1000000061"
+      },
+      {
+        "product": "삼성 DDR4 8GB",
+        "price": 1,
+        "price_formatted": "1원",
+        "source": "띵폰",
+        "source_title": "[SKT][번호이동] 갤럭시 Z Flip4 256G 256GB / SM-F721N 공시지원 부가서비스X",
+        "link": "https://ddingphone.com/view/48?tid=SKT&oid=%EB%B2%88%ED%98%B8%EC%9D%B4%EB%8F%99&sales=1&code=S1594099260&gid=256"
+      },
+      {
+        "product": "삼성 DDR4 16GB",
+        "price": 2000,
+        "price_formatted": "2,000원",
+        "source": "컴엔더 COMENDER",
+        "source_title": "삼성전자 DDR3-1333 PC3-10600 중고 (1GB, 2GB) 데스크탑 메모리",
+        "link": "https://smartstore.naver.com/main/products/12809598429"
+      },
+      {
+        "product": "삼성 DDR4 32GB",
+        "price": 2000,
+        "price_formatted": "2,000원",
+        "source": "베이스캠프",
+        "source_title": "삼성 DDR3 2G PC3-10600 중고",
+        "link": "http://basecamp.asia/shop/product_detail.html?pd_no=97673"
+      }
+    ],
+    "DDR3 RAM (데스크탑)": [
+      {
+        "product": "삼성 DDR3 4GB",
+        "price": 6000,
+        "price_formatted": "6,000원",
+        "source": "에스쓰리알",
+        "source_title": "삼성 하이닉스 데스크탑용 DDR3 4G 램(RAM)",
+        "link": "https://smartstore.naver.com/main/products/11758916536"
+      },
+      {
+        "product": "삼성 DDR3 8GB",
+        "price": 7500,
+        "price_formatted": "7,500원",
+        "source": "창성컴퓨터6",
+        "source_title": "(창성컴퓨터)중고데스크탑메모리SDRAM DDR1 DDR2 DDR3 512M 1G 2G 4G 8G DDR2-533 667 800 PC2-4200 5300 6400 PC3-10600",
+        "link": "https://smartstore.naver.com/main/products/2469811520"
+      }
+    ],
+    "DDR5 RAM (노트북)": [
+      {
+        "product": "삼성 DDR5 8GB (노트북)",
+        "price": 1440,
+        "price_formatted": "1,440원",
+        "source": "11번가",
+        "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+        "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+      },
+      {
+        "product": "삼성 DDR5 16GB (노트북)",
+        "price": 1440,
+        "price_formatted": "1,440원",
+        "source": "11번가",
+        "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+        "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+      },
+      {
+        "product": "삼성 DDR5 32GB (노트북)",
+        "price": 1440,
+        "price_formatted": "1,440원",
+        "source": "11번가",
+        "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+        "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+      }
+    ],
+    "DDR4 RAM (노트북)": [
+      {
+        "product": "삼성 DDR4 4GB (노트북)",
+        "price": 1440,
+        "price_formatted": "1,440원",
+        "source": "11번가",
+        "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+        "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+      },
+      {
+        "product": "삼성 DDR4 8GB (노트북)",
+        "price": 1440,
+        "price_formatted": "1,440원",
+        "source": "11번가",
+        "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+        "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+      },
+      {
+        "product": "삼성 DDR4 16GB (노트북)",
+        "price": 1440,
+        "price_formatted": "1,440원",
+        "source": "11번가",
+        "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+        "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+      },
+      {
+        "product": "삼성 DDR4 32GB (노트북)",
+        "price": 1440,
+        "price_formatted": "1,440원",
+        "source": "11번가",
+        "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+        "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+      }
+    ],
+    "DDR3 RAM (노트북)": [
+      {
+        "product": "삼성 DDR3 4GB (노트북)",
+        "price": 7750,
+        "price_formatted": "7,750원",
+        "source": "itcom19",
+        "source_title": "삼성전자 노트북 메모리 DDR3-1600 4GB (PC3-12800) 중고",
+        "link": "https://smartstore.naver.com/main/products/11928298656"
+      },
+      {
+        "product": "삼성 DDR3 8GB (노트북)",
+        "price": 17670,
+        "price_formatted": "17,670원",
+        "source": "쿠팡",
+        "source_title": "삼성 호환 DDR3 노트북 메모리 모듈 SODIMM RAM 8GB 4GB 2GB 1GB PC3 10600S 1333 Mhz 8G 4G 2G 1G  DDR3 1G 1333MHzX1p",
+        "link": "https://link.coupang.com/re/PCSNAVERPCSDP?pageKey=8550171970&ctag=8550171970&lptag=I9865980874&itemId=9865980874&vendorItemId=87227679307&spec=10305199"
+      }
+    ]
+  },
+  "price_history": {
+    "2026-03-20 13:00": {
+      "DDR5 RAM (데스크탑)": [
+        {
+          "product": "삼성 DDR5 8GB",
+          "price": 1,
+          "price_formatted": "1원",
+          "source": "네이버",
+          "source_title": "삼성전자 갤럭시 S24 5G 256GB [KT]",
+          "link": "https://search.shopping.naver.com/catalog/45321395619"
+        },
+        {
+          "product": "삼성 DDR5 16GB",
+          "price": 990,
+          "price_formatted": "990원",
+          "source": "그린나래621",
+          "source_title": "크라프트 연습장 필기 메모 스케치 무지 공책 노트 B5 36장",
+          "link": "https://smartstore.naver.com/main/products/12049729283"
+        },
+        {
+          "product": "삼성 DDR5 32GB",
+          "price": 990,
+          "price_formatted": "990원",
+          "source": "그린나래621",
+          "source_title": "크라프트 연습장 필기 메모 스케치 무지 공책 노트 B5 36장",
+          "link": "https://smartstore.naver.com/main/products/12049729283"
+        }
+      ],
+      "DDR4 RAM (데스크탑)": [
+        {
+          "product": "삼성 DDR4 4GB",
+          "price": 100,
+          "price_formatted": "100원",
+          "source": "11번가",
+          "source_title": "삼성전자 갤럭시 A17 4G 128GB SM-A175N 학생폰 무료폰",
+          "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=9132331001&tid=1000000061"
+        },
+        {
+          "product": "삼성 DDR4 8GB",
+          "price": 1,
+          "price_formatted": "1원",
+          "source": "띵폰",
+          "source_title": "[SKT][번호이동] 갤럭시 Z Flip4 256G 256GB / SM-F721N 공시지원 부가서비스X",
+          "link": "https://ddingphone.com/view/48?tid=SKT&oid=%EB%B2%88%ED%98%B8%EC%9D%B4%EB%8F%99&sales=1&code=S1594099260&gid=256"
+        },
+        {
+          "product": "삼성 DDR4 16GB",
+          "price": 2000,
+          "price_formatted": "2,000원",
+          "source": "컴엔더 COMENDER",
+          "source_title": "삼성전자 DDR3-1333 PC3-10600 중고 (1GB, 2GB) 데스크탑 메모리",
+          "link": "https://smartstore.naver.com/main/products/12809598429"
+        },
+        {
+          "product": "삼성 DDR4 32GB",
+          "price": 2000,
+          "price_formatted": "2,000원",
+          "source": "베이스캠프",
+          "source_title": "삼성 DDR3 2G PC3-10600 중고",
+          "link": "http://basecamp.asia/shop/product_detail.html?pd_no=97673"
+        }
+      ],
+      "DDR3 RAM (데스크탑)": [
+        {
+          "product": "삼성 DDR3 4GB",
+          "price": 6000,
+          "price_formatted": "6,000원",
+          "source": "에스쓰리알",
+          "source_title": "삼성 하이닉스 데스크탑용 DDR3 4G 램(RAM)",
+          "link": "https://smartstore.naver.com/main/products/11758916536"
+        },
+        {
+          "product": "삼성 DDR3 8GB",
+          "price": 7500,
+          "price_formatted": "7,500원",
+          "source": "창성컴퓨터6",
+          "source_title": "(창성컴퓨터)중고데스크탑메모리SDRAM DDR1 DDR2 DDR3 512M 1G 2G 4G 8G DDR2-533 667 800 PC2-4200 5300 6400 PC3-10600",
+          "link": "https://smartstore.naver.com/main/products/2469811520"
+        }
+      ],
+      "DDR5 RAM (노트북)": [
+        {
+          "product": "삼성 DDR5 8GB (노트북)",
+          "price": 1440,
+          "price_formatted": "1,440원",
+          "source": "11번가",
+          "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+          "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+        },
+        {
+          "product": "삼성 DDR5 16GB (노트북)",
+          "price": 1440,
+          "price_formatted": "1,440원",
+          "source": "11번가",
+          "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+          "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+        },
+        {
+          "product": "삼성 DDR5 32GB (노트북)",
+          "price": 1440,
+          "price_formatted": "1,440원",
+          "source": "11번가",
+          "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+          "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+        }
+      ],
+      "DDR4 RAM (노트북)": [
+        {
+          "product": "삼성 DDR4 4GB (노트북)",
+          "price": 1440,
+          "price_formatted": "1,440원",
+          "source": "11번가",
+          "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+          "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+        },
+        {
+          "product": "삼성 DDR4 8GB (노트북)",
+          "price": 1440,
+          "price_formatted": "1,440원",
+          "source": "11번가",
+          "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+          "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+        },
+        {
+          "product": "삼성 DDR4 16GB (노트북)",
+          "price": 1440,
+          "price_formatted": "1,440원",
+          "source": "11번가",
+          "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+          "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+        },
+        {
+          "product": "삼성 DDR4 32GB (노트북)",
+          "price": 1440,
+          "price_formatted": "1,440원",
+          "source": "11번가",
+          "source_title": "삼성전자(정품) DDR3 1G PC3-10600S / PC3-8500 노트북용 SO-DIMM ~7S153",
+          "link": "https://www.11st.co.kr/connect/Gateway.tmall?method=Xsite&prdNo=8498965437&tid=1000000061"
+        }
+      ],
+      "DDR3 RAM (노트북)": [
+        {
+          "product": "삼성 DDR3 4GB (노트북)",
+          "price": 7750,
+          "price_formatted": "7,750원",
+          "source": "itcom19",
+          "source_title": "삼성전자 노트북 메모리 DDR3-1600 4GB (PC3-12800) 중고",
+          "link": "https://smartstore.naver.com/main/products/11928298656"
+        },
+        {
+          "product": "삼성 DDR3 8GB (노트북)",
+          "price": 17670,
+          "price_formatted": "17,670원",
+          "source": "쿠팡",
+          "source_title": "삼성 호환 DDR3 노트북 메모리 모듈 SODIMM RAM 8GB 4GB 2GB 1GB PC3 10600S 1333 Mhz 8G 4G 2G 1G  DDR3 1G 1333MHzX1p",
+          "link": "https://link.coupang.com/re/PCSNAVERPCSDP?pageKey=8550171970&ctag=8550171970&lptag=I9865980874&itemId=9865980874&vendorItemId=87227679307&spec=10305199"
+        }
+      ]
+    }
+  }
+}
