@@ -12,6 +12,7 @@ import sys
 import traceback
 import re
 import glob
+import shutil
 from datetime import datetime, timezone, timedelta
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -199,22 +200,38 @@ def save_data(parsed_data, date_str, time_str):
 # ============================================
 # 드라이버 설정 (Chrome 프로필 사용)
 # ============================================
+import shutil
+
 def setup_driver():
-    """Chrome 프로필을 사용하여 로그인 상태 유지"""
     log("Chrome 드라이버 설정 중...")
     options = Options()
 
     chrome_profile = get_chrome_profile_path()
 
     if chrome_profile:
-        # ⭐ 핵심: Chrome 프로필을 직접 사용하여 로그인 세션 공유
-        options.add_argument(f"--user-data-dir={chrome_profile}")
-        options.add_argument("--profile-directory=Default")
-        log("✅ Chrome 프로필 로드됨 (로그인 세션 공유)")
-    else:
-        log("⚠️ Chrome 프로필을 찾을 수 없어 환경변수 쿠키 모드로 전환", "WARN")
+        # ⭐ 프로필을 임시 폴더로 복사 (Chrome 실행 중 충돌 방지)
+        temp_profile = os.path.join(os.environ.get("TEMP", "C:\\Temp"), "chrome_crawler_profile")
+        if os.path.exists(temp_profile):
+            shutil.rmtree(temp_profile, ignore_errors=True)
+        
+        # 쿠키 등 핵심 파일만 복사 (전체 복사는 느림)
+        os.makedirs(os.path.join(temp_profile, "Default"), exist_ok=True)
+        for filename in ["Cookies", "Cookies-journal", "Login Data", "Web Data"]:
+            src = os.path.join(chrome_profile, "Default", filename)
+            dst = os.path.join(temp_profile, "Default", filename)
+            if os.path.exists(src):
+                shutil.copy2(src, dst)
+                log(f"  쿠키 파일 복사: {filename}")
+        
+        # Local State 파일도 복사
+        local_state = os.path.join(chrome_profile, "Local State")
+        if os.path.exists(local_state):
+            shutil.copy2(local_state, os.path.join(temp_profile, "Local State"))
 
-    # headless 모드 (화면 없이 실행)
+        options.add_argument(f"--user-data-dir={temp_profile}")
+        options.add_argument("--profile-directory=Default")
+        log("✅ Chrome 프로필 복사 완료")
+    
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -223,9 +240,6 @@ def setup_driver():
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-
-    # ⭐ 중요: Chrome이 이미 실행 중이면 프로필 잠금 충돌 방지
-    options.add_argument("--remote-debugging-port=0")
 
     driver = webdriver.Chrome(options=options)
     log("Chrome 드라이버 초기화 완료")
