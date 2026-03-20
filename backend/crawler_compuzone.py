@@ -21,19 +21,19 @@ from datetime import datetime, timezone, timedelta
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 KST = timezone(timedelta(hours=9))
 
-SEARCH_URL = "https://www.compuzone.co.kr/search/search_result.htm"
+SEARCH_URL = "https://www.compuzone.co.kr/search/search.htm"
 
 # 수집 대상 제품 및 용량
 TARGETS = [
     {
         "name": "삼성 DDR5 PC5-44800 ECC/REG 서버용",
-        "search_keyword": "삼성 DDR5 PC5-44800 ECC REG 서버용",
+        "search_keyword": "PC5-44800 ECC REG 서버용",
         "category": "DDR5 ECC/REG (서버용)",
         "capacities": ["16GB", "32GB", "64GB", "128GB"],
     },
     {
         "name": "삼성 DDR5 PC5-44800",
-        "search_keyword": "삼성전자 삼성 DDR5 PC5-44800",
+        "search_keyword": "삼성 DDR5 PC5-44800",
         "category": "DDR5 (데스크탑)",
         "capacities": ["8GB", "16GB", "24GB", "32GB"],
     },
