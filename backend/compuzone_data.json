@@ -1,0 +1,55 @@
+{
+  "products": {
+    "DDR5 (데스크탑)": {
+      "product_name": "삼성 DDR5 PC5-44800",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800",
+      "options": [
+        {
+          "capacity": "24GB",
+          "price": 459000,
+          "price_formatted": "459,000원"
+        }
+      ]
+    },
+    "DDR5 ECC/REG (서버용)": {
+      "product_name": "삼성 DDR5 PC5-44800 ECC/REG 서버용",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용",
+      "options": [
+        {
+          "capacity": "16GB",
+          "price": 963000,
+          "price_formatted": "963,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 1638000,
+          "price_formatted": "1,638,000원"
+        }
+      ]
+    }
+  },
+  "price_history": {
+    "2026-03-20 14:22": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "24GB",
+          "price": 459000,
+          "price_formatted": "459,000원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "16GB",
+          "price": 963000,
+          "price_formatted": "963,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 1638000,
+          "price_formatted": "1,638,000원"
+        }
+      ]
+    }
+  },
+  "last_updated": "2026-03-20 14:22"
+}
