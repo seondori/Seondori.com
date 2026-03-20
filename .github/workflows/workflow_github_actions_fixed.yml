@@ -21,6 +21,8 @@ jobs:
         run: pip install selenium webdriver-manager requests
 
       - name: Run crawler
+        env:
+          PYTHONIOENCODING: utf-8
         run: |
           cd backend
           python crawler_cookie_based_fixed.py
