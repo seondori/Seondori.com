@@ -1,9 +1,9 @@
-name: RAM New Price Collector (API-Based)
+name: RAM New Price Collector (Danawa)
 
 on:
   schedule:
     - cron: '0 1 * * *'   # 한국시간 10:00
-    - cron: '0 4 * * *'   # 한국시간 13:00
+    - cron: '0 4 * * *'
     - cron: '0 9 * * *'   # 한국시간 18:00
   workflow_dispatch:
 
@@ -22,13 +22,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: pip install requests
+      - name: Install latest Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
 
-      - name: Run new price collector
-        env:
-          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
-          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+      - name: Install dependencies
+        run: pip install selenium webdriver-manager requests
+
+      - name: Run danawa crawler
         run: |
           cd backend
           python crawler_api_based.py
@@ -43,6 +45,14 @@ jobs:
             echo "⚠️ 결과 파일 없음"
           fi
 
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: danawa-debug-${{ github.run_id }}
+          path: backend/danawa_debug_*.png
+          retention-days: 3
+
       - name: Commit and push
         if: success()
         env:
@@ -55,7 +65,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "ℹ️ 변경사항 없음"
           else
-            git commit -m "🤖 신품 시세 업데이트: $(date +'%Y-%m-%d %H:%M')"
+            git commit -m "🔍 다나와 시세 업데이트: $(date +'%Y-%m-%d %H:%M')"
             for i in 1 2 3; do
               git pull --rebase origin main && git push origin main && break
               echo "⚠️ Push 실패 (시도 $i/3), 5초 후 재시도..."
