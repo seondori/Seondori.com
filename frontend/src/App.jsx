@@ -418,10 +418,10 @@ const App = () => {
         {/* ✅ 탭 - 컴퓨존이 맨 앞 */}
         <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 border-b border-[#333] pb-1 overflow-x-auto scrollbar-hide">
             {[
-              {id: 'compuzone', label: '🛒 컴퓨존', shortLabel: '🛒 컴퓨존'},
-              {id: 'ram', label: '💾 RAM 중고시세', shortLabel: '💾 중고'},
-              {id: 'ram-new', label: '🏷️ RAM 신품최저가', shortLabel: '🏷️ 신품'},
-              {id: 'dramexchange', label: '📊 DRAMeXchange', shortLabel: '📊 DRAM'},
+              {id: 'compuzone', label: '🛒 RAM 컴퓨존', shortLabel: '🛒 컴퓨존'},
+              {id: 'ram', label: '💾 RAM 중고 매입시세', shortLabel: '💾 중고'},
+              {id: 'ram-new', label: '🏷️ RAM 다나와', shortLabel: '🏷️ '다나와'},
+              {id: 'dramexchange', label: '📊 DRAMeXchange', shortLabel: '📊 미국시세'},
               {id: 'tradingview', label: '🔍 Trading View', shortLabel: '🔍 차트'}, 
               {id: 'indices', label: '📈 주가지수', shortLabel: '📈 지수'}, 
               {id: 'forex', label: '💱 환율', shortLabel: '💱 환율'}, 
