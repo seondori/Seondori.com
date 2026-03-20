@@ -149,7 +149,7 @@ def parse_price_data(price_text):
 # 데이터 저장 (기존과 동일)
 # ============================================
 def get_data_file():
-    files = glob.glob(os.path.join(BASE_DIR, "ram_*.json"))
+    files = glob.glob(os.path.join(BASE_DIR, "ram_price_junggo*.json"))
     # ram_new_*.json 제외
     files = [f for f in files if "ram_new_" not in f]
     if files:
