@@ -42,9 +42,55 @@ def load_dram_data():
         print(f"GitHub에서 DRAM 데이터 로드 실패: {e}")
         return None
 
+def load_compuzone_data():
+    """GitHub에서 컴퓨존 데이터 로드"""
+    try:
+        url = GITHUB_RAW + "compuzone_data.json"
+        res = requests.get(url, timeout=10)
+        res.raise_for_status()
+        return res.json()
+    except Exception as e:
+        print(f"GitHub에서 컴퓨존 데이터 로드 실패: {e}")
+        return None
+
+def load_ram_new_data():
+    """GitHub에서 신품 최저가 데이터 로드 (ram_new_*.json)"""
+    try:
+        # 먼저 최신 파일명을 찾기 위해 GitHub API 사용
+        api_url = "https://api.github.com/repos/seondori/Seondori.com/contents/backend"
+        res = requests.get(api_url, timeout=10)
+        res.raise_for_status()
+        files = res.json()
+        
+        # ram_new_*.json 파일 찾기
+        new_files = [f["name"] for f in files if f["name"].startswith("ram_new_") and f["name"].endswith(".json")]
+        
+        if not new_files:
+            print("ram_new_*.json 파일 없음")
+            return None
+        
+        latest_file = sorted(new_files)[-1]
+        url = GITHUB_RAW + latest_file
+        res = requests.get(url, timeout=10)
+        res.raise_for_status()
+        return res.json()
+    except Exception as e:
+        print(f"GitHub에서 신품 데이터 로드 실패: {e}")
+        return None
+
 @app.get("/")
 async def root():
-    return {"status": "ok", "message": "Seondori API Server", "endpoints": ["/api/market-data", "/api/ram-data"]}
+    return {
+        "status": "ok",
+        "message": "Seondori API Server",
+        "endpoints": [
+            "/api/market-data",
+            "/api/ram-data",
+            "/api/dramexchange-data",
+            "/api/compuzone-data",
+            "/api/ram-new-data",
+        ]
+    }
 
 class UpdateRequest(BaseModel):
     date: str
@@ -52,7 +98,7 @@ class UpdateRequest(BaseModel):
     text: str
 
 # ============================================
-# [완전 재작성] 네이버 카페 글 형식 파싱
+# 네이버 카페 글 형식 파싱
 # ============================================
 def parse_price_data(price_text):
     prices = {}
@@ -210,10 +256,9 @@ async def get_market_data(period: str = "1개월"):
 
 @app.get("/api/dramexchange-data")
 async def get_dramexchange_data():
-    """GitHub에서 DRAM Exchange 데이터를 직접 읽어 반환"""
     data = load_dram_data()
     if data is None:
-        return {"price_data": {}, "price_history": {}, "error": "데이터 로드 실패"}
+        return {"current_data": {}, "price_history": {}, "error": "데이터 로드 실패"}
     return data
 
 @app.get("/api/ram-data")
@@ -232,6 +277,46 @@ async def get_ram_data():
             for item in items:
                 p_name = item['product']
                 if p_name not in product_history: 
+                    product_history[p_name] = []
+                product_history[p_name].append({"date": date, "price": item['price']})
+
+    return {
+        "current": json_data.get("price_data", {}),
+        "trends": product_history,
+        "total_days": len(sorted_dates),
+        "date_range": f"{sorted_dates[0]} ~ {sorted_dates[-1]}" if sorted_dates else ""
+    }
+
+# ============================================
+# ✅ 컴퓨존 데이터 API
+# ============================================
+@app.get("/api/compuzone-data")
+async def get_compuzone_data():
+    data = load_compuzone_data()
+    if data is None:
+        return {"products": {}, "price_history": {}, "last_updated": ""}
+    return data
+
+# ============================================
+# ✅ 신품 최저가 데이터 API
+# ============================================
+@app.get("/api/ram-new-data")
+async def get_ram_new_data():
+    json_data = load_ram_new_data()
+    if json_data is None:
+        return {"current": {}, "trends": {}}
+    
+    # ram-data와 동일한 형식으로 변환
+    product_history = {}
+    raw_history = json_data.get("price_history", {})
+    sorted_dates = sorted(raw_history.keys())
+
+    for date in sorted_dates:
+        categories = raw_history[date]
+        for cat, items in categories.items():
+            for item in items:
+                p_name = item['product']
+                if p_name not in product_history:
                     product_history[p_name] = []
                 product_history[p_name].append({"date": date, "price": item['price']})
 
