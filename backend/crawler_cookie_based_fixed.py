@@ -230,8 +230,8 @@ def setup_driver():
         if os.path.exists(local_state):
             shutil.copy2(local_state, os.path.join(temp_profile, "Local State"))
 
-        options.add_argument(f"--user-data-dir={temp_profile}")
-        options.add_argument("--profile-directory=Default")
+        options.add_argument(r"--user-data-dir=C:\Users\stellaaa\AppData\Local\Google\Chrome\User Data")
+        options.add_argument("--profile-directory=Profile 12")
         log("✅ Chrome 프로필 복사 완료")
 
     options.add_argument("--headless=new")
