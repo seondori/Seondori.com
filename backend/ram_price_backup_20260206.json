@@ -30,6 +30,27 @@
         "product": "삼성 DDR5 8G 4800MHz",
         "price": 80000,
         "price_formatted": "80,000원"
+      },
+      {
+        "product": "삼성 DDR5 8GB",
+        "price": 175300,
+        "price_formatted": "175,300원",
+        "source": "SEVENSTAR MALL",
+        "source_title": "삼성전자 데스크탑 8GB DDR5 5600 PC5-44800 벌크 패키지포장"
+      },
+      {
+        "product": "삼성 DDR5 16GB",
+        "price": 292000,
+        "price_formatted": "292,000원",
+        "source": "인리컴",
+        "source_title": "삼성 칩 DDR5 16GB PC5 44800 5600B 데스크탑 메모리"
+      },
+      {
+        "product": "삼성 DDR5 32GB",
+        "price": 341510,
+        "price_formatted": "341,510원",
+        "source": "쿠팡",
+        "source_title": "삼성전자 DDR5 데스크탑 PC5-44800 5600MHz PC용 램 16GB"
       }
     ],
     "DDR4 RAM (데스크탑)": [
@@ -92,6 +113,34 @@
         "product": "삼성 DDR4 4G PC4-23400",
         "price": 15000,
         "price_formatted": "15,000원"
+      },
+      {
+        "product": "삼성 DDR4 4GB",
+        "price": 7900,
+        "price_formatted": "7,900원",
+        "source": "인리컴",
+        "source_title": "DDR3 4G PC3 12800U 램 4기가 데스크탑"
+      },
+      {
+        "product": "삼성 DDR4 8GB",
+        "price": 72500,
+        "price_formatted": "72,500원",
+        "source": "컴기공",
+        "source_title": "삼성 데스크탑 메모리 DDR4 8G PC4 17000 2133P"
+      },
+      {
+        "product": "삼성 DDR4 16GB",
+        "price": 138900,
+        "price_formatted": "138,900원",
+        "source": "쑤마트",
+        "source_title": "삼성전자 데스크탑용 DDR4 16GB PC4-2133P(17000 MHz)"
+      },
+      {
+        "product": "삼성 DDR4 32GB",
+        "price": 310000,
+        "price_formatted": "310,000원",
+        "source": "인리컴",
+        "source_title": "삼성 칩 데스크탑 DDR4 32GB PC4 21300 2666V 메모리"
       }
     ],
     "DDR4 RAM (노트북)": [
@@ -169,6 +218,34 @@
         "product": "삼성 DDR4 4G PC4-19200 (노트북)",
         "price": 8000,
         "price_formatted": "8,000원"
+      },
+      {
+        "product": "삼성 DDR4 4GB (노트북)",
+        "price": 15000,
+        "price_formatted": "15,000원",
+        "source": "컴기공",
+        "source_title": "삼성 DDR3 4GB PC3L 12800S 저전력 노트북 메모리"
+      },
+      {
+        "product": "삼성 DDR4 8GB (노트북)",
+        "price": 75000,
+        "price_formatted": "75,000원",
+        "source": "컴기공",
+        "source_title": "삼성전자 DDR4 8GB PC4-17000(2133P) 노트북 램 메모리"
+      },
+      {
+        "product": "삼성 DDR4 16GB (노트북)",
+        "price": 144790,
+        "price_formatted": "144,790원",
+        "source": "네이버",
+        "source_title": "삼성전자 삼성 DDR4 PC4-21300 16GB, 1개"
+      },
+      {
+        "product": "삼성 DDR4 32GB (노트북)",
+        "price": 347900,
+        "price_formatted": "347,900원",
+        "source": "에이코다",
+        "source_title": "삼성 노트북 용 DDR4 32G 3200MHz 3200AA PC4 램 메모리 업그레이드"
       }
     ],
     "DDR3 RAM (노트북)": [
@@ -186,6 +263,20 @@
         "product": "삼성 DDR4 8G 12800 (노트북)",
         "price": 3000,
         "price_formatted": "3,000원"
+      },
+      {
+        "product": "삼성 DDR3 4GB (노트북)",
+        "price": 12000,
+        "price_formatted": "12,000원",
+        "source": "인리컴",
+        "source_title": "노트북 DDR3 4G PC3 10600S 램 삼성 정품"
+      },
+      {
+        "product": "삼성 DDR3 8GB (노트북)",
+        "price": 28000,
+        "price_formatted": "28,000원",
+        "source": "네이버",
+        "source_title": "삼성전자 삼성 DDR3 PC3-12800 8GB, 1개"
       }
     ],
     "DDR3 RAM (데스크탑)": [
@@ -208,6 +299,20 @@
         "product": "삼성 DDR4 8G 10600",
         "price": 3000,
         "price_formatted": "3,000원"
+      },
+      {
+        "product": "삼성 DDR3 4GB",
+        "price": 7440,
+        "price_formatted": "7,440원",
+        "source": "G마켓",
+        "source_title": "삼성전자 컴퓨터 램 삼성 DDR3 4GB PC3-10600U RAM 메모리 데스크탑용"
+      },
+      {
+        "product": "삼성 DDR3 8GB",
+        "price": 34000,
+        "price_formatted": "34,000원",
+        "source": "인리컴",
+        "source_title": "삼성 칩 램8기가 DDR3 8GB PC3 12800 1600MHz 데스크탑"
       }
     ],
     "DDR5 RAM (노트북)": [
@@ -230,6 +335,27 @@
         "product": "삼성 DDR5 32G 5600 (노트북)",
         "price": 250000,
         "price_formatted": "250,000원"
+      },
+      {
+        "product": "삼성 DDR5 8GB (노트북)",
+        "price": 149200,
+        "price_formatted": "149,200원",
+        "source": "SEVENSTAR MALL",
+        "source_title": "삼성전자 노트북 8GB DDR5 4800 CL40 PC5-38400 벌크 패키지포장"
+      },
+      {
+        "product": "삼성 DDR5 16GB (노트북)",
+        "price": 323000,
+        "price_formatted": "323,000원",
+        "source": "옥션",
+        "source_title": "삼성전자 삼성 노트북용 DDR5 16GB PC5-5600B (PC5-44800S)"
+      },
+      {
+        "product": "삼성 DDR5 32GB (노트북)",
+        "price": 575000,
+        "price_formatted": "575,000원",
+        "source": "모두의놀이터",
+        "source_title": "삼성전자 노트북 DDR5-44800 5600 (32GB) 램 RAM 메모리"
       }
     ]
   },
@@ -21638,6 +21764,146 @@
           "product": "삼성 DDR3 8G PC3-10600 (노트북)",
           "price": 3000,
           "price_formatted": "3,000원"
+        }
+      ]
+    },
+    "2026-03-20 13:00": {
+      "DDR5 RAM (데스크탑)": [
+        {
+          "product": "삼성 DDR5 8GB",
+          "price": 175300,
+          "price_formatted": "175,300원",
+          "source": "SEVENSTAR MALL",
+          "source_title": "삼성전자 데스크탑 8GB DDR5 5600 PC5-44800 벌크 패키지포장"
+        },
+        {
+          "product": "삼성 DDR5 16GB",
+          "price": 292000,
+          "price_formatted": "292,000원",
+          "source": "인리컴",
+          "source_title": "삼성 칩 DDR5 16GB PC5 44800 5600B 데스크탑 메모리"
+        },
+        {
+          "product": "삼성 DDR5 32GB",
+          "price": 341510,
+          "price_formatted": "341,510원",
+          "source": "쿠팡",
+          "source_title": "삼성전자 DDR5 데스크탑 PC5-44800 5600MHz PC용 램 16GB"
+        }
+      ],
+      "DDR4 RAM (데스크탑)": [
+        {
+          "product": "삼성 DDR4 4GB",
+          "price": 7900,
+          "price_formatted": "7,900원",
+          "source": "인리컴",
+          "source_title": "DDR3 4G PC3 12800U 램 4기가 데스크탑"
+        },
+        {
+          "product": "삼성 DDR4 8GB",
+          "price": 72500,
+          "price_formatted": "72,500원",
+          "source": "컴기공",
+          "source_title": "삼성 데스크탑 메모리 DDR4 8G PC4 17000 2133P"
+        },
+        {
+          "product": "삼성 DDR4 16GB",
+          "price": 138900,
+          "price_formatted": "138,900원",
+          "source": "쑤마트",
+          "source_title": "삼성전자 데스크탑용 DDR4 16GB PC4-2133P(17000 MHz)"
+        },
+        {
+          "product": "삼성 DDR4 32GB",
+          "price": 310000,
+          "price_formatted": "310,000원",
+          "source": "인리컴",
+          "source_title": "삼성 칩 데스크탑 DDR4 32GB PC4 21300 2666V 메모리"
+        }
+      ],
+      "DDR3 RAM (데스크탑)": [
+        {
+          "product": "삼성 DDR3 4GB",
+          "price": 7440,
+          "price_formatted": "7,440원",
+          "source": "G마켓",
+          "source_title": "삼성전자 컴퓨터 램 삼성 DDR3 4GB PC3-10600U RAM 메모리 데스크탑용"
+        },
+        {
+          "product": "삼성 DDR3 8GB",
+          "price": 34000,
+          "price_formatted": "34,000원",
+          "source": "인리컴",
+          "source_title": "삼성 칩 램8기가 DDR3 8GB PC3 12800 1600MHz 데스크탑"
+        }
+      ],
+      "DDR5 RAM (노트북)": [
+        {
+          "product": "삼성 DDR5 8GB (노트북)",
+          "price": 149200,
+          "price_formatted": "149,200원",
+          "source": "SEVENSTAR MALL",
+          "source_title": "삼성전자 노트북 8GB DDR5 4800 CL40 PC5-38400 벌크 패키지포장"
+        },
+        {
+          "product": "삼성 DDR5 16GB (노트북)",
+          "price": 323000,
+          "price_formatted": "323,000원",
+          "source": "옥션",
+          "source_title": "삼성전자 삼성 노트북용 DDR5 16GB PC5-5600B (PC5-44800S)"
+        },
+        {
+          "product": "삼성 DDR5 32GB (노트북)",
+          "price": 575000,
+          "price_formatted": "575,000원",
+          "source": "모두의놀이터",
+          "source_title": "삼성전자 노트북 DDR5-44800 5600 (32GB) 램 RAM 메모리"
+        }
+      ],
+      "DDR4 RAM (노트북)": [
+        {
+          "product": "삼성 DDR4 4GB (노트북)",
+          "price": 15000,
+          "price_formatted": "15,000원",
+          "source": "컴기공",
+          "source_title": "삼성 DDR3 4GB PC3L 12800S 저전력 노트북 메모리"
+        },
+        {
+          "product": "삼성 DDR4 8GB (노트북)",
+          "price": 75000,
+          "price_formatted": "75,000원",
+          "source": "컴기공",
+          "source_title": "삼성전자 DDR4 8GB PC4-17000(2133P) 노트북 램 메모리"
+        },
+        {
+          "product": "삼성 DDR4 16GB (노트북)",
+          "price": 144790,
+          "price_formatted": "144,790원",
+          "source": "네이버",
+          "source_title": "삼성전자 삼성 DDR4 PC4-21300 16GB, 1개"
+        },
+        {
+          "product": "삼성 DDR4 32GB (노트북)",
+          "price": 347900,
+          "price_formatted": "347,900원",
+          "source": "에이코다",
+          "source_title": "삼성 노트북 용 DDR4 32G 3200MHz 3200AA PC4 램 메모리 업그레이드"
+        }
+      ],
+      "DDR3 RAM (노트북)": [
+        {
+          "product": "삼성 DDR3 4GB (노트북)",
+          "price": 12000,
+          "price_formatted": "12,000원",
+          "source": "인리컴",
+          "source_title": "노트북 DDR3 4G PC3 10600S 램 삼성 정품"
+        },
+        {
+          "product": "삼성 DDR3 8GB (노트북)",
+          "price": 28000,
+          "price_formatted": "28,000원",
+          "source": "네이버",
+          "source_title": "삼성전자 삼성 DDR3 PC3-12800 8GB, 1개"
         }
       ]
     }
