@@ -150,14 +150,14 @@ def parse_price_data(price_text):
 # 데이터 저장 (기존과 동일)
 # ============================================
 def get_data_file():
-    files = glob.glob(os.path.join(BASE_DIR, "ram_price_junggo.json"))
+    files = glob.glob(os.path.join(BASE_DIR, "ram_price_*.json"))
     # ram_new_*.json 제외
     files = [f for f in files if "ram_new_" not in f]
     if files:
         latest = sorted(files)[-1]
         log(f"기존 데이터 파일 사용: {latest}")
         return latest
-    new_file = os.path.join(BASE_DIR, f"ram_{datetime.now(KST).strftime('%Y%m%d')}.json")
+    new_file = os.path.join(BASE_DIR, f"ram_price_junggo_{datetime.now(KST).strftime('%Y%m%d')}.json")
     log(f"새 데이터 파일 생성: {new_file}")
     return new_file
 
