@@ -18,9 +18,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Python dependencies
+        shell: cmd
         run: pip install selenium webdriver-manager requests
 
       - name: Run crawler
+        shell: cmd
         env:
           PYTHONIOENCODING: utf-8
         run: |
@@ -29,25 +31,26 @@ jobs:
 
       - name: Check results
         if: always()
+        shell: cmd
         run: |
-          if (Test-Path "backend\ram_price_*.json") {
-            echo "✅ 결과 파일 확인됨"
-            dir backend\ram_price_*.json
-          } else {
-            echo "⚠️ 결과 파일 없음"
-          }
-        shell: pwsh
+          if exist backend\ram_price_junggo.json (
+            echo ✅ 결과 파일 확인됨
+            dir backend\ram_price_junggo.json
+          ) else (
+            echo ⚠️ 결과 파일 없음
+          )
 
       - name: Commit and push
         if: success()
+        shell: cmd
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git remote set-url origin https://x-access-token:%GITHUB_TOKEN%@github.com/${{ github.repository }}.git
           git add -A
-          $diff = git diff --staged --quiet 2>&1; $changed = $LASTEXITCODE -ne 0
+          git diff --staged --quiet || (git commit -m "🤖 중고 시세 업데이트" && git pull --rebase origin main && git push origin main)
           if ($changed) {
             $date = Get-Date -Format "yyyy-MM-dd HH:mm"
             git commit -m "🤖 중고 시세 업데이트: $date"
