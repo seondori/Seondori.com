@@ -69,10 +69,10 @@ def get_chrome_profile_path():
 # 네이버 로그인된 프로필 자동 탐지
 # ============================================
 def find_naver_profile(chrome_user_data):
-    """여러 Chrome 프로필 중 네이버 쿠키가 있는 프로필 찾기"""
-    profiles = ["Default", "Profile 1", "Profile 2", "Profile 3",
+    # Profile 12를 최우선으로 확인
+    profiles = ["Profile 12", "Default", "Profile 1", "Profile 2", "Profile 3",
                 "Profile 4", "Profile 5", "Profile 6", "Profile 7",
-                "Profile 8", "Profile 9", "Profile 10", "Profile 11", "Profile 12"]
+                "Profile 8", "Profile 9", "Profile 10", "Profile 11"]
 
     for profile in profiles:
         # 최신 Chrome: Network/Cookies
