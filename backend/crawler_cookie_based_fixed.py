@@ -1,7 +1,7 @@
 """
 네이버 카페 RAM 시세 자동 크롤러 (Self-Hosted Runner용)
-- GitHub Actions 환경변수 대신 로컬 Chrome 브라우저의 쿠키를 직접 사용
-- Chrome에 네이버 로그인만 유지하면 쿠키 수동 갱신 불필요
+- Chrome 프로필에서 쿠키를 임시 폴더로 복사하여 사용
+- Chrome이 열려있어도 충돌 없음
 - Windows 11 + Self-Hosted Runner 환경 기준
 """
 
@@ -39,21 +39,19 @@ def log(msg, level="INFO"):
     try:
         print(f"[{now}] [{level}] {msg}", flush=True)
     except UnicodeEncodeError:
-        # Windows cp949에서 이모지 출력 실패 시
         safe_msg = msg.encode('ascii', 'replace').decode('ascii')
         print(f"[{now}] [{level}] {safe_msg}", flush=True)
 
 # ============================================
-# Chrome 프로필 경로 찾기 (Windows)
+# Chrome 프로필 경로 찾기
 # ============================================
 def get_chrome_profile_path():
-    # Self-hosted runner에서 서비스 계정으로 실행될 때를 위해 직접 지정
+    # 직접 지정 (서비스 계정에서도 접근 가능하도록)
     direct_path = r"C:\Users\stellaaa\AppData\Local\Google\Chrome\User Data"
     if os.path.exists(direct_path):
-        log(f"✅ Chrome 프로필 경로: {direct_path}")
+        log(f"Chrome 프로필 경로: {direct_path}")
         return direct_path
 
-    # 기본 방식 (환경변수)
     local_app_data = os.environ.get("LOCALAPPDATA", "")
     if not local_app_data:
         local_app_data = os.path.expanduser("~") + "\\AppData\\Local"
@@ -61,14 +59,148 @@ def get_chrome_profile_path():
     chrome_path = os.path.join(local_app_data, "Google", "Chrome", "User Data")
 
     if os.path.exists(chrome_path):
-        log(f"✅ Chrome 프로필 경로: {chrome_path}")
+        log(f"Chrome 프로필 경로: {chrome_path}")
         return chrome_path
     else:
-        log(f"❌ Chrome 프로필 경로 없음: {chrome_path}", "ERROR")
+        log(f"Chrome 프로필 경로 없음: {chrome_path}", "ERROR")
         return None
 
 # ============================================
-# 파싱 함수 (기존과 동일)
+# 네이버 로그인된 프로필 자동 탐지
+# ============================================
+def find_naver_profile(chrome_user_data):
+    """여러 Chrome 프로필 중 네이버 쿠키가 있는 프로필 찾기"""
+    profiles = ["Default", "Profile 1", "Profile 2", "Profile 3",
+                "Profile 4", "Profile 5", "Profile 6", "Profile 7",
+                "Profile 8", "Profile 9", "Profile 10", "Profile 11", "Profile 12"]
+
+    for profile in profiles:
+        # 최신 Chrome: Network/Cookies
+        cookie_path = os.path.join(chrome_user_data, profile, "Network", "Cookies")
+        if os.path.exists(cookie_path):
+            log(f"  프로필 발견 (Network/Cookies): {profile}")
+            return profile
+
+        # 구버전 Chrome: Cookies
+        cookie_path = os.path.join(chrome_user_data, profile, "Cookies")
+        if os.path.exists(cookie_path):
+            log(f"  프로필 발견 (Cookies): {profile}")
+            return profile
+
+    return "Default"
+
+# ============================================
+# 드라이버 설정 (임시 프로필로 쿠키 복사)
+# ============================================
+def setup_driver():
+    log("Chrome 드라이버 설정 중...")
+    options = Options()
+
+    chrome_profile = get_chrome_profile_path()
+
+    if chrome_profile:
+        # 네이버 로그인된 프로필 찾기
+        profile_name = find_naver_profile(chrome_profile)
+        log(f"사용할 프로필: {profile_name}")
+
+        # 임시 폴더에 프로필 복사 (Chrome 실행 중 충돌 방지)
+        temp_profile = os.path.join(
+            os.environ.get("TEMP", os.environ.get("TMP", r"C:\Temp")),
+            "chrome_crawler_profile"
+        )
+
+        # 기존 임시 프로필 삭제
+        if os.path.exists(temp_profile):
+            shutil.rmtree(temp_profile, ignore_errors=True)
+            time.sleep(1)
+
+        # 필요한 디렉토리 생성
+        os.makedirs(os.path.join(temp_profile, "Default"), exist_ok=True)
+        os.makedirs(os.path.join(temp_profile, "Default", "Network"), exist_ok=True)
+
+        # 복사할 파일 목록 (원본 프로필 내 상대경로)
+        copy_files = [
+            # 최신 Chrome 쿠키 경로
+            os.path.join(profile_name, "Network", "Cookies"),
+            os.path.join(profile_name, "Network", "Cookies-journal"),
+            # 구버전 Chrome 쿠키 경로
+            os.path.join(profile_name, "Cookies"),
+            os.path.join(profile_name, "Cookies-journal"),
+            # 기타 필요 파일
+            os.path.join(profile_name, "Login Data"),
+            os.path.join(profile_name, "Login Data-journal"),
+            os.path.join(profile_name, "Web Data"),
+            os.path.join(profile_name, "Web Data-journal"),
+            os.path.join(profile_name, "Preferences"),
+            os.path.join(profile_name, "Secure Preferences"),
+        ]
+
+        copied_count = 0
+        for src_rel in copy_files:
+            src = os.path.join(chrome_profile, src_rel)
+            # 원본 프로필명을 Default로 매핑
+            dst_rel = src_rel.replace(profile_name, "Default")
+            dst = os.path.join(temp_profile, dst_rel)
+
+            if os.path.exists(src):
+                os.makedirs(os.path.dirname(dst), exist_ok=True)
+                try:
+                    shutil.copy2(src, dst)
+                    copied_count += 1
+                    log(f"  복사 완료: {src_rel}")
+                except Exception as e:
+                    log(f"  복사 실패: {src_rel} - {e}", "WARN")
+
+        # Local State 파일 복사
+        local_state = os.path.join(chrome_profile, "Local State")
+        if os.path.exists(local_state):
+            shutil.copy2(local_state, os.path.join(temp_profile, "Local State"))
+            copied_count += 1
+
+        log(f"프로필 복사 완료: {copied_count}개 파일")
+
+        if copied_count == 0:
+            log("쿠키 파일을 하나도 복사하지 못했습니다!", "ERROR")
+            # 디버깅: 프로필 폴더 내용 출력
+            profile_dir = os.path.join(chrome_profile, profile_name)
+            if os.path.exists(profile_dir):
+                log(f"프로필 폴더 내용:", "DEBUG")
+                for item in os.listdir(profile_dir)[:20]:
+                    log(f"  {item}", "DEBUG")
+                network_dir = os.path.join(profile_dir, "Network")
+                if os.path.exists(network_dir):
+                    log(f"Network 폴더 내용:", "DEBUG")
+                    for item in os.listdir(network_dir):
+                        log(f"  {item}", "DEBUG")
+
+        # 임시 프로필을 사용하도록 설정
+        options.add_argument(f"--user-data-dir={temp_profile}")
+        options.add_argument("--profile-directory=Default")
+    else:
+        log("Chrome 프로필을 찾을 수 없습니다", "ERROR")
+
+    # Chrome 옵션
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--no-first-run")
+    options.add_argument("--no-default-browser-check")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--remote-debugging-port=0")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_argument(
+        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    )
+
+    driver = webdriver.Chrome(options=options)
+    log("Chrome 드라이버 초기화 완료")
+    return driver
+
+# ============================================
+# 파싱 함수
 # ============================================
 def parse_price_data(price_text):
     log("파싱 시작")
@@ -152,11 +284,10 @@ def parse_price_data(price_text):
     return prices
 
 # ============================================
-# 데이터 저장 (기존과 동일)
+# 데이터 저장
 # ============================================
 def get_data_file():
     files = glob.glob(os.path.join(BASE_DIR, "ram_price_*.json"))
-    # ram_new_*.json 제외
     files = [f for f in files if "ram_new_" not in f]
     if files:
         latest = sorted(files)[-1]
@@ -199,62 +330,13 @@ def save_data(parsed_data, date_str, time_str):
     with open(data_path, "w", encoding="utf-8") as f:
         json.dump(full, f, ensure_ascii=False, indent=2)
 
-    log(f"✅ 데이터 저장 완료: {history_key}")
+    log(f"데이터 저장 완료: {history_key}")
     return True
-
-# ============================================
-# 드라이버 설정 (Chrome 프로필 사용)
-# ============================================
-import shutil
-
-def setup_driver():
-    log("Chrome 드라이버 설정 중...")
-    options = Options()
-
-    chrome_profile = get_chrome_profile_path()
-
-    if chrome_profile:
-        temp_profile = os.path.join(os.environ.get("TEMP", r"C:\Temp"), "chrome_crawler_profile")
-        if os.path.exists(temp_profile):
-            shutil.rmtree(temp_profile, ignore_errors=True)
-
-        os.makedirs(os.path.join(temp_profile, "Default"), exist_ok=True)
-        for filename in ["Cookies", "Cookies-journal", "Login Data", "Web Data"]:
-            src = os.path.join(chrome_profile, "Default", filename)
-            dst = os.path.join(temp_profile, "Default", filename)
-            if os.path.exists(src):
-                shutil.copy2(src, dst)
-                log(f"  쿠키 파일 복사: {filename}")
-
-        local_state = os.path.join(chrome_profile, "Local State")
-        if os.path.exists(local_state):
-            shutil.copy2(local_state, os.path.join(temp_profile, "Local State"))
-
-        options.add_argument(r"--user-data-dir=C:\Users\stellaaa\AppData\Local\Google\Chrome\User Data")
-        options.add_argument("--profile-directory=Profile 12")
-        log("✅ Chrome 프로필 복사 완료")
-
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--remote-debugging-port=9222")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-first-run")
-    options.add_argument("--no-default-browser-check")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                         "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-
-    driver = webdriver.Chrome(options=options)
-    log("Chrome 드라이버 초기화 완료")
-    return driver
 
 # ============================================
 # 로그인 확인
 # ============================================
 def verify_login(driver):
-    """네이버 로그인 상태 확인"""
     log("로그인 상태 확인 중...")
     try:
         driver.get("https://naver.com")
@@ -265,14 +347,15 @@ def verify_login(driver):
         auth_cookies = [c for c in cookies if c['name'] in ['NID_AUT', 'NID_SES']]
 
         log(f"네이버 쿠키: {len(naver_cookies)}개")
+        log(f"전체 쿠키 목록: {[c['name'] for c in cookies]}", "DEBUG")
 
         if auth_cookies:
-            log(f"✅ 로그인 확인됨: {[c['name'] for c in auth_cookies]}")
+            log(f"로그인 확인됨: {[c['name'] for c in auth_cookies]}")
             return True
         else:
-            log("❌ NID_AUT/NID_SES 쿠키 없음", "ERROR")
-            log(f"현재 쿠키 목록: {naver_cookies}", "DEBUG")
-            log("💡 Chrome에서 네이버에 로그인되어 있는지 확인해주세요", "ERROR")
+            log("NID_AUT/NID_SES 쿠키 없음", "ERROR")
+            log(f"현재 쿠키: {naver_cookies}", "DEBUG")
+            log("Chrome에서 네이버에 로그인되어 있는지 확인해주세요", "ERROR")
             return False
     except Exception as e:
         log(f"로그인 확인 중 오류: {str(e)}", "ERROR")
@@ -310,10 +393,10 @@ def search_cafe_post(driver):
         for article in articles:
             if TARGET_TITLE_KEYWORD in article.text:
                 url = article.get_attribute("href")
-                log(f"✅ 목표 게시글 발견: {url}")
+                log(f"목표 게시글 발견: {url}")
                 return url
 
-        log(f"❌ '{TARGET_TITLE_KEYWORD}' 제목을 찾지 못함", "ERROR")
+        log(f"'{TARGET_TITLE_KEYWORD}' 제목을 찾지 못함", "ERROR")
         return None
 
     except Exception as e:
@@ -342,7 +425,7 @@ def get_article_content(driver, article_url):
         )
 
         content = content_element.text.strip()
-        log(f"✅ 본문 가져오기 완료: {len(content)} 글자")
+        log(f"본문 가져오기 완료: {len(content)} 글자")
         return content
 
     except Exception as e:
@@ -371,58 +454,51 @@ def get_current_time_slot():
 def main():
     now = datetime.now(KST)
     log("=" * 60)
-    log("🚀 RAM 시세 크롤러 (Self-Hosted Runner / Chrome 프로필)")
-    log(f"📅 KST: {now.strftime('%Y-%m-%d %H:%M:%S')}")
-    log(f"📂 작업 디렉토리: {BASE_DIR}")
-    log(f"🐍 Python: {sys.version}")
-    log(f"💻 OS: {sys.platform}")
+    log("RAM 시세 크롤러 (Self-Hosted Runner / Chrome 프로필)")
+    log(f"KST: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+    log(f"작업 디렉토리: {BASE_DIR}")
+    log(f"Python: {sys.version}")
+    log(f"OS: {sys.platform}")
     log("=" * 60)
 
     driver = None
     try:
-        # 1. Chrome 프로필로 드라이버 시작 (로그인 세션 자동 사용)
         driver = setup_driver()
 
-        # 2. 로그인 확인
         if not verify_login(driver):
             log("=" * 60, "ERROR")
-            log("❌ 네이버 로그인이 안 되어 있습니다", "ERROR")
-            log("💡 이 PC의 Chrome 브라우저에서 네이버에 로그인해주세요", "ERROR")
-            log("💡 로그인 후 다시 실행하면 자동으로 쿠키를 사용합니다", "ERROR")
+            log("네이버 로그인이 안 되어 있습니다", "ERROR")
+            log("이 PC의 Chrome 브라우저에서 네이버에 로그인해주세요", "ERROR")
             log("=" * 60, "ERROR")
             return False
 
-        # 3. 게시글 검색
         url = search_cafe_post(driver)
         if not url:
-            log("❌ 게시글 검색 실패", "ERROR")
+            log("게시글 검색 실패", "ERROR")
             return False
 
-        # 4. 게시글 내용 가져오기
         content = get_article_content(driver, url)
         if not content:
-            log("❌ 게시글 내용 가져오기 실패", "ERROR")
+            log("게시글 내용 가져오기 실패", "ERROR")
             return False
 
-        # 5. 데이터 파싱
         parsed = parse_price_data(content)
         if not parsed:
-            log("❌ 데이터 파싱 실패 (결과 없음)", "ERROR")
+            log("데이터 파싱 실패 (결과 없음)", "ERROR")
             return False
 
-        # 6. 데이터 저장
         today = now.strftime("%Y-%m-%d")
         time_slot = get_current_time_slot()
         save_data(parsed, today, time_slot)
 
         log("=" * 60)
-        log("✅ 크롤러 성공적으로 완료!")
+        log("크롤러 성공적으로 완료!")
         log("=" * 60)
         return True
 
     except Exception as e:
         log("=" * 60, "ERROR")
-        log(f"❌ 오류 발생: {str(e)}", "ERROR")
+        log(f"오류 발생: {str(e)}", "ERROR")
         log(traceback.format_exc(), "ERROR")
         log("=" * 60, "ERROR")
         return False
