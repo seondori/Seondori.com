@@ -1,7 +1,7 @@
 """
 네이버 카페 RAM 시세 자동 크롤러 (Self-Hosted Runner용)
 - Chrome 프로필에서 쿠키를 임시 폴더로 복사하여 사용
-- Chrome이 열려있어도 충돌 없음
+- Chrome이 열려있어도 잠긴 파일 강제 복사
 - Windows 11 + Self-Hosted Runner 환경 기준
 """
 
@@ -13,6 +13,7 @@ import traceback
 import re
 import glob
 import shutil
+import subprocess
 from datetime import datetime, timezone, timedelta
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -43,10 +44,47 @@ def log(msg, level="INFO"):
         print(f"[{now}] [{level}] {safe_msg}", flush=True)
 
 # ============================================
+# Chrome이 잠근 파일도 복사
+# ============================================
+def force_copy_file(src, dst):
+    """Chrome이 사용 중인 파일도 복사 (3단계 시도)"""
+    # 1단계: 일반 복사
+    try:
+        shutil.copy2(src, dst)
+        return True
+    except (PermissionError, OSError):
+        pass
+
+    # 2단계: 바이너리 직접 읽기
+    try:
+        with open(src, 'rb') as f:
+            data = f.read()
+        with open(dst, 'wb') as f:
+            f.write(data)
+        return True
+    except (PermissionError, OSError):
+        pass
+
+    # 3단계: Windows robocopy (잠긴 파일 복사 가능)
+    try:
+        src_dir = os.path.dirname(src)
+        src_name = os.path.basename(src)
+        dst_dir = os.path.dirname(dst)
+        result = subprocess.run(
+            ['robocopy', src_dir, dst_dir, src_name, '/R:1', '/W:1', '/NFL', '/NDL', '/NJH', '/NJS'],
+            capture_output=True, timeout=10
+        )
+        if os.path.exists(dst):
+            return True
+    except Exception:
+        pass
+
+    return False
+
+# ============================================
 # Chrome 프로필 경로 찾기
 # ============================================
 def get_chrome_profile_path():
-    # 직접 지정 (서비스 계정에서도 접근 가능하도록)
     direct_path = r"C:\Users\stellaaa\AppData\Local\Google\Chrome\User Data"
     if os.path.exists(direct_path):
         log(f"Chrome 프로필 경로: {direct_path}")
@@ -69,19 +107,16 @@ def get_chrome_profile_path():
 # 네이버 로그인된 프로필 자동 탐지
 # ============================================
 def find_naver_profile(chrome_user_data):
-    # Profile 12를 최우선으로 확인
     profiles = ["Profile 12", "Default", "Profile 1", "Profile 2", "Profile 3",
                 "Profile 4", "Profile 5", "Profile 6", "Profile 7",
                 "Profile 8", "Profile 9", "Profile 10", "Profile 11"]
 
     for profile in profiles:
-        # 최신 Chrome: Network/Cookies
         cookie_path = os.path.join(chrome_user_data, profile, "Network", "Cookies")
         if os.path.exists(cookie_path):
             log(f"  프로필 발견 (Network/Cookies): {profile}")
             return profile
 
-        # 구버전 Chrome: Cookies
         cookie_path = os.path.join(chrome_user_data, profile, "Cookies")
         if os.path.exists(cookie_path):
             log(f"  프로필 발견 (Cookies): {profile}")
@@ -90,7 +125,7 @@ def find_naver_profile(chrome_user_data):
     return "Default"
 
 # ============================================
-# 드라이버 설정 (임시 프로필로 쿠키 복사)
+# 드라이버 설정
 # ============================================
 def setup_driver():
     log("Chrome 드라이버 설정 중...")
@@ -99,34 +134,26 @@ def setup_driver():
     chrome_profile = get_chrome_profile_path()
 
     if chrome_profile:
-        # 네이버 로그인된 프로필 찾기
         profile_name = find_naver_profile(chrome_profile)
         log(f"사용할 프로필: {profile_name}")
 
-        # 임시 폴더에 프로필 복사 (Chrome 실행 중 충돌 방지)
         temp_profile = os.path.join(
             os.environ.get("TEMP", os.environ.get("TMP", r"C:\Temp")),
             "chrome_crawler_profile"
         )
 
-        # 기존 임시 프로필 삭제
         if os.path.exists(temp_profile):
             shutil.rmtree(temp_profile, ignore_errors=True)
             time.sleep(1)
 
-        # 필요한 디렉토리 생성
         os.makedirs(os.path.join(temp_profile, "Default"), exist_ok=True)
         os.makedirs(os.path.join(temp_profile, "Default", "Network"), exist_ok=True)
 
-        # 복사할 파일 목록 (원본 프로필 내 상대경로)
         copy_files = [
-            # 최신 Chrome 쿠키 경로
             os.path.join(profile_name, "Network", "Cookies"),
             os.path.join(profile_name, "Network", "Cookies-journal"),
-            # 구버전 Chrome 쿠키 경로
             os.path.join(profile_name, "Cookies"),
             os.path.join(profile_name, "Cookies-journal"),
-            # 기타 필요 파일
             os.path.join(profile_name, "Login Data"),
             os.path.join(profile_name, "Login Data-journal"),
             os.path.join(profile_name, "Web Data"),
@@ -138,30 +165,26 @@ def setup_driver():
         copied_count = 0
         for src_rel in copy_files:
             src = os.path.join(chrome_profile, src_rel)
-            # 원본 프로필명을 Default로 매핑
             dst_rel = src_rel.replace(profile_name, "Default")
             dst = os.path.join(temp_profile, dst_rel)
 
             if os.path.exists(src):
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
-                try:
-                    shutil.copy2(src, dst)
+                if force_copy_file(src, dst):
                     copied_count += 1
                     log(f"  복사 완료: {src_rel}")
-                except Exception as e:
-                    log(f"  복사 실패: {src_rel} - {e}", "WARN")
+                else:
+                    log(f"  복사 실패: {src_rel}", "WARN")
 
-        # Local State 파일 복사
         local_state = os.path.join(chrome_profile, "Local State")
         if os.path.exists(local_state):
-            shutil.copy2(local_state, os.path.join(temp_profile, "Local State"))
-            copied_count += 1
+            if force_copy_file(local_state, os.path.join(temp_profile, "Local State")):
+                copied_count += 1
 
         log(f"프로필 복사 완료: {copied_count}개 파일")
 
         if copied_count == 0:
             log("쿠키 파일을 하나도 복사하지 못했습니다!", "ERROR")
-            # 디버깅: 프로필 폴더 내용 출력
             profile_dir = os.path.join(chrome_profile, profile_name)
             if os.path.exists(profile_dir):
                 log(f"프로필 폴더 내용:", "DEBUG")
@@ -173,13 +196,11 @@ def setup_driver():
                     for item in os.listdir(network_dir):
                         log(f"  {item}", "DEBUG")
 
-        # 임시 프로필을 사용하도록 설정
         options.add_argument(f"--user-data-dir={temp_profile}")
         options.add_argument("--profile-directory=Default")
     else:
         log("Chrome 프로필을 찾을 수 없습니다", "ERROR")
 
-    # Chrome 옵션
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -347,7 +368,6 @@ def verify_login(driver):
         auth_cookies = [c for c in cookies if c['name'] in ['NID_AUT', 'NID_SES']]
 
         log(f"네이버 쿠키: {len(naver_cookies)}개")
-        log(f"전체 쿠키 목록: {[c['name'] for c in cookies]}", "DEBUG")
 
         if auth_cookies:
             log(f"로그인 확인됨: {[c['name'] for c in auth_cookies]}")
