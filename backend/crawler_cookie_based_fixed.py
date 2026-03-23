@@ -137,67 +137,9 @@ def setup_driver():
         profile_name = find_naver_profile(chrome_profile)
         log(f"사용할 프로필: {profile_name}")
 
-        temp_profile = os.path.join(
-            os.environ.get("TEMP", os.environ.get("TMP", r"C:\Temp")),
-            "chrome_crawler_profile"
-        )
-
-        if os.path.exists(temp_profile):
-            shutil.rmtree(temp_profile, ignore_errors=True)
-            time.sleep(1)
-
-        os.makedirs(os.path.join(temp_profile, "Default"), exist_ok=True)
-        os.makedirs(os.path.join(temp_profile, "Default", "Network"), exist_ok=True)
-
-        copy_files = [
-            os.path.join(profile_name, "Network", "Cookies"),
-            os.path.join(profile_name, "Network", "Cookies-journal"),
-            os.path.join(profile_name, "Cookies"),
-            os.path.join(profile_name, "Cookies-journal"),
-            os.path.join(profile_name, "Login Data"),
-            os.path.join(profile_name, "Login Data-journal"),
-            os.path.join(profile_name, "Web Data"),
-            os.path.join(profile_name, "Web Data-journal"),
-            os.path.join(profile_name, "Preferences"),
-            os.path.join(profile_name, "Secure Preferences"),
-        ]
-
-        copied_count = 0
-        for src_rel in copy_files:
-            src = os.path.join(chrome_profile, src_rel)
-            dst_rel = src_rel.replace(profile_name, "Default")
-            dst = os.path.join(temp_profile, dst_rel)
-
-            if os.path.exists(src):
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
-                if force_copy_file(src, dst):
-                    copied_count += 1
-                    log(f"  복사 완료: {src_rel}")
-                else:
-                    log(f"  복사 실패: {src_rel}", "WARN")
-
-        local_state = os.path.join(chrome_profile, "Local State")
-        if os.path.exists(local_state):
-            if force_copy_file(local_state, os.path.join(temp_profile, "Local State")):
-                copied_count += 1
-
-        log(f"프로필 복사 완료: {copied_count}개 파일")
-
-        if copied_count == 0:
-            log("쿠키 파일을 하나도 복사하지 못했습니다!", "ERROR")
-            profile_dir = os.path.join(chrome_profile, profile_name)
-            if os.path.exists(profile_dir):
-                log(f"프로필 폴더 내용:", "DEBUG")
-                for item in os.listdir(profile_dir)[:20]:
-                    log(f"  {item}", "DEBUG")
-                network_dir = os.path.join(profile_dir, "Network")
-                if os.path.exists(network_dir):
-                    log(f"Network 폴더 내용:", "DEBUG")
-                    for item in os.listdir(network_dir):
-                        log(f"  {item}", "DEBUG")
-
-        options.add_argument(f"--user-data-dir={temp_profile}")
-        options.add_argument("--profile-directory=Default")
+        options.add_argument(f"--user-data-dir={chrome_profile}")
+        options.add_argument(f"--profile-directory={profile_name}")
+        log(f"원본 Chrome 프로필 직접 사용")
     else:
         log("Chrome 프로필을 찾을 수 없습니다", "ERROR")
 
