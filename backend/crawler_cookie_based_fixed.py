@@ -126,7 +126,7 @@ def parse_price_data(price_text):
     return prices
 
 def get_data_file():
-    files = glob.glob(os.path.join(BASE_DIR, "ram_*.json"))
+    files = glob.glob(os.path.join(BASE_DIR, "ram_price_*.json"))
     return sorted(files)[-1] if files else os.path.join(BASE_DIR, f"ram_{datetime.now().strftime('%Y%m%d')}.json")
 def get_current_time_slot():
     # ✅ 중요: GitHub Actions(UTC) 시간을 한국 시간(KST)으로 변환
