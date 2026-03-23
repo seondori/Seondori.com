@@ -10,7 +10,7 @@ on:
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,23 +22,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      # ⭐ 핵심: 최신 Chrome 설치 (버전 문제 해결)
       - name: Install latest Chrome
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
 
-      # ⭐ webdriver-manager만 사용 (manual chromedriver 설정 제거)
       - name: Install Python dependencies
-        run: |
-          pip install --upgrade pip
-          pip install selenium webdriver-manager requests
-
-      # Chrome 버전 확인 (디버깅용)
-      - name: Check Chrome version
-        run: |
-          google-chrome --version
-          which google-chrome
+        run: pip install selenium webdriver-manager requests
 
       - name: Run crawler
         env:
@@ -48,27 +38,34 @@ jobs:
           cd backend
           python crawler_cookie_based_fixed.py
 
-      - name: Check crawler results
+      - name: Check results
         if: always()
         run: |
-          if ls backend/ram_*.json 1> /dev/null 2>&1; then
-            echo "✅ 크롤러 결과 파일 확인됨"
-            ls -lah backend/ram_price*.json
+          if ls backend/ram_price_*.json 1> /dev/null 2>&1; then
+            echo "✅ 결과 파일 확인됨"
+            ls -lah backend/ram_price_*.json
           else
             echo "⚠️ 결과 파일 없음"
           fi
 
-      - name: Commit and push changes
+      - name: Commit and push
         if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git add -A
           if git diff --staged --quiet; then
             echo "ℹ️ 변경사항 없음"
           else
-            git commit -m "🤖 자동 업데이트: RAM 시세 $(date +'%Y-%m-%d %H:%M')"
-            git push
+            git commit -m "🤖 중고 시세 업데이트: $(date +'%Y-%m-%d %H:%M')"
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push origin main && break
+              echo "⚠️ Push 실패 (시도 $i/3), 5초 후 재시도..."
+              sleep 5
+            done
           fi
 
       - name: Upload logs on failure
