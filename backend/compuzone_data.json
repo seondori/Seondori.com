@@ -16,8 +16,8 @@
         },
         {
           "capacity": "24GB",
-          "price": 459000,
-          "price_formatted": "459,000원"
+          "price": 460000,
+          "price_formatted": "460,000원"
         },
         {
           "capacity": "32GB",
@@ -32,23 +32,18 @@
       "options": [
         {
           "capacity": "64GB",
-          "price": 4020000,
-          "price_formatted": "4,020,000원"
+          "price": 4280000,
+          "price_formatted": "4,280,000원"
         },
         {
           "capacity": "128GB",
-          "price": 8003500,
-          "price_formatted": "8,003,500원"
+          "price": 8667000,
+          "price_formatted": "8,667,000원"
         },
         {
           "capacity": "16GB",
           "price": 1070000,
           "price_formatted": "1,070,000원"
-        },
-        {
-          "capacity": "32GB",
-          "price": 1797500,
-          "price_formatted": "1,797,500원"
         }
       ]
     }
@@ -897,7 +892,48 @@
           "price_formatted": "1,797,500원"
         }
       ]
+    },
+    "2026-03-27 12:52": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "8GB",
+          "price": 166500,
+          "price_formatted": "166,500원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 339000,
+          "price_formatted": "339,000원"
+        },
+        {
+          "capacity": "24GB",
+          "price": 460000,
+          "price_formatted": "460,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 701000,
+          "price_formatted": "701,000원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "64GB",
+          "price": 4280000,
+          "price_formatted": "4,280,000원"
+        },
+        {
+          "capacity": "128GB",
+          "price": 8667000,
+          "price_formatted": "8,667,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 1070000,
+          "price_formatted": "1,070,000원"
+        }
+      ]
     }
   },
-  "last_updated": "2026-03-26 18:51"
+  "last_updated": "2026-03-27 12:52"
 }
