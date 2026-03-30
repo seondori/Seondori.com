@@ -28,7 +28,7 @@
     },
     "DDR5 ECC/REG (서버용)": {
       "product_name": "삼성 DDR5 PC5-44800 ECC/REG 서버용",
-      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용\nDDR5-REG ECC / 64GB / 5600MHz (PC5-44800) / 방열판 무 / 서버용 / M321R8GA0PB0-CWM / M321R8GA0EB2-CWMKH\n\n카카오페이 포인트\n특송",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용\nDDR5-REG ECC / 64GB / 5600MHz (PC5-44800) / 방열판 무 / 서버용 / M321R8GA0PB0-CWM / M321R8GA0EB2-CWMKH\n\n토스페이\n카카오페이 포인트\n특송",
       "options": [
         {
           "capacity": "64GB",
@@ -1393,7 +1393,53 @@
           "price_formatted": "1,926,000원"
         }
       ]
+    },
+    "2026-03-30 19:05": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "8GB",
+          "price": 169000,
+          "price_formatted": "169,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 360000,
+          "price_formatted": "360,000원"
+        },
+        {
+          "capacity": "24GB",
+          "price": 460000,
+          "price_formatted": "460,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 701000,
+          "price_formatted": "701,000원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "64GB",
+          "price": 4280000,
+          "price_formatted": "4,280,000원"
+        },
+        {
+          "capacity": "128GB",
+          "price": 8667000,
+          "price_formatted": "8,667,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 1070000,
+          "price_formatted": "1,070,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 1926000,
+          "price_formatted": "1,926,000원"
+        }
+      ]
     }
   },
-  "last_updated": "2026-03-30 15:03"
+  "last_updated": "2026-03-30 19:05"
 }
