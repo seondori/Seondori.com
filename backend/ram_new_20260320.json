@@ -3,8 +3,8 @@
     "DDR5-5600": [
       {
         "product": "삼성전자 DDR5-5600 8GB",
-        "price": 167020,
-        "price_formatted": "167,020원",
+        "price": 166790,
+        "price_formatted": "166,790원",
         "source": "다나와",
         "source_title": "삼성전자 DDR5-5600",
         "link": "https://prod.danawa.com/info/?pcode=18911771&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+8gb&cate=112752"
@@ -19,8 +19,8 @@
       },
       {
         "product": "삼성전자 DDR5-5600 32GB",
-        "price": 669850,
-        "price_formatted": "669,850원",
+        "price": 669930,
+        "price_formatted": "669,930원",
         "source": "다나와",
         "source_title": "삼성전자 DDR5-5600",
         "link": "https://prod.danawa.com/info/?pcode=20644043&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+32gb&cate=112752"
@@ -1696,6 +1696,60 @@
           "product": "삼성전자 DDR5-5600 32GB",
           "price": 669850,
           "price_formatted": "669,850원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-5600",
+          "link": "https://prod.danawa.com/info/?pcode=20644043&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+32gb&cate=112752"
+        }
+      ],
+      "DDR5-4800": [
+        {
+          "product": "삼성전자 DDR5-4800 8GB",
+          "price": 174340,
+          "price_formatted": "174,340원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-4800",
+          "link": "https://prod.danawa.com/info/?pcode=16388927&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+8gb&cate=112752"
+        },
+        {
+          "product": "삼성전자 DDR5-4800 16GB",
+          "price": 407260,
+          "price_formatted": "407,260원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-4800",
+          "link": "https://prod.danawa.com/info/?pcode=15759071&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+16gb&cate=112752"
+        },
+        {
+          "product": "삼성전자 DDR5-4800 32GB",
+          "price": 605890,
+          "price_formatted": "605,890원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-4800",
+          "link": "https://prod.danawa.com/info/?pcode=15764342&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+32gb&cate=112752"
+        }
+      ]
+    },
+    "2026-04-04 18:00": {
+      "DDR5-5600": [
+        {
+          "product": "삼성전자 DDR5-5600 8GB",
+          "price": 166790,
+          "price_formatted": "166,790원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-5600",
+          "link": "https://prod.danawa.com/info/?pcode=18911771&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+8gb&cate=112752"
+        },
+        {
+          "product": "삼성전자 DDR5-5600 16GB",
+          "price": 314890,
+          "price_formatted": "314,890원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-5600",
+          "link": "https://prod.danawa.com/info/?pcode=18911780&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+16gb&cate=112752"
+        },
+        {
+          "product": "삼성전자 DDR5-5600 32GB",
+          "price": 669930,
+          "price_formatted": "669,930원",
           "source": "다나와",
           "source_title": "삼성전자 DDR5-5600",
           "link": "https://prod.danawa.com/info/?pcode=20644043&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+32gb&cate=112752"
