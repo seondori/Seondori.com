@@ -2,9 +2,7 @@ name: RAM New Price Collector (Danawa)
 
 on:
   schedule:
-    - cron: '0 1 * * *'   # 한국시간 10:00
-    - cron: '0 4 * * *'
-    - cron: '0 9 * * *'   # 한국시간 18:00
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
