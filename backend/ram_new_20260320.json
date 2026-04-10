@@ -19,8 +19,8 @@
       },
       {
         "product": "삼성전자 DDR5-5600 32GB",
-        "price": 668990,
-        "price_formatted": "668,990원",
+        "price": 668980,
+        "price_formatted": "668,980원",
         "source": "다나와",
         "source_title": "삼성전자 DDR5-5600",
         "link": "https://prod.danawa.com/info/?pcode=20644043&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+32gb&cate=112752"
@@ -29,11 +29,11 @@
     "DDR5-4800": [
       {
         "product": "삼성전자 DDR5-4800 8GB",
-        "price": 399480,
-        "price_formatted": "399,480원",
+        "price": 147520,
+        "price_formatted": "147,520원",
         "source": "다나와",
-        "source_title": "삼성전자 ddr5-4800 8gb",
-        "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+8gb"
+        "source_title": "삼성전자 노트북 DDR5-4800",
+        "link": "https://prod.danawa.com/info/?pcode=17666243&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+8gb&cate=112752"
       },
       {
         "product": "삼성전자 DDR5-4800 16GB",
@@ -2504,8 +2504,8 @@
         },
         {
           "product": "삼성전자 DDR5-5600 32GB",
-          "price": 668990,
-          "price_formatted": "668,990원",
+          "price": 668980,
+          "price_formatted": "668,980원",
           "source": "다나와",
           "source_title": "삼성전자 DDR5-5600",
           "link": "https://prod.danawa.com/info/?pcode=20644043&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+32gb&cate=112752"
@@ -2514,11 +2514,11 @@
       "DDR5-4800": [
         {
           "product": "삼성전자 DDR5-4800 8GB",
-          "price": 399480,
-          "price_formatted": "399,480원",
+          "price": 147520,
+          "price_formatted": "147,520원",
           "source": "다나와",
-          "source_title": "삼성전자 ddr5-4800 8gb",
-          "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+8gb"
+          "source_title": "삼성전자 노트북 DDR5-4800",
+          "link": "https://prod.danawa.com/info/?pcode=17666243&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+8gb&cate=112752"
         },
         {
           "product": "삼성전자 DDR5-4800 16GB",
