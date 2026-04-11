@@ -19,8 +19,8 @@
       },
       {
         "product": "삼성전자 DDR5-5600 32GB",
-        "price": 668270,
-        "price_formatted": "668,270원",
+        "price": 668260,
+        "price_formatted": "668,260원",
         "source": "다나와",
         "source_title": "삼성전자 DDR5-5600",
         "link": "https://prod.danawa.com/info/?pcode=20644043&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+32gb&cate=112752"
@@ -37,11 +37,11 @@
       },
       {
         "product": "삼성전자 DDR5-4800 16GB",
-        "price": 417180,
-        "price_formatted": "417,180원",
+        "price": 47010,
+        "price_formatted": "47,010원",
         "source": "다나와",
-        "source_title": "삼성전자 DDR5-4800",
-        "link": "https://prod.danawa.com/info/?pcode=15759071&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+16gb&cate=112752"
+        "source_title": "삼성전자 ddr5-4800 16gb",
+        "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+16gb"
       },
       {
         "product": "삼성전자 DDR5-4800 32GB",
@@ -2666,8 +2666,8 @@
         },
         {
           "product": "삼성전자 DDR5-5600 32GB",
-          "price": 668270,
-          "price_formatted": "668,270원",
+          "price": 668260,
+          "price_formatted": "668,260원",
           "source": "다나와",
           "source_title": "삼성전자 DDR5-5600",
           "link": "https://prod.danawa.com/info/?pcode=20644043&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+32gb&cate=112752"
@@ -2684,11 +2684,11 @@
         },
         {
           "product": "삼성전자 DDR5-4800 16GB",
-          "price": 417180,
-          "price_formatted": "417,180원",
+          "price": 47010,
+          "price_formatted": "47,010원",
           "source": "다나와",
-          "source_title": "삼성전자 DDR5-4800",
-          "link": "https://prod.danawa.com/info/?pcode=15759071&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+16gb&cate=112752"
+          "source_title": "삼성전자 ddr5-4800 16gb",
+          "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+16gb"
         },
         {
           "product": "삼성전자 DDR5-4800 32GB",
