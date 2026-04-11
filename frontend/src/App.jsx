@@ -226,22 +226,44 @@ const App = () => {
   // ✅ 컴퓨존 히스토리 차트 데이터
   // ============================================
   const getCompuzoneTrend = (category, capacity) => {
-    const history = compuzoneData.price_history || {};
-    const timestamps = Object.keys(history).sort();
-    const periodDays = parseInt(czPeriod);
-    const recent = timestamps.slice(-periodDays);
+  const history = compuzoneData.price_history || {};
+  const timestamps = Object.keys(history).sort();
+  const periodDays = parseInt(czPeriod);
 
-    return recent.map(ts => {
-      const dayData = history[ts]?.[category];
-      if (!dayData) return null;
-      const opt = dayData.find(o => o.capacity === capacity);
-      if (!opt) return null;
-      return {
-        name: ts.split(' ')[0]?.substring(5) || ts.substring(5, 10),
-        price: opt.price
-      };
-    }).filter(Boolean);
-  };
+  // 하루 3개 슬롯만 필터링 (10:xx, 13:xx, 18:xx 중 가장 가까운 것)
+  const slots = ['10:00', '13:00', '18:00'];
+  const dailyMap = {};
+
+  timestamps.forEach(ts => {
+    const [date, time] = ts.split(' ');
+    if (!date || !time) return;
+    const hour = parseInt(time.split(':')[0]);
+
+    // 가장 가까운 슬롯 결정
+    let slot;
+    if (hour < 12) slot = '10:00';
+    else if (hour < 16) slot = '13:00';
+    else slot = '18:00';
+
+    const key = `${date} ${slot}`;
+    // 같은 슬롯이면 가장 나중 데이터로 덮어쓰기
+    dailyMap[key] = ts;
+  });
+
+  const filtered = Object.values(dailyMap).sort();
+  const recent = filtered.slice(-periodDays * 3);
+
+  return recent.map(ts => {
+    const dayData = history[ts]?.[category];
+    if (!dayData) return null;
+    const opt = dayData.find(o => o.capacity === capacity);
+    if (!opt) return null;
+    return {
+      name: ts.split(' ')[0]?.substring(5) || ts.substring(5, 10),
+      price: opt.price
+    };
+  }).filter(Boolean);
+};
 
   const renderCard = (item) => {
     const chartData = item.chart && item.chart.length > 0 ? item.chart : [{value:0}];
