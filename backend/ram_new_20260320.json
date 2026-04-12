@@ -29,11 +29,11 @@
     "DDR5-4800": [
       {
         "product": "삼성전자 DDR5-4800 8GB",
-        "price": 147570,
-        "price_formatted": "147,570원",
+        "price": 47010,
+        "price_formatted": "47,010원",
         "source": "다나와",
-        "source_title": "삼성전자 노트북 DDR5-4800",
-        "link": "https://prod.danawa.com/info/?pcode=17666243&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+8gb&cate=112752"
+        "source_title": "삼성전자 ddr5-4800 8gb",
+        "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+8gb"
       },
       {
         "product": "삼성전자 DDR5-4800 16GB",
@@ -2784,11 +2784,11 @@
       "DDR5-4800": [
         {
           "product": "삼성전자 DDR5-4800 8GB",
-          "price": 147570,
-          "price_formatted": "147,570원",
+          "price": 47010,
+          "price_formatted": "47,010원",
           "source": "다나와",
-          "source_title": "삼성전자 노트북 DDR5-4800",
-          "link": "https://prod.danawa.com/info/?pcode=17666243&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+8gb&cate=112752"
+          "source_title": "삼성전자 ddr5-4800 8gb",
+          "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+8gb"
         },
         {
           "product": "삼성전자 DDR5-4800 16GB",
