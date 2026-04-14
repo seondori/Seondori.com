@@ -11,11 +11,11 @@
       },
       {
         "product": "삼성전자 DDR5-5600 16GB",
-        "price": 260000,
-        "price_formatted": "260,000원",
+        "price": 317490,
+        "price_formatted": "317,490원",
         "source": "다나와",
-        "source_title": "삼성전자 DDR5-5600 16G",
-        "link": "http://dmall.danawa.com/sale/saleView.php?nSaleSeq=52477048&nCateC1=861&nCateC2=874&nCateC3=0&nCateC4=0"
+        "source_title": "삼성전자 DDR5-5600",
+        "link": "https://prod.danawa.com/info/?pcode=18911780&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+16gb&cate=112752"
       },
       {
         "product": "삼성전자 DDR5-5600 32GB",
@@ -37,8 +37,8 @@
       },
       {
         "product": "삼성전자 DDR5-4800 16GB",
-        "price": 419660,
-        "price_formatted": "419,660원",
+        "price": 323000,
+        "price_formatted": "323,000원",
         "source": "다나와",
         "source_title": "삼성전자 DDR5-4800",
         "link": "https://prod.danawa.com/info/?pcode=15759071&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+16gb&cate=112752"
@@ -2982,11 +2982,11 @@
         },
         {
           "product": "삼성전자 DDR5-5600 16GB",
-          "price": 260000,
-          "price_formatted": "260,000원",
+          "price": 317490,
+          "price_formatted": "317,490원",
           "source": "다나와",
-          "source_title": "삼성전자 DDR5-5600 16G",
-          "link": "http://dmall.danawa.com/sale/saleView.php?nSaleSeq=52477048&nCateC1=861&nCateC2=874&nCateC3=0&nCateC4=0"
+          "source_title": "삼성전자 DDR5-5600",
+          "link": "https://prod.danawa.com/info/?pcode=18911780&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+16gb&cate=112752"
         },
         {
           "product": "삼성전자 DDR5-5600 32GB",
@@ -3008,8 +3008,8 @@
         },
         {
           "product": "삼성전자 DDR5-4800 16GB",
-          "price": 419660,
-          "price_formatted": "419,660원",
+          "price": 323000,
+          "price_formatted": "323,000원",
           "source": "다나와",
           "source_title": "삼성전자 DDR5-4800",
           "link": "https://prod.danawa.com/info/?pcode=15759071&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+16gb&cate=112752"
