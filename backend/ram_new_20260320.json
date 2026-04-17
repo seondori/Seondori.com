@@ -3,8 +3,8 @@
     "DDR5-5600": [
       {
         "product": "삼성전자 DDR5-5600 8GB",
-        "price": 167410,
-        "price_formatted": "167,410원",
+        "price": 167390,
+        "price_formatted": "167,390원",
         "source": "다나와",
         "source_title": "삼성전자 DDR5-5600",
         "link": "https://prod.danawa.com/info/?pcode=18911771&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+8gb&cate=112752"
@@ -19,11 +19,11 @@
       },
       {
         "product": "삼성전자 DDR5-5600 32GB",
-        "price": 686500,
-        "price_formatted": "686,500원",
+        "price": 590000,
+        "price_formatted": "590,000원",
         "source": "다나와",
-        "source_title": "삼성전자 DDR5-5600",
-        "link": "https://prod.danawa.com/info/?pcode=20644043&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+32gb&cate=112752"
+        "source_title": "삼성전자 DDR5-5600 32GB 부산",
+        "link": "http://dmall.danawa.com/sale/saleView.php?nSaleSeq=52475647&nCateC1=861&nCateC2=874&nCateC3=0&nCateC4=0"
       }
     ],
     "DDR5-4800": [
@@ -37,11 +37,11 @@
       },
       {
         "product": "삼성전자 DDR5-4800 16GB",
-        "price": 339890,
-        "price_formatted": "339,890원",
+        "price": 13030,
+        "price_formatted": "13,030원",
         "source": "다나와",
-        "source_title": "삼성전자 DDR5-4800",
-        "link": "https://prod.danawa.com/info/?pcode=15759071&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+16gb&cate=112752"
+        "source_title": "삼성전자 ddr5-4800 16gb",
+        "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+16gb"
       },
       {
         "product": "삼성전자 DDR5-4800 32GB",
@@ -3553,6 +3553,60 @@
           "source": "다나와",
           "source_title": "삼성전자 DDR5-4800",
           "link": "https://prod.danawa.com/info/?pcode=15759071&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+16gb&cate=112752"
+        },
+        {
+          "product": "삼성전자 DDR5-4800 32GB",
+          "price": 633930,
+          "price_formatted": "633,930원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-4800",
+          "link": "https://prod.danawa.com/info/?pcode=15764342&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+32gb&cate=112752"
+        }
+      ]
+    },
+    "2026-04-17 18:00": {
+      "DDR5-5600": [
+        {
+          "product": "삼성전자 DDR5-5600 8GB",
+          "price": 167390,
+          "price_formatted": "167,390원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-5600",
+          "link": "https://prod.danawa.com/info/?pcode=18911771&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+8gb&cate=112752"
+        },
+        {
+          "product": "삼성전자 DDR5-5600 16GB",
+          "price": 317890,
+          "price_formatted": "317,890원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-5600",
+          "link": "https://prod.danawa.com/info/?pcode=18911780&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+16gb&cate=112752"
+        },
+        {
+          "product": "삼성전자 DDR5-5600 32GB",
+          "price": 590000,
+          "price_formatted": "590,000원",
+          "source": "다나와",
+          "source_title": "삼성전자 DDR5-5600 32GB 부산",
+          "link": "http://dmall.danawa.com/sale/saleView.php?nSaleSeq=52475647&nCateC1=861&nCateC2=874&nCateC3=0&nCateC4=0"
+        }
+      ],
+      "DDR5-4800": [
+        {
+          "product": "삼성전자 DDR5-4800 8GB",
+          "price": 147620,
+          "price_formatted": "147,620원",
+          "source": "다나와",
+          "source_title": "삼성전자 노트북 DDR5-4800",
+          "link": "https://prod.danawa.com/info/?pcode=17666243&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+8gb&cate=112752"
+        },
+        {
+          "product": "삼성전자 DDR5-4800 16GB",
+          "price": 13030,
+          "price_formatted": "13,030원",
+          "source": "다나와",
+          "source_title": "삼성전자 ddr5-4800 16gb",
+          "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+16gb"
         },
         {
           "product": "삼성전자 DDR5-4800 32GB",
