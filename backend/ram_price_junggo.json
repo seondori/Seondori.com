@@ -71,28 +71,28 @@
       },
       {
         "product": "삼성 DDR4 16G PC4-17000",
-        "price": 85000,
-        "price_formatted": "85,000원"
+        "price": 80000,
+        "price_formatted": "80,000원"
       },
       {
         "product": "삼성 DDR4 8G PC4-21300",
-        "price": 42000,
-        "price_formatted": "42,000원"
-      },
-      {
-        "product": "삼성 DDR4 8G PC4-19200",
         "price": 40000,
         "price_formatted": "40,000원"
       },
       {
+        "product": "삼성 DDR4 8G PC4-19200",
+        "price": 35000,
+        "price_formatted": "35,000원"
+      },
+      {
         "product": "삼성 DDR4 16G PC4-21300",
-        "price": 90000,
-        "price_formatted": "90,000원"
+        "price": 85000,
+        "price_formatted": "85,000원"
       },
       {
         "product": "삼성 DDR4 8G PC4-25600",
-        "price": 47000,
-        "price_formatted": "47,000원"
+        "price": 45000,
+        "price_formatted": "45,000원"
       },
       {
         "product": "삼성 DDR4 8G PC4-17000",
@@ -30867,28 +30867,28 @@
         },
         {
           "product": "삼성 DDR4 16G PC4-21300",
-          "price": 90000,
-          "price_formatted": "90,000원"
-        },
-        {
-          "product": "삼성 DDR4 16G PC4-17000",
           "price": 85000,
           "price_formatted": "85,000원"
         },
         {
+          "product": "삼성 DDR4 16G PC4-17000",
+          "price": 80000,
+          "price_formatted": "80,000원"
+        },
+        {
           "product": "삼성 DDR4 8G PC4-25600",
-          "price": 47000,
-          "price_formatted": "47,000원"
+          "price": 45000,
+          "price_formatted": "45,000원"
         },
         {
           "product": "삼성 DDR4 8G PC4-21300",
-          "price": 42000,
-          "price_formatted": "42,000원"
+          "price": 40000,
+          "price_formatted": "40,000원"
         },
         {
           "product": "삼성 DDR4 8G PC4-19200",
-          "price": 40000,
-          "price_formatted": "40,000원"
+          "price": 35000,
+          "price_formatted": "35,000원"
         },
         {
           "product": "삼성 DDR4 8G PC4-17000",
