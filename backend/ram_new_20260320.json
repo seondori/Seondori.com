@@ -3,19 +3,19 @@
     "DDR5-5600": [
       {
         "product": "삼성전자 DDR5-5600 8GB",
-        "price": 165930,
-        "price_formatted": "165,930원",
+        "price": 165920,
+        "price_formatted": "165,920원",
         "source": "다나와",
         "source_title": "삼성전자 DDR5-5600",
         "link": "https://prod.danawa.com/info/?pcode=18911771&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+8gb&cate=112752"
       },
       {
         "product": "삼성전자 DDR5-5600 16GB",
-        "price": 325780,
-        "price_formatted": "325,780원",
+        "price": 280000,
+        "price_formatted": "280,000원",
         "source": "다나와",
-        "source_title": "삼성전자 DDR5-5600",
-        "link": "https://prod.danawa.com/info/?pcode=18911780&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+16gb&cate=112752"
+        "source_title": "삼성전자 DDR5-5600 16G",
+        "link": "http://dmall.danawa.com/sale/saleView.php?nSaleSeq=52477048&nCateC1=861&nCateC2=874&nCateC3=0&nCateC4=0"
       },
       {
         "product": "삼성전자 DDR5-5600 32GB",
@@ -4810,19 +4810,19 @@
       "DDR5-5600": [
         {
           "product": "삼성전자 DDR5-5600 8GB",
-          "price": 165930,
-          "price_formatted": "165,930원",
+          "price": 165920,
+          "price_formatted": "165,920원",
           "source": "다나와",
           "source_title": "삼성전자 DDR5-5600",
           "link": "https://prod.danawa.com/info/?pcode=18911771&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+8gb&cate=112752"
         },
         {
           "product": "삼성전자 DDR5-5600 16GB",
-          "price": 325780,
-          "price_formatted": "325,780원",
+          "price": 280000,
+          "price_formatted": "280,000원",
           "source": "다나와",
-          "source_title": "삼성전자 DDR5-5600",
-          "link": "https://prod.danawa.com/info/?pcode=18911780&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+16gb&cate=112752"
+          "source_title": "삼성전자 DDR5-5600 16G",
+          "link": "http://dmall.danawa.com/sale/saleView.php?nSaleSeq=52477048&nCateC1=861&nCateC2=874&nCateC3=0&nCateC4=0"
         },
         {
           "product": "삼성전자 DDR5-5600 32GB",
