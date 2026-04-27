@@ -2,17 +2,17 @@
   "products": {
     "DDR5 (데스크탑)": {
       "product_name": "삼성 DDR5 PC5-44800",
-      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800\nDDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용 / 최신 생산 주차\n\n토스페이\n용산점 현장구매 가능 상품\n가산점 현장구매 가능 상품\n\n비교\n\n363,000원\n4.9\n(28,348건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800\nDDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용 / 최신 생산 주차\n\n토스페이\n용산점 현장구매 가능 상품\n가산점 현장구매 가능 상품\n\n비교\n\n358,500원\n4.9\n(28,348건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
       "options": [
         {
           "capacity": "8GB",
-          "price": 179000,
-          "price_formatted": "179,000원"
+          "price": 176500,
+          "price_formatted": "176,500원"
         },
         {
           "capacity": "16GB",
-          "price": 363000,
-          "price_formatted": "363,000원"
+          "price": 358500,
+          "price_formatted": "358,500원"
         },
         {
           "capacity": "24GB",
@@ -21,8 +21,8 @@
         },
         {
           "capacity": "32GB",
-          "price": 740000,
-          "price_formatted": "740,000원"
+          "price": 727500,
+          "price_formatted": "727,500원"
         }
       ]
     },
@@ -16021,7 +16021,53 @@
           "price_formatted": "1,926,000원"
         }
       ]
+    },
+    "2026-04-27 12:23": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "8GB",
+          "price": 176500,
+          "price_formatted": "176,500원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 358500,
+          "price_formatted": "358,500원"
+        },
+        {
+          "capacity": "24GB",
+          "price": 448000,
+          "price_formatted": "448,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 727500,
+          "price_formatted": "727,500원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "64GB",
+          "price": 3860000,
+          "price_formatted": "3,860,000원"
+        },
+        {
+          "capacity": "128GB",
+          "price": 8667000,
+          "price_formatted": "8,667,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 968900,
+          "price_formatted": "968,900원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 1926000,
+          "price_formatted": "1,926,000원"
+        }
+      ]
     }
   },
-  "last_updated": "2026-04-27 08:42"
+  "last_updated": "2026-04-27 12:23"
 }
