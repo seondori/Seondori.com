@@ -3,8 +3,8 @@
     "DDR5 RAM (데스크탑)": [
       {
         "product": "삼성 DDR5 32G 5600MHz",
-        "price": 380000,
-        "price_formatted": "380,000원"
+        "price": 400000,
+        "price_formatted": "400,000원"
       },
       {
         "product": "삼성 DDR5 16G 4800MHz",
@@ -56,13 +56,13 @@
     "DDR4 RAM (데스크탑)": [
       {
         "product": "삼성 DDR4 32G PC4-25600",
-        "price": 180000,
-        "price_formatted": "180,000원"
+        "price": 170000,
+        "price_formatted": "170,000원"
       },
       {
         "product": "삼성 DDR4 32G PC4-21300",
-        "price": 135000,
-        "price_formatted": "135,000원"
+        "price": 130000,
+        "price_formatted": "130,000원"
       },
       {
         "product": "삼성 DDR4 16G PC4-25600",
@@ -76,13 +76,13 @@
       },
       {
         "product": "삼성 DDR4 8G PC4-21300",
-        "price": 37000,
-        "price_formatted": "37,000원"
+        "price": 35000,
+        "price_formatted": "35,000원"
       },
       {
         "product": "삼성 DDR4 8G PC4-19200",
-        "price": 35000,
-        "price_formatted": "35,000원"
+        "price": 30000,
+        "price_formatted": "30,000원"
       },
       {
         "product": "삼성 DDR4 16G PC4-21300",
@@ -96,8 +96,8 @@
       },
       {
         "product": "삼성 DDR4 8G PC4-17000",
-        "price": 35000,
-        "price_formatted": "35,000원"
+        "price": 30000,
+        "price_formatted": "30,000원"
       },
       {
         "product": "삼성 DDR4 4G PC4-25600",
@@ -144,8 +144,8 @@
       },
       {
         "product": "삼성 DDR4 32G PC4-23400",
-        "price": 135000,
-        "price_formatted": "135,000원"
+        "price": 130000,
+        "price_formatted": "130,000원"
       },
       {
         "product": "삼성 DDR3 8G PC3-12800",
@@ -161,13 +161,13 @@
     "DDR4 RAM (노트북)": [
       {
         "product": "삼성 DDR4 32G PC4-25600 (노트북)",
-        "price": 170000,
-        "price_formatted": "170,000원"
+        "price": 160000,
+        "price_formatted": "160,000원"
       },
       {
         "product": "삼성 DDR4 16G PC4-25600 (노트북)",
-        "price": 85000,
-        "price_formatted": "85,000원"
+        "price": 80000,
+        "price_formatted": "80,000원"
       },
       {
         "product": "삼성 DDR4 32G PC4-21300 (노트북)",
@@ -191,13 +191,13 @@
       },
       {
         "product": "삼성 DDR4 8G PC4-25600 (노트북)",
-        "price": 40000,
-        "price_formatted": "40,000원"
+        "price": 38000,
+        "price_formatted": "38,000원"
       },
       {
         "product": "삼성 DDR4 8G PC4-21300 (노트북)",
-        "price": 35000,
-        "price_formatted": "35,000원"
+        "price": 32000,
+        "price_formatted": "32,000원"
       },
       {
         "product": "삼성 DDR4 8G PC4-19200 (노트북)",
@@ -338,8 +338,8 @@
       },
       {
         "product": "삼성 DDR5 16G 5600MHz (노트북)",
-        "price": 110000,
-        "price_formatted": "110,000원"
+        "price": 130000,
+        "price_formatted": "130,000원"
       },
       {
         "product": "삼성 DDR5 8G 5600 (노트북)",
@@ -36000,8 +36000,8 @@
         },
         {
           "product": "삼성 DDR5 32G 5600MHz",
-          "price": 380000,
-          "price_formatted": "380,000원"
+          "price": 400000,
+          "price_formatted": "400,000원"
         },
         {
           "product": "삼성 DDR5 8G 4800MHz",
@@ -36022,18 +36022,18 @@
       "DDR4 RAM (데스크탑)": [
         {
           "product": "삼성 DDR4 32G PC4-25600",
-          "price": 180000,
-          "price_formatted": "180,000원"
+          "price": 170000,
+          "price_formatted": "170,000원"
         },
         {
           "product": "삼성 DDR4 32G PC4-21300",
-          "price": 135000,
-          "price_formatted": "135,000원"
+          "price": 130000,
+          "price_formatted": "130,000원"
         },
         {
           "product": "삼성 DDR4 32G PC4-23400",
-          "price": 135000,
-          "price_formatted": "135,000원"
+          "price": 130000,
+          "price_formatted": "130,000원"
         },
         {
           "product": "삼성 DDR4 16G PC4-25600",
@@ -36057,18 +36057,18 @@
         },
         {
           "product": "삼성 DDR4 8G PC4-21300",
-          "price": 37000,
-          "price_formatted": "37,000원"
+          "price": 35000,
+          "price_formatted": "35,000원"
         },
         {
           "product": "삼성 DDR4 8G PC4-19200",
-          "price": 35000,
-          "price_formatted": "35,000원"
+          "price": 30000,
+          "price_formatted": "30,000원"
         },
         {
           "product": "삼성 DDR4 8G PC4-17000",
-          "price": 35000,
-          "price_formatted": "35,000원"
+          "price": 30000,
+          "price_formatted": "30,000원"
         },
         {
           "product": "삼성 DDR4 4G PC4-25600",
@@ -36104,15 +36104,15 @@
         },
         {
           "product": "삼성 DDR5 16G 5600MHz (노트북)",
-          "price": 110000,
-          "price_formatted": "110,000원"
+          "price": 130000,
+          "price_formatted": "130,000원"
         }
       ],
       "DDR4 RAM (노트북)": [
         {
           "product": "삼성 DDR4 32G PC4-25600 (노트북)",
-          "price": 170000,
-          "price_formatted": "170,000원"
+          "price": 160000,
+          "price_formatted": "160,000원"
         },
         {
           "product": "삼성 DDR4 32G PC4-21300 (노트북)",
@@ -36121,8 +36121,8 @@
         },
         {
           "product": "삼성 DDR4 16G PC4-25600 (노트북)",
-          "price": 85000,
-          "price_formatted": "85,000원"
+          "price": 80000,
+          "price_formatted": "80,000원"
         },
         {
           "product": "삼성 DDR4 16G PC4-21300 (노트북)",
@@ -36141,13 +36141,13 @@
         },
         {
           "product": "삼성 DDR4 8G PC4-25600 (노트북)",
-          "price": 40000,
-          "price_formatted": "40,000원"
+          "price": 38000,
+          "price_formatted": "38,000원"
         },
         {
           "product": "삼성 DDR4 8G PC4-21300 (노트북)",
-          "price": 35000,
-          "price_formatted": "35,000원"
+          "price": 32000,
+          "price_formatted": "32,000원"
         },
         {
           "product": "삼성 DDR4 8G PC4-19200 (노트북)",
