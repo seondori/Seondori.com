@@ -35439,7 +35439,48 @@
           "price_formatted": "1,915,300원"
         }
       ]
+    },
+    "2026-06-11 08:08": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "8GB",
+          "price": 184000,
+          "price_formatted": "184,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 358000,
+          "price_formatted": "358,000원"
+        },
+        {
+          "capacity": "24GB",
+          "price": 425000,
+          "price_formatted": "425,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 754000,
+          "price_formatted": "754,000원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "64GB",
+          "price": 3926000,
+          "price_formatted": "3,926,000원"
+        },
+        {
+          "capacity": "128GB",
+          "price": 8667000,
+          "price_formatted": "8,667,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 1915300,
+          "price_formatted": "1,915,300원"
+        }
+      ]
     }
   },
-  "last_updated": "2026-06-11 00:41"
+  "last_updated": "2026-06-11 08:08"
 }
