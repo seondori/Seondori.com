@@ -293,12 +293,16 @@ def search_cafe_post(driver):
 
     except Exception as e:
         log(f"카페 검색 오류: {str(e)}", "ERROR")
-        return None
-    finally:
         try:
             driver.switch_to.default_content()
-        except:
-            pass
+            driver.save_screenshot(os.path.join(BASE_DIR, "search_debug.png"))
+            with open(os.path.join(BASE_DIR, "search_debug.html"), "w", encoding="utf-8") as f:
+                f.write(driver.page_source)
+            log(f"현재 URL: {driver.current_url}", "DEBUG")
+            log(f"페이지 타이틀: {driver.title}", "DEBUG")
+        except Exception as e2:
+            log(f"디버그 저장 실패: {e2}", "WARN")
+        return None
 
 
 def get_article_content(driver, article_url):
