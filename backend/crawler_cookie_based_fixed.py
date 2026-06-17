@@ -25,8 +25,8 @@ from selenium.webdriver.chrome.options import Options
 # 설정
 # ============================================
 CAFE_URL = "https://cafe.naver.com/joonggonara"
-SEARCH_KEYWORD = "베스트코리아컴 BKC"
-TARGET_TITLE_KEYWORD = "구입]채굴기"
+SEARCH_KEYWORD = "베스트코리아컴"
+TARGET_TITLE_KEYWORD = "[매입]구입]채굴기"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 KST = timezone(timedelta(hours=9))
@@ -188,6 +188,7 @@ def setup_driver():
                          'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
 
     driver = webdriver.Chrome(options=options)
+    driver.set_page_load_timeout(40)
     log("Chrome 드라이버 초기화 완료")
     return driver
 
@@ -295,11 +296,12 @@ def search_cafe_post(driver):
         log(f"카페 검색 오류: {str(e)}", "ERROR")
         try:
             driver.switch_to.default_content()
-            driver.save_screenshot(os.path.join(BASE_DIR, "search_debug.png"))
-            with open(os.path.join(BASE_DIR, "search_debug.html"), "w", encoding="utf-8") as f:
-                f.write(driver.page_source)
             log(f"현재 URL: {driver.current_url}", "DEBUG")
             log(f"페이지 타이틀: {driver.title}", "DEBUG")
+            driver.save_screenshot(os.path.join(BASE_DIR, "cafe_debug.png"))
+            with open(os.path.join(BASE_DIR, "cafe_debug.html"), "w", encoding="utf-8") as f:
+                f.write(driver.page_source)
+            log("디버그 파일 저장 완료", "DEBUG")
         except Exception as e2:
             log(f"디버그 저장 실패: {e2}", "WARN")
         return None
