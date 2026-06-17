@@ -37,6 +37,7 @@ jobs:
         run: |
           cd backend
           python crawler_cookie_based_fixed.py
+          
       - name: Upload debug artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,7 +46,11 @@ jobs:
           path: |
             backend/search_debug.png
             backend/search_debug.html
-            
+      - name: Test Naver connectivity
+        run: |
+          echo "=== curl naver.com ==="
+          curl -sS -m 30 -o /dev/null -w "HTTP %{http_code}, time %{time_total}s\n" https://www.naver.com || echo "curl 실패/타임아웃"
+      
       - name: Check results
         if: always()
         run: |
