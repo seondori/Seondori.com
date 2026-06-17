@@ -37,7 +37,15 @@ jobs:
         run: |
           cd backend
           python crawler_cookie_based_fixed.py
-
+      - name: Upload debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: search-debug
+          path: |
+            backend/search_debug.png
+            backend/search_debug.html
+            
       - name: Check results
         if: always()
         run: |
