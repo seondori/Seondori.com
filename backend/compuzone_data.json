@@ -2,7 +2,7 @@
   "products": {
     "DDR5 (데스크탑)": {
       "product_name": "삼성 DDR5 PC5-44800",
-      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800\nDDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용\n\n토스페이\n용산점 현장구매 가능 상품\n가산점 현장구매 가능 상품\n\n비교\n\n369,000원\n4.9\n(29,027건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800\nDDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용\n\n토스페이\n용산점 현장구매 가능 상품\n가산점 현장구매 가능 상품\n\n비교\n\n371,000원\n4.9\n(29,027건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
       "options": [
         {
           "capacity": "8GB",
@@ -11,8 +11,8 @@
         },
         {
           "capacity": "16GB",
-          "price": 369000,
-          "price_formatted": "369,000원"
+          "price": 371000,
+          "price_formatted": "371,000원"
         },
         {
           "capacity": "24GB",
@@ -38330,7 +38330,53 @@
           "price_formatted": "2,225,000원"
         }
       ]
+    },
+    "2026-06-24 12:50": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "8GB",
+          "price": 186000,
+          "price_formatted": "186,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 371000,
+          "price_formatted": "371,000원"
+        },
+        {
+          "capacity": "24GB",
+          "price": 425000,
+          "price_formatted": "425,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 768000,
+          "price_formatted": "768,000원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "64GB",
+          "price": 4545000,
+          "price_formatted": "4,545,000원"
+        },
+        {
+          "capacity": "128GB",
+          "price": 8667000,
+          "price_formatted": "8,667,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 1155000,
+          "price_formatted": "1,155,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 2225000,
+          "price_formatted": "2,225,000원"
+        }
+      ]
     }
   },
-  "last_updated": "2026-06-24 08:36"
+  "last_updated": "2026-06-24 12:50"
 }
