@@ -21,14 +21,14 @@
         },
         {
           "capacity": "32GB",
-          "price": 768000,
-          "price_formatted": "768,000원"
+          "price": 769000,
+          "price_formatted": "769,000원"
         }
       ]
     },
     "DDR5 ECC/REG (서버용)": {
       "product_name": "삼성 DDR5 PC5-44800 ECC/REG 서버용",
-      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용\nDDR5-REG ECC / 64GB / 5600MHz (PC5-44800) / 방열판 무 / 서버용 / M321R8GA0PB0-CWM / M321R8GA0EB2-CWMKH\n\n토스페이\n특송\n\n비교\n\n4,545,000원\n4.9\n(122건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용\nDDR5-REG ECC / 64GB / 5600MHz (PC5-44800) / 방열판 무 / 서버용 / M321R8GA0PB0-CWM / M321R8GA0EB2-CWMKH\n\n토스페이\n특송\n\n비교\n\n4,545,000원\n4.9\n(122건)\n장바구니\n \n구매하기\n새창\n관심상품",
       "options": [
         {
           "capacity": "64GB",
@@ -38744,7 +38744,53 @@
           "price_formatted": "2,225,000원"
         }
       ]
+    },
+    "2026-06-26 13:50": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "8GB",
+          "price": 186000,
+          "price_formatted": "186,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 371000,
+          "price_formatted": "371,000원"
+        },
+        {
+          "capacity": "24GB",
+          "price": 425000,
+          "price_formatted": "425,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 769000,
+          "price_formatted": "769,000원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "64GB",
+          "price": 4545000,
+          "price_formatted": "4,545,000원"
+        },
+        {
+          "capacity": "128GB",
+          "price": 8667000,
+          "price_formatted": "8,667,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 1155000,
+          "price_formatted": "1,155,000원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 2225000,
+          "price_formatted": "2,225,000원"
+        }
+      ]
     }
   },
-  "last_updated": "2026-06-26 05:59"
+  "last_updated": "2026-06-26 13:50"
 }
