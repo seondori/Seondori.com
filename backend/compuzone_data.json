@@ -2,7 +2,7 @@
   "products": {
     "DDR5 (데스크탑)": {
       "product_name": "삼성 DDR5 PC5-44800",
-      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800\nDDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용\n\n토스페이\n용산점 현장구매 가능 상품\n가산점 현장구매 가능 상품\n\n비교\n\n395,500원\n4.9\n(29,276건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800\nDDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용\n\n토스페이\n용산점 현장구매 가능 상품\n가산점 현장구매 가능 상품\n\n비교\n\n395,500원\n4.9\n(29,290건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
       "options": [
         {
           "capacity": "8GB",
@@ -16,39 +16,39 @@
         },
         {
           "capacity": "24GB",
-          "price": 492200,
-          "price_formatted": "492,200원"
+          "price": 481500,
+          "price_formatted": "481,500원"
         },
         {
           "capacity": "32GB",
-          "price": 820000,
-          "price_formatted": "820,000원"
+          "price": 847500,
+          "price_formatted": "847,500원"
         }
       ]
     },
     "DDR5 ECC/REG (서버용)": {
       "product_name": "삼성 DDR5 PC5-44800 ECC/REG 서버용",
-      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용\nDDR5-REG ECC / 64GB / 5600MHz (PC5-44800) / 방열판 무 / 서버용 / M321R8GA0PB0-CWM / M321R8GA0EB2-CWMKH\n\n토스페이\n특송\n\n비교\n\n4,805,300원\n4.9\n(126건)\n장바구니\n \n구매하기\n새창\n관심상품",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용\nDDR5-REG ECC / 64GB / 5600MHz (PC5-44800) / 방열판 무 / 서버용 / M321R8GA0PB0-CWM / M321R8GA0EB2-CWMKH\n\n토스페이\n특송\n\n비교\n\n4,558,200원\n4.9\n(126건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
       "options": [
         {
           "capacity": "64GB",
-          "price": 4805300,
-          "price_formatted": "4,805,300원"
+          "price": 4558200,
+          "price_formatted": "4,558,200원"
         },
         {
           "capacity": "128GB",
-          "price": 10072800,
-          "price_formatted": "10,072,800원"
+          "price": 10025900,
+          "price_formatted": "10,025,900원"
         },
         {
           "capacity": "16GB",
-          "price": 1268500,
-          "price_formatted": "1,268,500원"
+          "price": 1262600,
+          "price_formatted": "1,262,600원"
         },
         {
           "capacity": "32GB",
-          "price": 2451000,
-          "price_formatted": "2,451,000원"
+          "price": 2439600,
+          "price_formatted": "2,439,600원"
         }
       ]
     }
@@ -44387,7 +44387,53 @@
           "price_formatted": "2,451,000원"
         }
       ]
+    },
+    "2026-07-21 16:09": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "8GB",
+          "price": 195000,
+          "price_formatted": "195,000원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 395500,
+          "price_formatted": "395,500원"
+        },
+        {
+          "capacity": "24GB",
+          "price": 481500,
+          "price_formatted": "481,500원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 847500,
+          "price_formatted": "847,500원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "64GB",
+          "price": 4558200,
+          "price_formatted": "4,558,200원"
+        },
+        {
+          "capacity": "128GB",
+          "price": 10025900,
+          "price_formatted": "10,025,900원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 1262600,
+          "price_formatted": "1,262,600원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 2439600,
+          "price_formatted": "2,439,600원"
+        }
+      ]
     }
   },
-  "last_updated": "2026-07-21 01:56"
+  "last_updated": "2026-07-21 16:09"
 }
