@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-21 16:30",
+  "last_updated": "2026-08-21 19:56",
   "current_data": {
     "DDR5": [
       {
@@ -105437,6 +105437,185 @@
       ]
     },
     "2026-08-21 16:30": {
+      "DDR5": [
+        {
+          "product": "DDR5 16Gb (2Gx8) 4800/5600",
+          "daily_high": 68.5,
+          "daily_low": 37.0,
+          "session_high": 68.5,
+          "session_low": 37.0,
+          "session_average": 54.1,
+          "session_change": "0.62 %"
+        },
+        {
+          "product": "DDR5 16Gb (2Gx8) eTT",
+          "daily_high": 25.3,
+          "daily_low": 22.7,
+          "session_high": 25.3,
+          "session_low": 22.7,
+          "session_average": 23.7,
+          "session_change": "0.17 %"
+        },
+        {
+          "product": "DDR5 UDIMM 16GB 4800/5600",
+          "daily_high": 242.0,
+          "daily_low": 215.0,
+          "session_high": 242.0,
+          "session_low": 215.0,
+          "session_average": 225.0,
+          "session_change": "1.12 %"
+        },
+        {
+          "product": "DDR5 RDIMM 32GB 4800/5600",
+          "daily_high": 1750.0,
+          "daily_low": 1490.0,
+          "session_high": 1750.0,
+          "session_low": 1490.0,
+          "session_average": 1580.0,
+          "session_change": "0.96 %"
+        },
+        {
+          "product": "GDDR5 8Gb",
+          "daily_high": 17.5,
+          "daily_low": 9.5,
+          "session_high": 17.5,
+          "session_low": 9.5,
+          "session_average": 11.773,
+          "session_change": "0.39 %"
+        },
+        {
+          "product": "LPDDR5X 16GB",
+          "daily_high": 512.0,
+          "daily_low": 58.0,
+          "session_high": 0,
+          "session_low": 0,
+          "session_average": 0,
+          "session_change": "N/A"
+        },
+        {
+          "product": "DDR5 8GB SO-DIMM",
+          "daily_high": 123.0,
+          "daily_low": 102.0,
+          "session_high": 115.0,
+          "session_low": 2.68,
+          "session_average": 3.03,
+          "session_change": ""
+        }
+      ],
+      "DDR4": [
+        {
+          "product": "DDR4 16Gb (2Gx8) 3200",
+          "daily_high": 116.0,
+          "daily_low": 42.0,
+          "session_high": 116.0,
+          "session_low": 42.0,
+          "session_average": 91.073,
+          "session_change": "0.54 %"
+        },
+        {
+          "product": "DDR4 16Gb (2Gx8) eTT",
+          "daily_high": 11.8,
+          "daily_low": 9.8,
+          "session_high": 11.8,
+          "session_low": 9.8,
+          "session_average": 11.325,
+          "session_change": "0.33 %"
+        },
+        {
+          "product": "DDR4 8Gb (1Gx8) 3200",
+          "daily_high": 74.0,
+          "daily_low": 23.0,
+          "session_high": 74.0,
+          "session_low": 23.0,
+          "session_average": 43.288,
+          "session_change": "0.35 %"
+        },
+        {
+          "product": "DDR4 8Gb (1Gx8) eTT",
+          "daily_high": 4.45,
+          "daily_low": 3.88,
+          "session_high": 4.45,
+          "session_low": 3.88,
+          "session_average": 4.246,
+          "session_change": "0.17 %"
+        },
+        {
+          "product": "DDR4 UDIMM 16GB 3200",
+          "daily_high": 178.0,
+          "daily_low": 150.0,
+          "session_high": 178.0,
+          "session_low": 150.0,
+          "session_average": 159.8,
+          "session_change": "0.57 %"
+        },
+        {
+          "product": "DDR4 16GB SO-DIMM",
+          "daily_high": 256.0,
+          "daily_low": 192.0,
+          "session_high": 227.0,
+          "session_low": 0.0,
+          "session_average": 0.0,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 8GB SO-DIMM",
+          "daily_high": 128.0,
+          "daily_low": 96.0,
+          "session_high": 119.0,
+          "session_low": 0.0,
+          "session_average": 0.0,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 16Gb 2Gx8",
+          "daily_high": 50.0,
+          "daily_low": 39.0,
+          "session_high": 42.0,
+          "session_low": 5.0,
+          "session_average": 5.41,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 8Gb 1Gx8",
+          "daily_high": 28.5,
+          "daily_low": 19.0,
+          "session_high": 21.0,
+          "session_low": 5.0,
+          "session_average": 5.56,
+          "session_change": ""
+        },
+        {
+          "product": "DDR4 4Gb 256Mx16",
+          "daily_high": 15.0,
+          "daily_low": 11.5,
+          "session_high": 13.0,
+          "session_low": 8.33,
+          "session_average": 35.29,
+          "session_change": ""
+        }
+      ],
+      "DDR3": [
+        {
+          "product": "DDR3 4Gb 512Mx8 1600/1866",
+          "daily_high": 20.2,
+          "daily_low": 9.6,
+          "session_high": 20.2,
+          "session_low": 9.6,
+          "session_average": 13.947,
+          "session_change": "-0.03 %"
+        },
+        {
+          "product": "DDR3 4Gb 256Mx16",
+          "daily_high": 14.0,
+          "daily_low": 11.0,
+          "session_high": 12.5,
+          "session_low": 13.64,
+          "session_average": 10.0,
+          "session_change": ""
+        }
+      ]
+    },
+    "2026-08-21 19:56": {
       "DDR5": [
         {
           "product": "DDR5 16Gb (2Gx8) 4800/5600",
