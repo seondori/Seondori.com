@@ -2,7 +2,7 @@
   "products": {
     "DDR5 (데스크탑)": {
       "product_name": "삼성 DDR5 PC5-44800",
-      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800\nDDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용 / 26년도 생산주차\n\n네이버 포인트\n토스페이\n용산점 현장구매 가능 상품\n가산점 현장구매 가능 상품\n\n비교\n\n375,000원\n4.9\n(29,832건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
+      "source_title": "[삼성전자] 삼성 DDR5 PC5-44800\nDDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용 / 26년도 생산주차\n\n네이버 포인트\n토스페이\n용산점 현장구매 가능 상품\n가산점 현장구매 가능 상품\n\n비교\n\n375,000원\n4.9\n(29,844건)\n1시간픽업\n장바구니\n \n구매하기\n새창\n관심상품",
       "options": [
         {
           "capacity": "8GB",
@@ -63060,7 +63060,53 @@
           "price_formatted": "2,558,500원"
         }
       ]
+    },
+    "2026-09-20 05:13": {
+      "DDR5 (데스크탑)": [
+        {
+          "capacity": "8GB",
+          "price": 198500,
+          "price_formatted": "198,500원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 375000,
+          "price_formatted": "375,000원"
+        },
+        {
+          "capacity": "24GB",
+          "price": 438700,
+          "price_formatted": "438,700원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 829000,
+          "price_formatted": "829,000원"
+        }
+      ],
+      "DDR5 ECC/REG (서버용)": [
+        {
+          "capacity": "64GB",
+          "price": 4601000,
+          "price_formatted": "4,601,000원"
+        },
+        {
+          "capacity": "128GB",
+          "price": 10072800,
+          "price_formatted": "10,072,800원"
+        },
+        {
+          "capacity": "16GB",
+          "price": 1306200,
+          "price_formatted": "1,306,200원"
+        },
+        {
+          "capacity": "32GB",
+          "price": 2558500,
+          "price_formatted": "2,558,500원"
+        }
+      ]
     }
   },
-  "last_updated": "2026-09-19 23:40"
+  "last_updated": "2026-09-20 05:13"
 }
