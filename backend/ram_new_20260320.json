@@ -3,11 +3,11 @@
     "DDR5-5600": [
       {
         "product": "삼성전자 DDR5-5600 8GB",
-        "price": 183560,
-        "price_formatted": "183,560원",
+        "price": 184000,
+        "price_formatted": "184,000원",
         "source": "다나와",
-        "source_title": "삼성전자 DDR5-5600 데스크탑용/DDR5/5600MHz (PC5-44800)/램개수: 1개/히트싱크:",
-        "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-5600+8gb"
+        "source_title": "삼성전자 DDR5-5600",
+        "link": "https://prod.danawa.com/info/?pcode=18911771&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+8gb&cate=112752"
       },
       {
         "product": "삼성전자 DDR5-5600 16GB",
@@ -45,8 +45,8 @@
       },
       {
         "product": "삼성전자 DDR5-4800 32GB",
-        "price": 2040000,
-        "price_formatted": "2,040,000원",
+        "price": 2039990,
+        "price_formatted": "2,039,990원",
         "source": "다나와",
         "source_title": "삼성전자 DDR5-4800 ECC/REG",
         "link": "https://prod.danawa.com/info/?pcode=21678638&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+32gb&cate=112752"
@@ -32072,11 +32072,11 @@
       "DDR5-5600": [
         {
           "product": "삼성전자 DDR5-5600 8GB",
-          "price": 183560,
-          "price_formatted": "183,560원",
+          "price": 184000,
+          "price_formatted": "184,000원",
           "source": "다나와",
-          "source_title": "삼성전자 DDR5-5600 데스크탑용/DDR5/5600MHz (PC5-44800)/램개수: 1개/히트싱크:",
-          "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-5600+8gb"
+          "source_title": "삼성전자 DDR5-5600",
+          "link": "https://prod.danawa.com/info/?pcode=18911771&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-5600+8gb&cate=112752"
         },
         {
           "product": "삼성전자 DDR5-5600 16GB",
@@ -32114,8 +32114,8 @@
         },
         {
           "product": "삼성전자 DDR5-4800 32GB",
-          "price": 2040000,
-          "price_formatted": "2,040,000원",
+          "price": 2039990,
+          "price_formatted": "2,039,990원",
           "source": "다나와",
           "source_title": "삼성전자 DDR5-4800 ECC/REG",
           "link": "https://prod.danawa.com/info/?pcode=21678638&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+ddr5-4800+32gb&cate=112752"
