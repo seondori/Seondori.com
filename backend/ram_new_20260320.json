@@ -29,8 +29,8 @@
     "DDR5-4800": [
       {
         "product": "삼성전자 DDR5-4800 8GB",
-        "price": 120000,
-        "price_formatted": "120,000원",
+        "price": 22543,
+        "price_formatted": "22,543원",
         "source": "다나와",
         "source_title": "삼성전자 ddr5-4800 8gb",
         "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+8gb"
@@ -45,10 +45,10 @@
       },
       {
         "product": "삼성전자 DDR5-4800 32GB",
-        "price": 64531,
-        "price_formatted": "64,531원",
+        "price": 682760,
+        "price_formatted": "682,760원",
         "source": "다나와",
-        "source_title": "삼성전자 ddr5-4800 32gb",
+        "source_title": "삼성전자 DDR5-4800 데스크탑용/DDR5/4800MHz (PC5-38400)/램개수: 1개/히트싱크:",
         "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+32gb"
       }
     ]
@@ -33988,8 +33988,8 @@
       "DDR5-4800": [
         {
           "product": "삼성전자 DDR5-4800 8GB",
-          "price": 120000,
-          "price_formatted": "120,000원",
+          "price": 22543,
+          "price_formatted": "22,543원",
           "source": "다나와",
           "source_title": "삼성전자 ddr5-4800 8gb",
           "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+8gb"
@@ -34004,10 +34004,10 @@
         },
         {
           "product": "삼성전자 DDR5-4800 32GB",
-          "price": 64531,
-          "price_formatted": "64,531원",
+          "price": 682760,
+          "price_formatted": "682,760원",
           "source": "다나와",
-          "source_title": "삼성전자 ddr5-4800 32gb",
+          "source_title": "삼성전자 DDR5-4800 데스크탑용/DDR5/4800MHz (PC5-38400)/램개수: 1개/히트싱크:",
           "link": "https://search.danawa.com/dsearch.php?query=삼성전자+ddr5-4800+32gb"
         }
       ]
